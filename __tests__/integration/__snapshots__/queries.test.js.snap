@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`many-to-many.graphql 1`] = `
+Object {
+  "data": Object {
+    "a": Object {
+      "nodes": Array [
+        Object {
+          "personName": "Person1",
+          "teamsByTeamMemberPersonIdAndTeamId": Object {
+            "nodes": Array [
+              Object {
+                "teamName": "Team1",
+              },
+              Object {
+                "teamName": "Team2",
+              },
+            ],
+          },
+        },
+        Object {
+          "personName": "Person2",
+          "teamsByTeamMemberPersonIdAndTeamId": Object {
+            "nodes": Array [
+              Object {
+                "teamName": "Team1",
+              },
+            ],
+          },
+        },
+        Object {
+          "personName": "Person3",
+          "teamsByTeamMemberPersonIdAndTeamId": Object {
+            "nodes": Array [],
+          },
+        },
+      ],
+    },
+  },
+}
+`;
