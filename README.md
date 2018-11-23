@@ -29,7 +29,7 @@ Example:
 yarn add @graphile-contrib/pg-many-to-many
 ```
 
-Requires `postgraphile@^4.1.0-rc.0` or `graphile-build-pg@^4.1.0-rc.0`
+Requires `postgraphile@^4.1.0-rc.2` or `graphile-build-pg@^4.1.0-rc.2`
 
 ## Usage
 

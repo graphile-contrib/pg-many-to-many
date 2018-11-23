@@ -1,8 +1,3 @@
-const semver = require("semver");
-const {
-  name: packageName,
-  version: packageVersion,
-} = require("./package.json");
 const debugFactory = require("debug");
 const debug = debugFactory("graphile-build-pg");
 
@@ -15,20 +10,34 @@ module.exports = function PgManyToManyRelationPlugin(
     pgSimpleCollections === "only" || pgSimpleCollections === "both";
 
   builder.hook("build", build => {
-    // Check graphile-build-pg version
-    const graphileBuildPgRange = "^4.1.0-rc.0";
-    if (!semver.satisfies(build.graphileBuildPgVersion, graphileBuildPgRange)) {
+    const pkg = require("./package.json");
+
+    // Check dependencies
+    if (!build.versions) {
       throw new Error(
-        `Plugin ${packageName}@${packageVersion} requires graphile-build-pg@${graphileBuildPgRange} (current version: ${
-          build.graphileBuildPgVersion
+        `Plugin ${pkg.name}@${
+          pkg.version
+        } requires graphile-build@^4.1.0-rc.2 in order to check dependencies (current version: ${
+          build.graphileBuildVersion
         })`
       );
     }
-    // Register plugin version on `build`
-    if (!build.versions) {
-      build.versions = {};
-    }
-    build.versions[packageName] = packageVersion;
+    const depends = (name, range) => {
+      if (!build.hasVersion(name, range)) {
+        throw new Error(
+          `Plugin ${pkg.name}@${pkg.version} requires ${name}@${range} (${
+            build.versions[name]
+              ? `current version: ${build.versions[name]}`
+              : "not found"
+          })`
+        );
+      }
+    };
+    depends("graphile-build-pg", "^4.1.0-rc.2");
+
+    // Register this plugin
+    build.versions = build.extend(build.versions, { [pkg.name]: pkg.version });
+
     return build;
   });
 
@@ -307,7 +316,6 @@ module.exports = function PgManyToManyRelationPlugin(
                     });
 
                     return {
-                      // TODO: Fix this description - it's not accurate for simple collections
                       description: `Reads and enables pagination through a set of \`${rightTableTypeName}\`.`,
                       type: isConnection
                         ? new GraphQLNonNull(RightTableConnectionType)
