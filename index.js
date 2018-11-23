@@ -35,10 +35,10 @@ module.exports = function PgManyToManyRelationPlugin(
   builder.hook("inflection", inflection => {
     return Object.assign(inflection, {
       manyToManyRelationByKeys(
-        leftKeys,
+        _leftKeys,
         junctionLeftKeys,
         junctionRightKeys,
-        rightKeys,
+        _rightKeys,
         junctionTable,
         rightTable
       ) {
@@ -54,10 +54,10 @@ module.exports = function PgManyToManyRelationPlugin(
         );
       },
       manyToManyRelationByKeysSimple(
-        leftKeys,
+        _leftKeys,
         junctionLeftKeys,
         junctionRightKeys,
-        rightKeys,
+        _rightKeys,
         junctionTable,
         rightTable
       ) {
