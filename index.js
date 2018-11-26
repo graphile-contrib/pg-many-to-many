@@ -1,5 +1,4 @@
 module.exports = function PgManyToManyPlugin(builder, options) {
-
   builder.hook("build", build => {
     const pkg = require("./package.json");
 
@@ -31,6 +30,6 @@ module.exports = function PgManyToManyPlugin(builder, options) {
 
     return build;
   });
-  
+
   require("./src/PgManyToManyRelationPlugin.js")(builder, options);
 };
