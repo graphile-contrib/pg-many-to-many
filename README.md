@@ -1,5 +1,3 @@
-# ⚠️ WARNING: Work-in-progress. Not intended for general use yet.
-
 # @graphile-contrib/pg-many-to-many
 
 This Graphile Engine plugin adds connection fields for many-to-many relations.
@@ -7,7 +5,6 @@ This Graphile Engine plugin adds connection fields for many-to-many relations.
 Example:
 
 ```graphql
-
 {
   allPeople {
     nodes {
