@@ -35,7 +35,7 @@ Append this plugin and the additional fields will be added to your schema.
 ### Usage - CLI
 
 ```
-postgraphile --append-plugins @graphile-contrib/pg-order-by-related -c postgres:///my_db
+postgraphile --append-plugins @graphile-contrib/pg-many-to-many -c postgres:///my_db
 ```
 
 ### Usage - Library
