@@ -32,4 +32,8 @@ module.exports = function PgManyToManyPlugin(builder, options) {
   });
 
   require("./src/PgManyToManyRelationPlugin.js")(builder, options);
+
+  // FIXME: Key columns in junction table should not be exposed as edge fields
+  // FIXME: SQL for resolving edge columns isn't working yet
+  require("./src/PgManyToManyEdgeColumnsPlugin.js")(builder, options);
 };

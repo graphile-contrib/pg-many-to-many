@@ -3,6 +3,13 @@ query {
     nodes {
       personName
       teamsByTeamMemberPersonIdAndTeamId {
+        # FIXME: SQL for resolving edge columns isn't working yet
+        #edges {
+        #  node {
+        #    teamName
+        #  }
+        #  createdAt
+        #}
         nodes {
           teamName
         }
