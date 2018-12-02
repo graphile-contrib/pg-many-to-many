@@ -2,6 +2,8 @@
 
 This Graphile Engine plugin adds connection fields for many-to-many relations.
 
+> Requires `postgraphile@^4.1.0-rc.2` or `graphile-build-pg@^4.1.0-rc.2`
+
 Example:
 
 ```graphql
@@ -20,40 +22,35 @@ Example:
 }
 ```
 
-## Installation
-
-```
-yarn add @graphile-contrib/pg-many-to-many
-```
-
-Requires `postgraphile@^4.1.0-rc.2` or `graphile-build-pg@^4.1.0-rc.2`
-
 ## Usage
 
 Append this plugin and the additional fields will be added to your schema.
 
-### Usage - CLI
+### CLI
 
-```
-postgraphile --append-plugins @graphile-contrib/pg-many-to-many -c postgres:///my_db
+```bash
+yarn add postgraphile@^4.1.0-rc.2
+yarn add @graphile-contrib/pg-many-to-many
+npx postgraphile --append-plugins @graphile-contrib/pg-many-to-many
 ```
 
-### Usage - Library
+### Library
 
 ```js
 const express = require("express");
 const { postgraphile } = require("postgraphile");
-const PgManyToMany = require("@graphile-contrib/pg-many-to-many");
+const PgManyToManyPlugin = require("@graphile-contrib/pg-many-to-many");
 
 const app = express();
 
 app.use(
   postgraphile(process.env.DATABASE_URL, "app_public", {
-    appendPlugins: [PgManyToMany]
+    appendPlugins: [PgManyToManyPlugin],
+    graphiql: true,
   })
 );
 
-app.listen(process.env.PORT || 3000);
+app.listen(5000);
 ```
 
 ## Inflection
