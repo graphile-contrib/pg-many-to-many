@@ -7,7 +7,7 @@ module.exports = function PgManyToManyPlugin(builder, options) {
       throw new Error(
         `Plugin ${pkg.name}@${
           pkg.version
-        } requires graphile-build@^4.1.0-rc.2 in order to check dependencies (current version: ${
+        } requires graphile-build@^4.1.0 in order to check dependencies (current version: ${
           build.graphileBuildVersion
         })`
       );
@@ -23,7 +23,7 @@ module.exports = function PgManyToManyPlugin(builder, options) {
         );
       }
     };
-    depends("graphile-build-pg", "^4.1.0-rc.2");
+    depends("graphile-build-pg", "^4.1.0");
 
     // Register this plugin
     build.versions = build.extend(build.versions, { [pkg.name]: pkg.version });

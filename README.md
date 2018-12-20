@@ -2,7 +2,7 @@
 
 This Graphile Engine plugin adds connection fields for many-to-many relations.
 
-> Requires `postgraphile@^4.1.0-rc.2` or `graphile-build-pg@^4.1.0-rc.2`
+> Requires `postgraphile@^4.1.0` or `graphile-build-pg@^4.1.0`
 
 Example:
 
@@ -29,7 +29,7 @@ Append this plugin and the additional fields will be added to your schema.
 ### CLI
 
 ```bash
-yarn add postgraphile@^4.1.0-rc.2
+yarn add postgraphile
 yarn add @graphile-contrib/pg-many-to-many
 npx postgraphile --append-plugins @graphile-contrib/pg-many-to-many
 ```
