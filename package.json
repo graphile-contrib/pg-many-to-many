@@ -31,6 +31,6 @@
     "testRegex": "__tests__/.*\\.test\\.js$"
   },
   "files": [
-    "index.js"
+    "src"
   ]
 }
