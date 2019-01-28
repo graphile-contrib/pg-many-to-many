@@ -65,7 +65,43 @@ You can override this by adding an inflector plugin. For example, the following 
 const { makeAddInflectorsPlugin } = require("graphile-utils");
 
 module.exports = makeAddInflectorsPlugin(
-  // TODO
+  {
+    manyToManyRelationByKeys(
+      _leftKeys,
+      _junctionLeftKeys,
+      _junctionRightKeys,
+      _rightKeys,
+      _junctionTable,
+      rightTable,
+      _junctionLeftConstraint,
+      junctionRightConstraint
+    ) {
+      if (junctionRightConstraint.tags.manyToManyFieldName) {
+        return junctionRightConstraint.tags.manyToManyFieldName;
+      }
+      return this.camelCase(
+        `${this.pluralize(this._singularizedTableName(rightTable))}`
+      );
+    },
+    manyToManyRelationByKeysSimple(
+      _leftKeys,
+      _junctionLeftKeys,
+      _junctionRightKeys,
+      _rightKeys,
+      _junctionTable,
+      rightTable,
+      _junctionLeftConstraint,
+      junctionRightConstraint
+    ) {
+      if (junctionRightConstraint.tags.manyToManySimpleFieldName) {
+        return junctionRightConstraint.tags.manyToManySimpleFieldName;
+      }
+      return this.camelCase(
+        `${this.pluralize(this._singularizedTableName(rightTable))}-list`
+      );
+    },
+  },
+  true // Passing true here allows the plugin to overwrite existing inflectors.
 );
 ```
 
