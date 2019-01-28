@@ -67,10 +67,10 @@ const { makeAddInflectorsPlugin } = require("graphile-utils");
 module.exports = makeAddInflectorsPlugin(
   {
     manyToManyRelationByKeys(
-      _leftKeys,
-      _junctionLeftKeys,
-      _junctionRightKeys,
-      _rightKeys,
+      _leftKeyAttributes,
+      _junctionLeftKeyAttributes,
+      _junctionRightKeyAttributes,
+      _rightKeyAttributes,
       _junctionTable,
       rightTable,
       _junctionLeftConstraint,
@@ -84,10 +84,10 @@ module.exports = makeAddInflectorsPlugin(
       );
     },
     manyToManyRelationByKeysSimple(
-      _leftKeys,
-      _junctionLeftKeys,
-      _junctionRightKeys,
-      _rightKeys,
+      _leftKeyAttributes,
+      _junctionLeftKeyAttributes,
+      _junctionRightKeyAttributes,
+      _rightKeyAttributes,
       _junctionTable,
       rightTable,
       _junctionLeftConstraint,

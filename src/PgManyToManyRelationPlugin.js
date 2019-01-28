@@ -12,10 +12,10 @@ module.exports = function PgManyToManyRelationPlugin(
   builder.hook("inflection", inflection => {
     return Object.assign(inflection, {
       manyToManyRelationByKeys(
-        _leftKeys,
-        junctionLeftKeys,
-        junctionRightKeys,
-        _rightKeys,
+        _leftKeyAttributes,
+        junctionLeftKeyAttributes,
+        junctionRightKeyAttributes,
+        _rightKeyAttributes,
         junctionTable,
         rightTable,
         _junctionLeftConstraint,
@@ -28,18 +28,18 @@ module.exports = function PgManyToManyRelationPlugin(
           `${this.pluralize(
             this._singularizedTableName(rightTable)
           )}-by-${this._singularizedTableName(junctionTable)}-${[
-            ...junctionLeftKeys,
-            ...junctionRightKeys,
+            ...junctionLeftKeyAttributes,
+            ...junctionRightKeyAttributes,
           ]
-            .map(key => this.column(key))
+            .map(attr => this.column(attr))
             .join("-and-")}`
         );
       },
       manyToManyRelationByKeysSimple(
-        _leftKeys,
-        junctionLeftKeys,
-        junctionRightKeys,
-        _rightKeys,
+        _leftKeyAttributes,
+        junctionLeftKeyAttributes,
+        junctionRightKeyAttributes,
+        _rightKeyAttributes,
         junctionTable,
         rightTable,
         _junctionLeftConstraint,
@@ -52,10 +52,10 @@ module.exports = function PgManyToManyRelationPlugin(
           `${this.pluralize(
             this._singularizedTableName(rightTable)
           )}-by-${this._singularizedTableName(junctionTable)}-${[
-            ...junctionLeftKeys,
-            ...junctionRightKeys,
+            ...junctionLeftKeyAttributes,
+            ...junctionRightKeyAttributes,
           ]
-            .map(key => this.column(key))
+            .map(attr => this.column(attr))
             .join("-and-")}-list`
         );
       },
@@ -130,55 +130,62 @@ module.exports = function PgManyToManyRelationPlugin(
             inflection.connection(RightTableType.name)
           );
 
-          const leftKeys = junctionLeftConstraint.foreignKeyAttributes;
-          const junctionLeftKeys = junctionLeftConstraint.keyAttributes;
-          const junctionRightKeys = junctionRightConstraint.keyAttributes;
-          const rightKeys = junctionRightConstraint.foreignKeyAttributes;
+          const leftKeyAttributes = junctionLeftConstraint.foreignKeyAttributes;
+          const junctionLeftKeyAttributes =
+            junctionLeftConstraint.keyAttributes;
+          const junctionRightKeyAttributes =
+            junctionRightConstraint.keyAttributes;
+          const rightKeyAttributes =
+            junctionRightConstraint.foreignKeyAttributes;
 
           // Ensure keys were found
           if (
-            !leftKeys.every(_ => _) ||
-            !junctionLeftKeys.every(_ => _) ||
-            !junctionRightKeys.every(_ => _) ||
-            !rightKeys.every(_ => _)
+            !leftKeyAttributes.every(_ => _) ||
+            !junctionLeftKeyAttributes.every(_ => _) ||
+            !junctionRightKeyAttributes.every(_ => _) ||
+            !rightKeyAttributes.every(_ => _)
           ) {
             throw new Error("Could not find key columns!");
           }
 
           // Ensure keys can be read
           if (
-            leftKeys.some(key => omit(key, "read")) ||
-            junctionLeftKeys.some(key => omit(key, "read")) ||
-            junctionRightKeys.some(key => omit(key, "read")) ||
-            rightKeys.some(key => omit(key, "read"))
+            leftKeyAttributes.some(attr => omit(attr, "read")) ||
+            junctionLeftKeyAttributes.some(attr => omit(attr, "read")) ||
+            junctionRightKeyAttributes.some(attr => omit(attr, "read")) ||
+            rightKeyAttributes.some(attr => omit(attr, "read"))
           ) {
             return memo;
           }
 
           // Ensure both constraints are single-column
           // TODO: handle multi-column
-          if (leftKeys.length > 1 || rightKeys.length > 1) {
+          if (leftKeyAttributes.length > 1 || rightKeyAttributes.length > 1) {
             return memo;
           }
 
           // Since we're ignoring multi-column keys, we can simplify here
-          const leftKey = leftKeys[0];
-          const junctionLeftKey = junctionLeftKeys[0];
-          const junctionRightKey = junctionRightKeys[0];
-          const rightKey = rightKeys[0];
+          const leftKeyAttribute = leftKeyAttributes[0];
+          const junctionLeftKeyAttribute = junctionLeftKeyAttributes[0];
+          const junctionRightKeyAttribute = junctionRightKeyAttributes[0];
+          const rightKeyAttribute = rightKeyAttributes[0];
 
           // Ensure junction constraint keys are not unique (which would result in a one-to-one relation)
           const junctionLeftConstraintIsUnique = !!junctionTable.constraints.find(
             c =>
               (c.type === "p" || c.type === "u") &&
-              c.keyAttributeNums.length === junctionLeftKeys.length &&
-              c.keyAttributeNums.every((n, i) => junctionLeftKeys[i].num === n)
+              c.keyAttributeNums.length === junctionLeftKeyAttributes.length &&
+              c.keyAttributeNums.every(
+                (n, i) => junctionLeftKeyAttributes[i].num === n
+              )
           );
           const junctionRightConstraintIsUnique = !!junctionTable.constraints.find(
             c =>
               (c.type === "p" || c.type === "u") &&
-              c.keyAttributeNums.length === junctionRightKeys.length &&
-              c.keyAttributeNums.every((n, i) => junctionRightKeys[i].num === n)
+              c.keyAttributeNums.length === junctionRightKeyAttributes.length &&
+              c.keyAttributeNums.every(
+                (n, i) => junctionRightKeyAttributes[i].num === n
+              )
           );
           if (
             junctionLeftConstraintIsUnique ||
@@ -190,20 +197,20 @@ module.exports = function PgManyToManyRelationPlugin(
           function makeFields(isConnection) {
             const manyRelationFieldName = isConnection
               ? inflection.manyToManyRelationByKeys(
-                  leftKeys,
-                  junctionLeftKeys,
-                  junctionRightKeys,
-                  rightKeys,
+                  leftKeyAttributes,
+                  junctionLeftKeyAttributes,
+                  junctionRightKeyAttributes,
+                  rightKeyAttributes,
                   junctionTable,
                   rightTable,
                   junctionLeftConstraint,
                   junctionRightConstraint
                 )
               : inflection.manyToManyRelationByKeysSimple(
-                  leftKeys,
-                  junctionLeftKeys,
-                  junctionRightKeys,
-                  rightKeys,
+                  leftKeyAttributes,
+                  junctionLeftKeyAttributes,
+                  junctionRightKeyAttributes,
+                  rightKeyAttributes,
                   junctionTable,
                   rightTable,
                   junctionLeftConstraint,
@@ -247,10 +254,10 @@ module.exports = function PgManyToManyRelationPlugin(
                                 innerQueryBuilder.parentQueryBuilder = queryBuilder;
                                 const rightPrimaryKeyConstraint =
                                   rightTable.primaryKeyConstraint;
-                                const rightPrimaryKeys =
+                                const rightPrimaryKeyAttributes =
                                   rightPrimaryKeyConstraint &&
                                   rightPrimaryKeyConstraint.keyAttributes;
-                                if (rightPrimaryKeys) {
+                                if (rightPrimaryKeyAttributes) {
                                   innerQueryBuilder.beforeLock(
                                     "orderBy",
                                     () => {
@@ -261,14 +268,16 @@ module.exports = function PgManyToManyRelationPlugin(
                                         innerQueryBuilder.data.cursorPrefix = [
                                           "primary_key_asc",
                                         ];
-                                        rightPrimaryKeys.forEach(key => {
-                                          innerQueryBuilder.orderBy(
-                                            sql.fragment`${innerQueryBuilder.getTableAlias()}.${sql.identifier(
-                                              key.name
-                                            )}`,
-                                            true
-                                          );
-                                        });
+                                        rightPrimaryKeyAttributes.forEach(
+                                          attr => {
+                                            innerQueryBuilder.orderBy(
+                                              sql.fragment`${innerQueryBuilder.getTableAlias()}.${sql.identifier(
+                                                attr.name
+                                              )}`,
+                                              true
+                                            );
+                                          }
+                                        );
                                         innerQueryBuilder.setOrderIsUnique();
                                       }
                                     }
@@ -277,16 +286,16 @@ module.exports = function PgManyToManyRelationPlugin(
 
                                 innerQueryBuilder.where(
                                   sql.fragment`${rightTableAlias}.${sql.identifier(
-                                    rightKey.name
+                                    rightKeyAttribute.name
                                   )} in (select ${sql.identifier(
-                                    junctionRightKey.name
+                                    junctionRightKeyAttribute.name
                                   )} from ${sql.identifier(
                                     junctionTable.namespace.name,
                                     junctionTable.name
                                   )} where ${sql.identifier(
-                                    junctionLeftKey.name
+                                    junctionLeftKeyAttribute.name
                                   )} = ${leftTableAlias}.${sql.identifier(
-                                    leftKey.name
+                                    leftKeyAttribute.name
                                   )})`
                                 );
                               }
