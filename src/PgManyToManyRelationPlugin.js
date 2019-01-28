@@ -17,8 +17,13 @@ module.exports = function PgManyToManyRelationPlugin(
         junctionRightKeys,
         _rightKeys,
         junctionTable,
-        rightTable
+        rightTable,
+        _junctionLeftConstraint,
+        junctionRightConstraint
       ) {
+        if (junctionRightConstraint.tags.manyToManyFieldName) {
+          return junctionRightConstraint.tags.manyToManyFieldName;
+        }
         return this.camelCase(
           `${this.pluralize(
             this._singularizedTableName(rightTable)
@@ -36,8 +41,13 @@ module.exports = function PgManyToManyRelationPlugin(
         junctionRightKeys,
         _rightKeys,
         junctionTable,
-        rightTable
+        rightTable,
+        _junctionLeftConstraint,
+        junctionRightConstraint
       ) {
+        if (junctionRightConstraint.tags.manyToManySimpleFieldName) {
+          return junctionRightConstraint.tags.manyToManySimpleFieldName;
+        }
         return this.camelCase(
           `${this.pluralize(
             this._singularizedTableName(rightTable)
@@ -185,7 +195,9 @@ module.exports = function PgManyToManyRelationPlugin(
                   junctionRightKeys,
                   rightKeys,
                   junctionTable,
-                  rightTable
+                  rightTable,
+                  junctionLeftConstraint,
+                  junctionRightConstraint
                 )
               : inflection.manyToManyRelationByKeysSimple(
                   leftKeys,
@@ -193,7 +205,9 @@ module.exports = function PgManyToManyRelationPlugin(
                   junctionRightKeys,
                   rightKeys,
                   junctionTable,
-                  rightTable
+                  rightTable,
+                  junctionLeftConstraint,
+                  junctionRightConstraint
                 );
 
             memo = extend(

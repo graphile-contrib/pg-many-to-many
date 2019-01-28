@@ -367,13 +367,8 @@ type Query implements Node {
 type Team implements Node {
   id: Int!
 
-  \\"\\"\\"
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  \\"\\"\\"
-  nodeId: ID!
-
   \\"\\"\\"Reads and enables pagination through a set of \`Person\`.\\"\\"\\"
-  peopleByTeamMemberTeamIdAndPersonId(
+  members(
     \\"\\"\\"Read all values in the set after (below) this cursor.\\"\\"\\"
     after: Cursor
 
@@ -402,7 +397,7 @@ type Team implements Node {
   ): PeopleConnection!
 
   \\"\\"\\"Reads and enables pagination through a set of \`Person\`.\\"\\"\\"
-  peopleByTeamMemberTeamIdAndPersonIdList(
+  membersList(
     \\"\\"\\"
     A condition to be used in determining which values should be returned by the collection.
     \\"\\"\\"
@@ -417,6 +412,11 @@ type Team implements Node {
     \\"\\"\\"The method to use when ordering \`Person\`.\\"\\"\\"
     orderBy: [PeopleOrderBy!]
   ): [Person!]!
+
+  \\"\\"\\"
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  \\"\\"\\"
+  nodeId: ID!
 
   \\"\\"\\"Reads and enables pagination through a set of \`TeamMember\`.\\"\\"\\"
   teamMembersByTeamId(

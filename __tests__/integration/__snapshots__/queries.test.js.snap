@@ -36,6 +36,39 @@ Object {
         },
       ],
     },
+    "b": Object {
+      "nodes": Array [
+        Object {
+          "members": Object {
+            "nodes": Array [
+              Object {
+                "personName": "Person1",
+              },
+              Object {
+                "personName": "Person2",
+              },
+            ],
+          },
+          "teamName": "Team1",
+        },
+        Object {
+          "members": Object {
+            "nodes": Array [
+              Object {
+                "personName": "Person1",
+              },
+            ],
+          },
+          "teamName": "Team2",
+        },
+        Object {
+          "members": Object {
+            "nodes": Array [],
+          },
+          "teamName": "Team3",
+        },
+      ],
+    },
   },
 }
 `;

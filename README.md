@@ -70,3 +70,11 @@ module.exports = makeAddInflectorsPlugin(
 ```
 
 See the [makeAddInflectorsPlugin documentation](https://www.graphile.org/postgraphile/make-add-inflectors-plugin/) for more information.
+
+You can also override individual field names using `@manyToManyFieldName` and `@manyToManySimpleFieldName` smart comments:
+
+```sql
+comment on constraint team_member_team_id_fkey on p.team_member is E'@manyToManyFieldName teams';
+```
+
+This changes the GraphQL field name from `teamsByTeamMemberTeamId` to `teams`.

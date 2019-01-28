@@ -13,9 +13,9 @@ insert into p.team_member (person_id, team_id, created_at) values
   (1, 2, '2018-01-02T12:00:00Z'),
   (2, 1, '2018-01-03T12:00:00Z');
 
--- Person1: [Team1, Team2]
+-- Person1: [Team1,Team2]
 -- Person2: [Team1]
 -- Person3: []
--- Team1: [Person1, Person2]
+-- Team1: [Person1,Person2]
 -- Team2: [Person1]
 -- Team3: []
