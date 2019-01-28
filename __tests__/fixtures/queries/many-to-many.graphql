@@ -9,4 +9,14 @@ query {
       }
     }
   }
+  b: allTeams {
+    nodes {
+      teamName
+      members {
+        nodes {
+          personName
+        }
+      }
+    }
+  }
 }
