@@ -4,7 +4,7 @@
   "description": "Add connection fields for many-to-many relations",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint index.js",
+    "lint": "eslint **/*.js",
     "test": "scripts/test"
   },
   "repository": {
