@@ -1,6 +1,3 @@
-const debugFactory = require("debug");
-const debug = debugFactory("graphile-build-pg");
-
 module.exports = function PgManyToManyRelationPlugin(
   builder,
   { pgSimpleCollections }
@@ -119,12 +116,11 @@ module.exports = function PgManyToManyRelationPlugin(
             null
           );
           if (!RightTableType) {
-            debug(
+            throw new Error(
               `Could not determine type for table with id ${
                 junctionRightConstraint.classId
               }`
             );
-            return memo;
           }
           const RightTableConnectionType = getTypeByName(
             inflection.connection(RightTableType.name)
