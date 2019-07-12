@@ -17,7 +17,7 @@
     "url": "https://github.com/graphile-contrib/pg-many-to-many/issues"
   },
   "devDependencies": {
-    "eslint": "^5.13.0",
+    "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.0.0",
     "eslint-plugin-jest": "^22.2.2",
     "eslint-plugin-prettier": "^3.0.1",
