@@ -213,7 +213,7 @@ module.exports = function PgManyToManyRelationPlugin(
                   junctionRightConstraint
                 );
 
-            memo = extend(
+            return extend(
               memo,
               {
                 [manyRelationFieldName]: fieldWithHooks(
@@ -339,10 +339,10 @@ module.exports = function PgManyToManyRelationPlugin(
             );
           }
           if (hasConnections) {
-            makeFields(true);
+            return makeFields(true);
           }
           if (hasSimpleCollections) {
-            makeFields(false);
+            return makeFields(false);
           }
           return memo;
         }, {}),
