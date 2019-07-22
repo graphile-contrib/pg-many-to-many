@@ -1,4 +1,4 @@
-# @graphile-contrib/pg-many-to-many
+# @graphile-contrib/pg-many-to-many 
 
 [![Package on npm](https://img.shields.io/npm/v/@graphile-contrib/pg-many-to-many.svg)](https://www.npmjs.com/package/@graphile-contrib/pg-many-to-many) [![CircleCI](https://circleci.com/gh/graphile-contrib/pg-many-to-many.svg?style=svg)](https://circleci.com/gh/graphile-contrib/pg-many-to-many)
 
