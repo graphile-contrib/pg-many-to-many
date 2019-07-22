@@ -21,3 +21,4 @@ create table p.team_member (
 
 comment on constraint team_member_person_id_fkey on p.team_member is E'@manyToManyFieldName members\n@manyToManySimpleFieldName membersList';
 
+comment on constraint team_member_team_id_fkey on p.team_member is E'@simpleCollections omit';

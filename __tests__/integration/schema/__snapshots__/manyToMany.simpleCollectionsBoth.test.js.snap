@@ -153,23 +153,6 @@ type Person implements Node {
     \\"\\"\\"The method to use when ordering \`Team\`.\\"\\"\\"
     orderBy: [TeamsOrderBy!] = [PRIMARY_KEY_ASC]
   ): TeamsConnection!
-
-  \\"\\"\\"Reads and enables pagination through a set of \`Team\`.\\"\\"\\"
-  teamsByTeamMemberPersonIdAndTeamIdList(
-    \\"\\"\\"
-    A condition to be used in determining which values should be returned by the collection.
-    \\"\\"\\"
-    condition: TeamCondition
-
-    \\"\\"\\"Only read the first \`n\` values of the set.\\"\\"\\"
-    first: Int
-
-    \\"\\"\\"Skip the first \`n\` values.\\"\\"\\"
-    offset: Int
-
-    \\"\\"\\"The method to use when ordering \`Team\`.\\"\\"\\"
-    orderBy: [TeamsOrderBy!]
-  ): [Team!]!
 }
 
 \\"\\"\\"

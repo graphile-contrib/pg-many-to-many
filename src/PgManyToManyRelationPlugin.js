@@ -2,10 +2,6 @@ module.exports = function PgManyToManyRelationPlugin(
   builder,
   { pgSimpleCollections }
 ) {
-  const hasConnections = pgSimpleCollections !== "only";
-  const hasSimpleCollections =
-    pgSimpleCollections === "only" || pgSimpleCollections === "both";
-
   builder.hook("inflection", inflection => {
     return Object.assign(inflection, {
       manyToManyRelationByKeys(
@@ -338,6 +334,13 @@ module.exports = function PgManyToManyRelationPlugin(
               )} and ${describePgEntity(junctionRightConstraint)}.`
             );
           }
+          const simpleCollections =
+            junctionRightConstraint.tags.simpleCollections ||
+            rightTable.tags.simpleCollections ||
+            pgSimpleCollections;
+          const hasConnections = simpleCollections !== "only";
+          const hasSimpleCollections =
+            simpleCollections === "only" || simpleCollections === "both";
           if (hasConnections) {
             makeFields(true);
           }
