@@ -327,9 +327,9 @@ module.exports = function PgManyToManyRelationPlugin(
                 ),
               },
 
-              `Many-to-many relation (${
+              `Many-to-many relation field (${
                 isConnection ? "connection" : "simple collection"
-              }) for ${describePgEntity(
+              }) on ${Self.name} type for ${describePgEntity(
                 junctionLeftConstraint
               )} and ${describePgEntity(junctionRightConstraint)}.`
             );
