@@ -60,6 +60,55 @@ Object {
 }
 `;
 
+exports[`schema=p query=edge-fields.graphql 1`] = `
+Object {
+  "data": Object {
+    "allTeams": Object {
+      "nodes": Array [
+        Object {
+          "members": Object {
+            "edges": Array [
+              Object {
+                "createdAt": null,
+                "node": Object {
+                  "personName": "Person1",
+                },
+              },
+              Object {
+                "createdAt": null,
+                "node": Object {
+                  "personName": "Person2",
+                },
+              },
+            ],
+          },
+          "teamName": "Team1",
+        },
+        Object {
+          "members": Object {
+            "edges": Array [
+              Object {
+                "createdAt": null,
+                "node": Object {
+                  "personName": "Person1",
+                },
+              },
+            ],
+          },
+          "teamName": "Team2",
+        },
+        Object {
+          "members": Object {
+            "edges": Array [],
+          },
+          "teamName": "Team3",
+        },
+      ],
+    },
+  },
+}
+`;
+
 exports[`schema=p query=many-to-many.graphql 1`] = `
 Object {
   "data": Object {
@@ -124,6 +173,55 @@ Object {
         Object {
           "members": Object {
             "nodes": Array [],
+          },
+          "teamName": "Team3",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`schema=t query=edge-fields.graphql 1`] = `
+Object {
+  "data": Object {
+    "allTeams": Object {
+      "nodes": Array [
+        Object {
+          "members": Object {
+            "edges": Array [
+              Object {
+                "data": Array [],
+                "node": Object {
+                  "personName": "Person1",
+                },
+              },
+              Object {
+                "data": Array [],
+                "node": Object {
+                  "personName": "Person2",
+                },
+              },
+            ],
+          },
+          "teamName": "Team1",
+        },
+        Object {
+          "members": Object {
+            "edges": Array [
+              Object {
+                "data": Array [],
+                "node": Object {
+                  "personName": "Person1",
+                },
+              },
+            ],
+          },
+          "teamName": "Team2",
+        },
+        Object {
+          "members": Object {
+            "edges": Array [],
           },
           "teamName": "Team3",
         },

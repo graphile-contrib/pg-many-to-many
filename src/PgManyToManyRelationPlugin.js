@@ -82,7 +82,7 @@ function manyToManyRelationships(leftTable, build) {
           // Ensure junction constraint keys are not unique (which would result in a one-to-one relation)
           const junctionLeftConstraintIsUnique = !!junctionTable.constraints.find(
             c =>
-              (c.type === "p" || c.type === "u") &&
+              ["p", "u"].includes(c.type) &&
               arraysAreEqual(
                 c.keyAttributeNums,
                 junctionLeftKeyAttributes.map(attr => attr.num)
@@ -90,7 +90,7 @@ function manyToManyRelationships(leftTable, build) {
           );
           const junctionRightConstraintIsUnique = !!junctionTable.constraints.find(
             c =>
-              (c.type === "p" || c.type === "u") &&
+              ["p", "u"].includes(c.type) &&
               arraysAreEqual(
                 c.keyAttributeNums,
                 junctionRightKeyAttributes.map(attr => attr.num)
@@ -103,6 +103,18 @@ function manyToManyRelationships(leftTable, build) {
             return memoRight;
           }
 
+          const duplicateConnectionsAllowed = !junctionTable.constraints.find(
+            c =>
+              ["p", "u"].includes(c.type) &&
+              arraysAreEqual(
+                c.keyAttributeNums.concat().sort(),
+                [
+                  ...junctionLeftKeyAttributes.map(obj => obj.num),
+                  ...junctionRightKeyAttributes.map(obj => obj.num),
+                ].sort()
+              )
+          );
+
           return [
             ...memoRight,
             {
@@ -114,11 +126,491 @@ function manyToManyRelationships(leftTable, build) {
               rightTable,
               junctionLeftConstraint,
               junctionRightConstraint,
+              duplicateConnectionsAllowed,
             },
           ];
         }, []);
       return [...memoLeft, ...memoRight];
     }, []);
+}
+const hasNonNullKey = row => {
+  if (
+    Array.isArray(row.__identifiers) &&
+    row.__identifiers.every(i => i != null)
+  ) {
+    return true;
+  }
+  for (const k in row) {
+    if (row.hasOwnProperty(k)) {
+      if ((k[0] !== "_" || k[1] !== "_") && row[k] !== null) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+function createManyToManyConditionInputType(leftTable, relationship, build) {
+  const {
+    leftKeyAttributes,
+    junctionLeftKeyAttributes,
+    junctionRightKeyAttributes,
+    rightKeyAttributes,
+    junctionTable,
+    rightTable,
+    junctionLeftConstraint,
+    junctionRightConstraint,
+  } = relationship;
+  const {
+    newWithHooks,
+    inflection,
+    pgGetGqlInputTypeByTypeIdAndModifier,
+    graphql: { GraphQLInputObjectType, GraphQLString },
+    pgColumnFilter,
+    pgOmit: omit,
+    describePgEntity,
+    sqlCommentByAddingTags,
+  } = build;
+  const relationName = inflection.manyToManyRelationByKeys(
+    leftKeyAttributes,
+    junctionLeftKeyAttributes,
+    junctionRightKeyAttributes,
+    rightKeyAttributes,
+    junctionTable,
+    rightTable,
+    junctionLeftConstraint,
+    junctionRightConstraint
+  );
+  newWithHooks(
+    GraphQLInputObjectType,
+    {
+      description: `A condition to be used against \`${relationName}\` object types. All fields are tested for equality and combined with a logical ‘and.’`,
+      name: inflection.conditionType(relationName),
+      fields: context => {
+        const { fieldWithHooks } = context;
+        return junctionTable.attributes.reduce((memo, attr) => {
+          // PERFORMANCE: These used to be .filter(...) calls
+          if (!pgColumnFilter(attr, build, context)) return memo;
+          if (omit(attr, "filter")) return memo;
+          if (junctionLeftKeyAttributes.includes(attr)) return memo;
+          if (junctionRightKeyAttributes.includes(attr)) return memo;
+
+          const fieldName = inflection.column(attr);
+          memo = build.extend(
+            memo,
+            {
+              [fieldName]: fieldWithHooks(
+                fieldName,
+                {
+                  description: `Checks for equality with the \`${fieldName}\` field in the junction table.`,
+                  type:
+                    pgGetGqlInputTypeByTypeIdAndModifier(
+                      attr.typeId,
+                      attr.typeModifier
+                    ) || GraphQLString,
+                },
+                {
+                  isPgConnectionConditionInputField: true,
+                }
+              ),
+            },
+            `Adding condition argument for ${describePgEntity(attr)}`
+          );
+          return memo;
+        }, {});
+      },
+    },
+    {
+      __origin: `Adding condition type for ${describePgEntity(
+        leftTable
+      )}. You can rename the table's GraphQL type via:\n\n  ${sqlCommentByAddingTags(
+        leftTable,
+        {
+          name: "newNameHere",
+        }
+      )}`,
+      pgIntrospection: leftTable,
+      isPgCondition: true,
+    },
+    true // Conditions might all be filtered
+  );
+}
+
+function createManyToManyConnectionType(
+  _leftTable,
+  relationship,
+  build,
+  context
+) {
+  const {
+    leftKeyAttributes,
+    junctionLeftKeyAttributes,
+    junctionRightKeyAttributes,
+    rightKeyAttributes,
+    junctionTable,
+    rightTable,
+    junctionLeftConstraint,
+    junctionRightConstraint,
+    duplicateConnectionsAllowed,
+  } = relationship;
+  const {
+    extend,
+    newWithHooks,
+    inflection,
+    graphql: { GraphQLObjectType, GraphQLNonNull, GraphQLList, GraphQLString },
+    pgColumnFilter,
+    pgOmit: omit,
+    pgSql: sql,
+    pg2gql,
+    getTypeByName,
+    pgGetGqlTypeByTypeIdAndModifier,
+    describePgEntity,
+    sqlCommentByAddingTags,
+    pgField,
+    pgGetSelectValueForFieldAndTypeAndModifier: getSelectValueForFieldAndTypeAndModifier,
+    getSafeAliasFromResolveInfo,
+    pgForbidSetofFunctionsToReturnNull = false,
+    subscriptions = false,
+  } = build;
+  const nullableIf = (condition, Type) =>
+    condition ? Type : new GraphQLNonNull(Type);
+  const Cursor = getTypeByName("Cursor");
+  const handleNullRow = pgForbidSetofFunctionsToReturnNull
+    ? row => row
+    : (row, identifiers) => {
+        if ((identifiers && hasNonNullKey(identifiers)) || hasNonNullKey(row)) {
+          return row;
+        } else {
+          return null;
+        }
+      };
+
+  const TableType = pgGetGqlTypeByTypeIdAndModifier(rightTable.type.id, null);
+  if (!TableType) {
+    throw new Error(
+      `Could not determine type for table with id ${rightTable.type.id}`
+    );
+  }
+
+  const primaryKeyConstraint = rightTable.primaryKeyConstraint;
+  const primaryKeys =
+    primaryKeyConstraint && primaryKeyConstraint.keyAttributes;
+
+  const junctionAttributes = junctionTable.attributes.filter(
+    attr =>
+      pgColumnFilter(attr, build, context) &&
+      !omit(attr, "filter") &&
+      !junctionLeftKeyAttributes.includes(attr) &&
+      !junctionRightKeyAttributes.includes(attr)
+  );
+  const junctionTypeName = inflection.tableType(junctionTable);
+  const base64 = str => Buffer.from(String(str)).toString("base64");
+
+  const EdgeType = newWithHooks(
+    GraphQLObjectType,
+    {
+      description: `A \`${
+        TableType.name
+      }\` edge in the connection, with data from \`${junctionTypeName}\`.`,
+      name: inflection.manyToManyRelationEdge(
+        leftKeyAttributes,
+        junctionLeftKeyAttributes,
+        junctionRightKeyAttributes,
+        rightKeyAttributes,
+        junctionTable,
+        rightTable,
+        junctionLeftConstraint,
+        junctionRightConstraint
+      ),
+      fields: ({ fieldWithHooks }) => {
+        const edgeFields = {
+          cursor: fieldWithHooks(
+            "cursor",
+            ({ addDataGenerator }) => {
+              addDataGenerator(() => ({
+                usesCursor: [true],
+                pgQuery: queryBuilder => {
+                  if (primaryKeys) {
+                    queryBuilder.selectIdentifiers(rightTable);
+                  }
+                },
+              }));
+              return {
+                description: "A cursor for use in pagination.",
+                type: Cursor,
+                resolve(data) {
+                  return data.__cursor && base64(JSON.stringify(data.__cursor));
+                },
+              };
+            },
+            {
+              isCursorField: true,
+            }
+          ),
+          node: pgField(
+            build,
+            fieldWithHooks,
+            "node",
+            {
+              description: `The \`${TableType.name}\` at the end of the edge.`,
+              type: nullableIf(!pgForbidSetofFunctionsToReturnNull, TableType),
+              resolve(data, _args, resolveContext, resolveInfo) {
+                const safeAlias = getSafeAliasFromResolveInfo(resolveInfo);
+                const record = handleNullRow(
+                  data[safeAlias],
+                  data.__identifiers
+                );
+                const liveRecord =
+                  resolveInfo.rootValue && resolveInfo.rootValue.liveRecord;
+                if (record && primaryKeys && liveRecord && data.__identifiers) {
+                  liveRecord("pg", rightTable, data.__identifiers);
+                }
+                return record;
+              },
+            },
+            {},
+            false,
+            {
+              withQueryBuilder: queryBuilder => {
+                if (subscriptions) {
+                  queryBuilder.selectIdentifiers(rightTable);
+                }
+              },
+            }
+          ),
+        };
+
+        const fieldsFromAttributes = attributes =>
+          attributes.reduce((memo, attr) => {
+            const fieldName = inflection.column(attr);
+            if (memo[fieldName]) {
+              throw new Error(
+                `Two columns produce the same GraphQL field name '${fieldName}' on class '${
+                  rightTable.namespaceName
+                }.${rightTable.name}'; one of them is '${attr.name}'`
+              );
+            }
+            memo = extend(
+              memo,
+              {
+                [fieldName]: fieldWithHooks(
+                  fieldName,
+                  fieldContext => {
+                    const { type, typeModifier } = attr;
+                    // const sqlColumn = sql.identifier(attr.name);
+                    const { addDataGenerator } = fieldContext;
+                    const ReturnType =
+                      pgGetGqlTypeByTypeIdAndModifier(
+                        attr.typeId,
+                        attr.typeModifier
+                      ) || GraphQLString;
+                    addDataGenerator(parsedResolveInfoFragment => {
+                      return {
+                        pgQuery: queryBuilder => {
+                          queryBuilder.select(
+                            getSelectValueForFieldAndTypeAndModifier(
+                              ReturnType,
+                              fieldContext,
+                              parsedResolveInfoFragment,
+                              sql.literal(null), // TODO
+                              type,
+                              typeModifier
+                            ),
+                            fieldName
+                          );
+                        },
+                      };
+                    });
+                    // const convertFromPg = pg2gqlForType(type);
+                    return {
+                      description: attr.description,
+                      // type: nullableIf(
+                      //   !attr.isNotNull &&
+                      //     !attr.type.domainIsNotNull &&
+                      //     !attr.tags.notNull,
+                      //   ReturnType
+                      // ),
+                      type: ReturnType,
+                      resolve: data => {
+                        // return convertFromPg(data[fieldName]);
+                        return pg2gql(data[fieldName], type);
+                      },
+                    };
+                  },
+                  { pgFieldIntrospection: attr }
+                ),
+              },
+              `Adding field for ${describePgEntity(
+                attr
+              )}. You can rename this field with:\n\n  ${sqlCommentByAddingTags(
+                attr,
+                {
+                  name: "newNameHere",
+                }
+              )}`
+            );
+            return memo;
+          }, {});
+
+        if (duplicateConnectionsAllowed) {
+          const JunctionDataType = newWithHooks(
+            GraphQLObjectType,
+            {
+              description: `Edge data from \`${junctionTypeName}\`.`,
+              name: inflection.manyToManyRelationEdgeData(
+                leftKeyAttributes,
+                junctionLeftKeyAttributes,
+                junctionRightKeyAttributes,
+                rightKeyAttributes,
+                junctionTable,
+                rightTable,
+                junctionLeftConstraint,
+                junctionRightConstraint
+              ),
+              fields: fieldsFromAttributes(junctionAttributes),
+            },
+            { isEdgeDataType: true }
+          );
+          return extend(edgeFields, {
+            data: fieldWithHooks(
+              "data",
+              {
+                description: "List of junction data",
+                // TODO: allow this to be a connection?
+                type: new GraphQLNonNull(
+                  new GraphQLList(new GraphQLNonNull(JunctionDataType))
+                ),
+                resolve() {
+                  // TODO
+                  return [];
+                },
+              },
+              {
+                isEdgeDataType: true,
+              }
+            ),
+          });
+        } else {
+          return extend(edgeFields, fieldsFromAttributes(junctionAttributes));
+        }
+      },
+    },
+    {
+      isEdgeType: true,
+      isPgRowEdgeType: true,
+      nodeType: TableType,
+    }
+  );
+  const PageInfo = getTypeByName(inflection.builtin("PageInfo"));
+
+  newWithHooks(
+    GraphQLObjectType,
+    {
+      description: `A connection to a list of \`${
+        TableType.name
+      }\` values, with data from \`${junctionTypeName}\`.`,
+      name: inflection.manyToManyRelationConnection(
+        leftKeyAttributes,
+        junctionLeftKeyAttributes,
+        junctionRightKeyAttributes,
+        rightKeyAttributes,
+        junctionTable,
+        rightTable,
+        junctionLeftConstraint,
+        junctionRightConstraint
+      ),
+      fields: ({ recurseDataGeneratorsForField, fieldWithHooks }) => {
+        recurseDataGeneratorsForField("pageInfo", true);
+        return {
+          nodes: pgField(
+            build,
+            fieldWithHooks,
+            "nodes",
+            {
+              description: `A list of \`${TableType.name}\` objects.`,
+              type: new GraphQLNonNull(
+                new GraphQLList(
+                  nullableIf(!pgForbidSetofFunctionsToReturnNull, TableType)
+                )
+              ),
+              resolve(data, _args, resolveContext, resolveInfo) {
+                const safeAlias = getSafeAliasFromResolveInfo(resolveInfo);
+                const liveRecord =
+                  resolveInfo.rootValue && resolveInfo.rootValue.liveRecord;
+                return data.data.map(entry => {
+                  const record = handleNullRow(
+                    entry[safeAlias],
+                    entry[safeAlias].__identifiers
+                  );
+                  if (
+                    record &&
+                    liveRecord &&
+                    primaryKeys &&
+                    entry[safeAlias].__identifiers
+                  ) {
+                    liveRecord(
+                      "pg",
+                      rightTable,
+                      entry[safeAlias].__identifiers
+                    );
+                  }
+
+                  return record;
+                });
+              },
+            },
+            {},
+            false,
+            {
+              withQueryBuilder: queryBuilder => {
+                if (subscriptions) {
+                  queryBuilder.selectIdentifiers(rightTable);
+                }
+              },
+            }
+          ),
+          edges: pgField(
+            build,
+            fieldWithHooks,
+            "edges",
+            {
+              description: `A list of edges which contains the \`${
+                TableType.name
+              }\`, info from the \`${junctionTypeName}\`, and the cursor to aid in pagination.`,
+              type: new GraphQLNonNull(
+                new GraphQLList(new GraphQLNonNull(EdgeType))
+              ),
+              resolve(data, _args, _context, resolveInfo) {
+                const safeAlias = getSafeAliasFromResolveInfo(resolveInfo);
+                return data.data.map(entry => ({
+                  ...entry,
+                  ...entry[safeAlias],
+                }));
+              },
+            },
+            {},
+            false,
+            {
+              hoistCursor: true,
+            }
+          ),
+          pageInfo: PageInfo && {
+            description: "Information to aid in pagination.",
+            type: new GraphQLNonNull(PageInfo),
+            resolve(data) {
+              return data;
+            },
+          },
+        };
+      },
+    },
+    {
+      isConnectionType: true,
+      isPgRowConnectionType: true,
+      edgeType: EdgeType,
+      nodeType: TableType,
+    }
+  );
 }
 
 module.exports = function PgManyToManyRelationPlugin(
@@ -175,8 +667,104 @@ module.exports = function PgManyToManyRelationPlugin(
             .join("-and-")}-list`
         );
       },
+      manyToManyRelationEdge(
+        leftKeyAttributes,
+        junctionLeftKeyAttributes,
+        junctionRightKeyAttributes,
+        rightKeyAttributes,
+        junctionTable,
+        rightTable,
+        junctionLeftConstraint,
+        junctionRightConstraint
+      ) {
+        const relationName = inflection.manyToManyRelationByKeys(
+          leftKeyAttributes,
+          junctionLeftKeyAttributes,
+          junctionRightKeyAttributes,
+          rightKeyAttributes,
+          junctionTable,
+          rightTable,
+          junctionLeftConstraint,
+          junctionRightConstraint
+        );
+        return this.upperCamelCase(`${relationName}-edge`);
+      },
+      manyToManyRelationEdgeData(
+        leftKeyAttributes,
+        junctionLeftKeyAttributes,
+        junctionRightKeyAttributes,
+        rightKeyAttributes,
+        junctionTable,
+        rightTable,
+        junctionLeftConstraint,
+        junctionRightConstraint
+      ) {
+        const relationName = inflection.manyToManyRelationByKeys(
+          leftKeyAttributes,
+          junctionLeftKeyAttributes,
+          junctionRightKeyAttributes,
+          rightKeyAttributes,
+          junctionTable,
+          rightTable,
+          junctionLeftConstraint,
+          junctionRightConstraint
+        );
+        return this.upperCamelCase(`${relationName}-edge-data`);
+      },
+      manyToManyRelationConnection(
+        leftKeyAttributes,
+        junctionLeftKeyAttributes,
+        junctionRightKeyAttributes,
+        rightKeyAttributes,
+        junctionTable,
+        rightTable,
+        junctionLeftConstraint,
+        junctionRightConstraint
+      ) {
+        const relationName = inflection.manyToManyRelationByKeys(
+          leftKeyAttributes,
+          junctionLeftKeyAttributes,
+          junctionRightKeyAttributes,
+          rightKeyAttributes,
+          junctionTable,
+          rightTable,
+          junctionLeftConstraint,
+          junctionRightConstraint
+        );
+        return this.upperCamelCase(`${relationName}-connection`);
+      },
     });
   });
+
+  builder.hook(
+    "init",
+    (_, build, context) => {
+      const {
+        pgIntrospectionResultsByKind: introspectionResultsByKind,
+        pgOmit: omit,
+      } = build;
+      introspectionResultsByKind.class.forEach(leftTable => {
+        // PERFORMANCE: These used to be .filter(...) calls
+        if (!leftTable.isSelectable || omit(leftTable, "filter")) return;
+        if (!leftTable.namespace) return;
+
+        const relationships = manyToManyRelationships(leftTable, build);
+        relationships.forEach(relationship => {
+          createManyToManyConditionInputType(leftTable, relationship, build);
+          createManyToManyConnectionType(
+            leftTable,
+            relationship,
+            build,
+            context
+          );
+        });
+      });
+      return _;
+    },
+    ["PgManyToManyConnection"],
+    [],
+    ["PgTypes"]
+  );
 
   builder.hook("GraphQLObjectType:fields", (fields, build, context) => {
     const {
@@ -218,7 +806,6 @@ module.exports = function PgManyToManyRelationPlugin(
             junctionRightConstraint,
           }
         ) => {
-          const rightTableTypeName = inflection.tableType(rightTable);
           const RightTableType = pgGetGqlTypeByTypeIdAndModifier(
             rightTable.type.id,
             null
@@ -231,7 +818,16 @@ module.exports = function PgManyToManyRelationPlugin(
             );
           }
           const RightTableConnectionType = getTypeByName(
-            inflection.connection(RightTableType.name)
+            inflection.manyToManyRelationConnection(
+              leftKeyAttributes,
+              junctionLeftKeyAttributes,
+              junctionRightKeyAttributes,
+              rightKeyAttributes,
+              junctionTable,
+              rightTable,
+              junctionLeftConstraint,
+              junctionRightConstraint
+            )
           );
 
           // Since we're ignoring multi-column keys, we can simplify here
@@ -354,6 +950,7 @@ module.exports = function PgManyToManyRelationPlugin(
                       };
                     });
 
+                    const rightTableTypeName = inflection.tableType(rightTable);
                     return {
                       description: `Reads and enables pagination through a set of \`${rightTableTypeName}\`.`,
                       type: isConnection
@@ -379,6 +976,15 @@ module.exports = function PgManyToManyRelationPlugin(
                     isPgFieldSimpleCollection: !isConnection,
                     isPgManyToManyRelationField: true,
                     pgFieldIntrospection: rightTable,
+                    pgManyToManyLeftTable: leftTable,
+                    pgManyToManyLeftKeyAttributes: leftKeyAttributes,
+                    pgManyToManyRightTable: rightTable,
+                    pgManyToManyRightKeyAttributes: rightKeyAttributes,
+                    pgManyToManyJunctionTable: junctionTable,
+                    pgManyToManyJunctionLeftConstraint: junctionLeftConstraint,
+                    pgManyToManyJunctionRightConstraint: junctionRightConstraint,
+                    pgManyToManyJunctionLeftKeyAttributes: junctionLeftKeyAttributes,
+                    pgManyToManyJunctionRightKeyAttributes: junctionRightKeyAttributes,
                   }
                 ),
               },
@@ -390,6 +996,7 @@ module.exports = function PgManyToManyRelationPlugin(
               )} and ${describePgEntity(junctionRightConstraint)}.`
             );
           }
+
           const simpleCollections =
             junctionRightConstraint.tags.simpleCollections ||
             rightTable.tags.simpleCollections ||

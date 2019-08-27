@@ -1,0 +1,18 @@
+{
+  allTeams {
+    nodes {
+      teamName
+      members {
+        edges {
+          node {
+            personName
+          }
+          data {
+            startAt
+            endAt
+          }
+        }
+      }
+    }
+  }
+}
