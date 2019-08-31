@@ -63,6 +63,8 @@ To avoid naming conflicts, this plugin uses a verbose naming convention (e.g. `t
 
 Writing a custom inflector plugin gives you full control over the GraphQL field names. Here is an example plugin that shortens the field names to just the table name (producing e.g. `teams`):
 
+> :warning: Warning: Simplifying the field names as shown below will lead to field name conflicts if your junction table has multiple foreign keys referencing the same table. You will need to customize the inflector function to resolve the conflicts.
+
 ```js
 const { makeAddInflectorsPlugin } = require("graphile-utils");
 
@@ -106,8 +108,6 @@ module.exports = makeAddInflectorsPlugin(
   true // Passing true here allows the plugin to overwrite existing inflectors.
 );
 ```
-
-> NOTE: Simplifying the field names as shown above will lead to field name conflicts if your junction table has multiple foreign keys referencing the same table. You can resolve conflicts by adding additional logic to your inflector function or by adding smart comments in your SQL schema.
 
 For more information on custom inflector plugins, see the [makeAddInflectorsPlugin documentation](https://www.graphile.org/postgraphile/make-add-inflectors-plugin/).
 
