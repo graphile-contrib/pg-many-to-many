@@ -291,7 +291,8 @@ module.exports = function PgManyToManyRelationPlugin(
                                   )})`
                                 );
                               },
-                              queryBuilder.context
+                              queryBuilder.context,
+                              queryBuilder.rootValue
                             );
                             return sql.fragment`(${query})`;
                           }, getSafeAliasFromAlias(parsedResolveInfoFragment.alias));
