@@ -290,7 +290,9 @@ module.exports = function PgManyToManyRelationPlugin(
                                     leftKeyAttribute.name
                                   )})`
                                 );
-                              }
+                              },
+                              queryBuilder.context,
+                              queryBuilder.rootValue
                             );
                             return sql.fragment`(${query})`;
                           }, getSafeAliasFromAlias(parsedResolveInfoFragment.alias));
