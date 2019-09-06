@@ -105,35 +105,6 @@ type Person implements Node {
     \\"\\"\\"The method to use when ordering \`TeamMember\`.\\"\\"\\"
     orderBy: [TeamMembersOrderBy!] = [PRIMARY_KEY_ASC]
   ): TeamMembersConnection!
-
-  \\"\\"\\"Reads and enables pagination through a set of \`Team\`.\\"\\"\\"
-  teamsByTeamMemberPersonIdAndTeamId(
-    \\"\\"\\"Read all values in the set after (below) this cursor.\\"\\"\\"
-    after: Cursor
-
-    \\"\\"\\"Read all values in the set before (above) this cursor.\\"\\"\\"
-    before: Cursor
-
-    \\"\\"\\"
-    A condition to be used in determining which values should be returned by the collection.
-    \\"\\"\\"
-    condition: TeamCondition
-
-    \\"\\"\\"Only read the first \`n\` values of the set.\\"\\"\\"
-    first: Int
-
-    \\"\\"\\"Only read the last \`n\` values of the set.\\"\\"\\"
-    last: Int
-
-    \\"\\"\\"
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
-    based pagination. May not be used with \`last\`.
-    \\"\\"\\"
-    offset: Int
-
-    \\"\\"\\"The method to use when ordering \`Team\`.\\"\\"\\"
-    orderBy: [TeamsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TeamsConnection!
 }
 
 \\"\\"\\"
