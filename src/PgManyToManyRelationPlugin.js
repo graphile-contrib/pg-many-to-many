@@ -85,7 +85,10 @@ module.exports = function PgManyToManyRelationPlugin(
       leftTable.foreignConstraints
         .filter(con => con.type === "f")
         .reduce((memo, junctionLeftConstraint) => {
-          if (omit(junctionLeftConstraint, "read")) {
+          if (
+            omit(junctionLeftConstraint, "read") ||
+            omit(junctionLeftConstraint, "manyToMany")
+          ) {
             return memo;
           }
           const junctionTable =
@@ -105,7 +108,10 @@ module.exports = function PgManyToManyRelationPlugin(
           if (!junctionRightConstraint) {
             return memo;
           }
-          if (omit(junctionRightConstraint, "read")) {
+          if (
+            omit(junctionRightConstraint, "read") ||
+            omit(junctionRightConstraint, "manyToMany")
+          ) {
             return memo;
           }
           const rightTable = junctionRightConstraint.foreignClass;
