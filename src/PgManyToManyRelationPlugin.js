@@ -105,6 +105,9 @@ module.exports = function PgManyToManyRelationPlugin(
           if (!junctionRightConstraint) {
             return memo;
           }
+          if (omit(junctionRightConstraint, "read")) {
+            return memo;
+          }
           const rightTable = junctionRightConstraint.foreignClass;
           const rightTableTypeName = inflection.tableType(rightTable);
           const RightTableType = pgGetGqlTypeByTypeIdAndModifier(

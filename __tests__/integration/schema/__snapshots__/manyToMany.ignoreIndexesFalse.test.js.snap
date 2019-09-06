@@ -1,7 +1,116 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`prints a schema with \`ignoreIndexes: false\` 1`] = `
-"\\"\\"\\"A location in a connection that can be used for resuming pagination.\\"\\"\\"
+"type Bar implements Node {
+  id: Int!
+  name: String!
+
+  \\"\\"\\"
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  \\"\\"\\"
+  nodeId: ID!
+}
+
+\\"\\"\\"
+A condition to be used against \`Bar\` object types. All fields are tested for equality and combined with a logical ‘and.’
+\\"\\"\\"
+input BarCondition {
+  \\"\\"\\"Checks for equality with the object’s \`id\` field.\\"\\"\\"
+  id: Int
+}
+
+\\"\\"\\"A connection to a list of \`Bar\` values.\\"\\"\\"
+type BarsConnection {
+  \\"\\"\\"
+  A list of edges which contains the \`Bar\` and cursor to aid in pagination.
+  \\"\\"\\"
+  edges: [BarsEdge!]!
+
+  \\"\\"\\"A list of \`Bar\` objects.\\"\\"\\"
+  nodes: [Bar]!
+
+  \\"\\"\\"Information to aid in pagination.\\"\\"\\"
+  pageInfo: PageInfo!
+
+  \\"\\"\\"The count of *all* \`Bar\` you could get from the connection.\\"\\"\\"
+  totalCount: Int
+}
+
+\\"\\"\\"A \`Bar\` edge in the connection.\\"\\"\\"
+type BarsEdge {
+  \\"\\"\\"A cursor for use in pagination.\\"\\"\\"
+  cursor: Cursor
+
+  \\"\\"\\"The \`Bar\` at the end of the edge.\\"\\"\\"
+  node: Bar
+}
+
+\\"\\"\\"Methods to use when ordering \`Bar\`.\\"\\"\\"
+enum BarsOrderBy {
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type Baz implements Node {
+  barId: Int!
+
+  \\"\\"\\"Reads a single \`Foo\` that is related to this \`Baz\`.\\"\\"\\"
+  fooByFooId: Foo
+  fooId: Int!
+
+  \\"\\"\\"
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  \\"\\"\\"
+  nodeId: ID!
+}
+
+\\"\\"\\"
+A condition to be used against \`Baz\` object types. All fields are tested for equality and combined with a logical ‘and.’
+\\"\\"\\"
+input BazCondition {
+  \\"\\"\\"Checks for equality with the object’s \`fooId\` field.\\"\\"\\"
+  fooId: Int
+}
+
+\\"\\"\\"A connection to a list of \`Baz\` values.\\"\\"\\"
+type BazsConnection {
+  \\"\\"\\"
+  A list of edges which contains the \`Baz\` and cursor to aid in pagination.
+  \\"\\"\\"
+  edges: [BazsEdge!]!
+
+  \\"\\"\\"A list of \`Baz\` objects.\\"\\"\\"
+  nodes: [Baz]!
+
+  \\"\\"\\"Information to aid in pagination.\\"\\"\\"
+  pageInfo: PageInfo!
+
+  \\"\\"\\"The count of *all* \`Baz\` you could get from the connection.\\"\\"\\"
+  totalCount: Int
+}
+
+\\"\\"\\"A \`Baz\` edge in the connection.\\"\\"\\"
+type BazsEdge {
+  \\"\\"\\"A cursor for use in pagination.\\"\\"\\"
+  cursor: Cursor
+
+  \\"\\"\\"The \`Baz\` at the end of the edge.\\"\\"\\"
+  node: Baz
+}
+
+\\"\\"\\"Methods to use when ordering \`Baz\`.\\"\\"\\"
+enum BazsOrderBy {
+  FOO_ID_ASC
+  FOO_ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+\\"\\"\\"A location in a connection that can be used for resuming pagination.\\"\\"\\"
 scalar Cursor
 
 \\"\\"\\"
@@ -9,6 +118,87 @@ A point in time as described by the [ISO
 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
 \\"\\"\\"
 scalar Datetime
+
+type Foo implements Node {
+  \\"\\"\\"Reads and enables pagination through a set of \`Baz\`.\\"\\"\\"
+  bazsByFooId(
+    \\"\\"\\"Read all values in the set after (below) this cursor.\\"\\"\\"
+    after: Cursor
+
+    \\"\\"\\"Read all values in the set before (above) this cursor.\\"\\"\\"
+    before: Cursor
+
+    \\"\\"\\"
+    A condition to be used in determining which values should be returned by the collection.
+    \\"\\"\\"
+    condition: BazCondition
+
+    \\"\\"\\"Only read the first \`n\` values of the set.\\"\\"\\"
+    first: Int
+
+    \\"\\"\\"Only read the last \`n\` values of the set.\\"\\"\\"
+    last: Int
+
+    \\"\\"\\"
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    \\"\\"\\"
+    offset: Int
+
+    \\"\\"\\"The method to use when ordering \`Baz\`.\\"\\"\\"
+    orderBy: [BazsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): BazsConnection!
+  id: Int!
+  name: String!
+
+  \\"\\"\\"
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  \\"\\"\\"
+  nodeId: ID!
+}
+
+\\"\\"\\"
+A condition to be used against \`Foo\` object types. All fields are tested for equality and combined with a logical ‘and.’
+\\"\\"\\"
+input FooCondition {
+  \\"\\"\\"Checks for equality with the object’s \`id\` field.\\"\\"\\"
+  id: Int
+}
+
+\\"\\"\\"A connection to a list of \`Foo\` values.\\"\\"\\"
+type FoosConnection {
+  \\"\\"\\"
+  A list of edges which contains the \`Foo\` and cursor to aid in pagination.
+  \\"\\"\\"
+  edges: [FoosEdge!]!
+
+  \\"\\"\\"A list of \`Foo\` objects.\\"\\"\\"
+  nodes: [Foo]!
+
+  \\"\\"\\"Information to aid in pagination.\\"\\"\\"
+  pageInfo: PageInfo!
+
+  \\"\\"\\"The count of *all* \`Foo\` you could get from the connection.\\"\\"\\"
+  totalCount: Int
+}
+
+\\"\\"\\"A \`Foo\` edge in the connection.\\"\\"\\"
+type FoosEdge {
+  \\"\\"\\"A cursor for use in pagination.\\"\\"\\"
+  cursor: Cursor
+
+  \\"\\"\\"The \`Foo\` at the end of the edge.\\"\\"\\"
+  node: Foo
+}
+
+\\"\\"\\"Methods to use when ordering \`Foo\`.\\"\\"\\"
+enum FoosOrderBy {
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
 
 \\"\\"\\"An object with a globally unique \`ID\`.\\"\\"\\"
 interface Node {
@@ -105,9 +295,20 @@ type Person implements Node {
     \\"\\"\\"The method to use when ordering \`TeamMember\`.\\"\\"\\"
     orderBy: [TeamMembersOrderBy!] = [PRIMARY_KEY_ASC]
   ): TeamMembersConnection!
+}
 
-  \\"\\"\\"Reads and enables pagination through a set of \`Team\`.\\"\\"\\"
-  teamsByTeamMemberPersonIdAndTeamId(
+\\"\\"\\"
+A condition to be used against \`Person\` object types. All fields are tested for equality and combined with a logical ‘and.’
+\\"\\"\\"
+input PersonCondition {
+  \\"\\"\\"Checks for equality with the object’s \`id\` field.\\"\\"\\"
+  id: Int
+}
+
+\\"\\"\\"The root query type which gives access points into the data universe.\\"\\"\\"
+type Query implements Node {
+  \\"\\"\\"Reads and enables pagination through a set of \`Bar\`.\\"\\"\\"
+  allBars(
     \\"\\"\\"Read all values in the set after (below) this cursor.\\"\\"\\"
     after: Cursor
 
@@ -117,7 +318,7 @@ type Person implements Node {
     \\"\\"\\"
     A condition to be used in determining which values should be returned by the collection.
     \\"\\"\\"
-    condition: TeamCondition
+    condition: BarCondition
 
     \\"\\"\\"Only read the first \`n\` values of the set.\\"\\"\\"
     first: Int
@@ -131,21 +332,68 @@ type Person implements Node {
     \\"\\"\\"
     offset: Int
 
-    \\"\\"\\"The method to use when ordering \`Team\`.\\"\\"\\"
-    orderBy: [TeamsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TeamsConnection!
-}
+    \\"\\"\\"The method to use when ordering \`Bar\`.\\"\\"\\"
+    orderBy: [BarsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): BarsConnection
 
-\\"\\"\\"
-A condition to be used against \`Person\` object types. All fields are tested for equality and combined with a logical ‘and.’
-\\"\\"\\"
-input PersonCondition {
-  \\"\\"\\"Checks for equality with the object’s \`id\` field.\\"\\"\\"
-  id: Int
-}
+  \\"\\"\\"Reads and enables pagination through a set of \`Baz\`.\\"\\"\\"
+  allBazs(
+    \\"\\"\\"Read all values in the set after (below) this cursor.\\"\\"\\"
+    after: Cursor
 
-\\"\\"\\"The root query type which gives access points into the data universe.\\"\\"\\"
-type Query implements Node {
+    \\"\\"\\"Read all values in the set before (above) this cursor.\\"\\"\\"
+    before: Cursor
+
+    \\"\\"\\"
+    A condition to be used in determining which values should be returned by the collection.
+    \\"\\"\\"
+    condition: BazCondition
+
+    \\"\\"\\"Only read the first \`n\` values of the set.\\"\\"\\"
+    first: Int
+
+    \\"\\"\\"Only read the last \`n\` values of the set.\\"\\"\\"
+    last: Int
+
+    \\"\\"\\"
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    \\"\\"\\"
+    offset: Int
+
+    \\"\\"\\"The method to use when ordering \`Baz\`.\\"\\"\\"
+    orderBy: [BazsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): BazsConnection
+
+  \\"\\"\\"Reads and enables pagination through a set of \`Foo\`.\\"\\"\\"
+  allFoos(
+    \\"\\"\\"Read all values in the set after (below) this cursor.\\"\\"\\"
+    after: Cursor
+
+    \\"\\"\\"Read all values in the set before (above) this cursor.\\"\\"\\"
+    before: Cursor
+
+    \\"\\"\\"
+    A condition to be used in determining which values should be returned by the collection.
+    \\"\\"\\"
+    condition: FooCondition
+
+    \\"\\"\\"Only read the first \`n\` values of the set.\\"\\"\\"
+    first: Int
+
+    \\"\\"\\"Only read the last \`n\` values of the set.\\"\\"\\"
+    last: Int
+
+    \\"\\"\\"
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    \\"\\"\\"
+    offset: Int
+
+    \\"\\"\\"The method to use when ordering \`Foo\`.\\"\\"\\"
+    orderBy: [FoosOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FoosConnection
+
   \\"\\"\\"Reads and enables pagination through a set of \`Person\`.\\"\\"\\"
   allPeople(
     \\"\\"\\"Read all values in the set after (below) this cursor.\\"\\"\\"
@@ -232,6 +480,27 @@ type Query implements Node {
     \\"\\"\\"The method to use when ordering \`Team\`.\\"\\"\\"
     orderBy: [TeamsOrderBy!] = [PRIMARY_KEY_ASC]
   ): TeamsConnection
+
+  \\"\\"\\"Reads a single \`Bar\` using its globally unique \`ID\`.\\"\\"\\"
+  bar(
+    \\"\\"\\"The globally unique \`ID\` to be used in selecting a single \`Bar\`.\\"\\"\\"
+    nodeId: ID!
+  ): Bar
+  barById(id: Int!): Bar
+
+  \\"\\"\\"Reads a single \`Baz\` using its globally unique \`ID\`.\\"\\"\\"
+  baz(
+    \\"\\"\\"The globally unique \`ID\` to be used in selecting a single \`Baz\`.\\"\\"\\"
+    nodeId: ID!
+  ): Baz
+  bazByFooIdAndBarId(barId: Int!, fooId: Int!): Baz
+
+  \\"\\"\\"Reads a single \`Foo\` using its globally unique \`ID\`.\\"\\"\\"
+  foo(
+    \\"\\"\\"The globally unique \`ID\` to be used in selecting a single \`Foo\`.\\"\\"\\"
+    nodeId: ID!
+  ): Foo
+  fooById(id: Int!): Foo
 
   \\"\\"\\"Fetches an object given its globally unique \`ID\`.\\"\\"\\"
   node(

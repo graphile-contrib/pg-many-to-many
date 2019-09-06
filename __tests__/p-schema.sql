@@ -22,3 +22,21 @@ create table p.team_member (
 comment on constraint team_member_person_id_fkey on p.team_member is E'@manyToManyFieldName members\n@manyToManySimpleFieldName membersList';
 
 comment on constraint team_member_team_id_fkey on p.team_member is E'@simpleCollections omit';
+
+create table p.foo (
+  id serial primary key,
+  name text not null
+);
+
+create table p.bar (
+  id serial primary key,
+  name text not null
+);
+
+create table p.baz (
+  foo_id int constraint baz_foo_id_fkey references p.foo (id),
+  bar_id int constraint baz_bar_id_fkey references p.bar (id),
+  primary key (foo_id, bar_id)
+);
+
+comment on constraint baz_bar_id_fkey on p.baz is E'@omit';
