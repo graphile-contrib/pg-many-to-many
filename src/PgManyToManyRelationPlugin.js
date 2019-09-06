@@ -102,6 +102,9 @@ module.exports = function PgManyToManyRelationPlugin(
               })`
             );
           }
+          if (omit(junctionTable, "manyToMany")) {
+            return memo;
+          }
           const junctionRightConstraint = junctionTable.constraints
             .filter(con => con.type === "f")
             .find(con => con.foreignClassId !== leftTable.id);
