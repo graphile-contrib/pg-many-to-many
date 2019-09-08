@@ -1,18 +1,13 @@
 const pg = require("pg");
-const { readFile } = require("fs");
+const fs = require("fs");
+const util = require("util");
+const path = require("path");
 const pgConnectionString = require("pg-connection-string");
+
+const readFile = util.promisify(fs.readFile);
 
 // This test suite can be flaky. Increase it’s timeout.
 jest.setTimeout(1000 * 20);
-
-function readFilePromise(filename, encoding) {
-  return new Promise((resolve, reject) => {
-    readFile(filename, encoding, (err, res) => {
-      if (err) reject(err);
-      else resolve(res);
-    });
-  });
-}
 
 const withPgClient = async (url, fn) => {
   if (!fn) {
@@ -54,7 +49,16 @@ const withRootDb = fn => withDbFromUrl(process.env.TEST_DATABASE_URL, fn);
 let prepopulatedDBKeepalive;
 
 const populateDatabase = async client => {
-  await client.query(await readFilePromise(`${__dirname}/p-data.sql`, "utf8"));
+  const sqlSchemas = fs.readdirSync(path.resolve(__dirname, "schemas"));
+  await Promise.all(
+    sqlSchemas.map(async sqlSchema => {
+      const sqlData = await readFile(
+        path.resolve(__dirname, "schemas", sqlSchema, "data.sql"),
+        "utf8"
+      );
+      await client.query(sqlData);
+    })
+  );
   return {};
 };
 
