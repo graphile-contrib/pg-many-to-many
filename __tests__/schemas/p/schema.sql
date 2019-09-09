@@ -40,3 +40,20 @@ create table p.baz (
 );
 
 comment on constraint baz_bar_id_fkey on p.baz is E'@omit';
+
+create table p.qux (
+  foo_id int constraint qux_foo_id_fkey references p.foo (id),
+  bar_id int constraint qux_bar_id_fkey references p.bar (id),
+  primary key (foo_id, bar_id)
+);
+
+comment on table p.qux is E'@omit all';
+comment on constraint qux_bar_id_fkey on p.qux is E'@omit manyToMany';
+
+create table p.corge (
+  foo_id int constraint corge_foo_id_fkey references p.foo (id),
+  bar_id int constraint corge_bar_id_fkey references p.bar (id),
+  primary key (foo_id, bar_id)
+);
+
+comment on table p.corge is E'@omit all,manyToMany';
