@@ -118,11 +118,11 @@ The `@manyToManyFieldName` and `@manyToManySimpleFieldName` smart comments allow
 For example, to rename the Connection field from `teamsByTeamMemberTeamId` to `teams`:
 
 ```sql
-comment on constraint team_member_team_id_fkey on p.team_member is E'@manyToManyFieldName teams';
+comment on constraint membership_team_id_fkey on p.membership is E'@manyToManyFieldName teams';
 ```
 
 To rename both the Connection and simple collection fields (assuming simple collections are enabled):
 
 ```sql
-comment on constraint team_member_team_id_fkey on p.team_member is E'@manyToManyFieldName teams\n@manyToManySimpleFieldName teamsList';
+comment on constraint membership_team_id_fkey on p.membership is E'@manyToManyFieldName teams\n@manyToManySimpleFieldName teamsList';
 ```
