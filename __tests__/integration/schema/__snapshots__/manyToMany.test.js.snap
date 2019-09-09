@@ -215,6 +215,77 @@ enum FoosOrderBy {
   PRIMARY_KEY_DESC
 }
 
+type Membership implements Node {
+  createdAt: Datetime!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+
+  """Reads a single \`Person\` that is related to this \`Membership\`."""
+  personByPersonId: Person
+  personId: Int!
+
+  """Reads a single \`Team\` that is related to this \`Membership\`."""
+  teamByTeamId: Team
+  teamId: Int!
+}
+
+"""
+A condition to be used against \`Membership\` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input MembershipCondition {
+  """Checks for equality with the object’s \`createdAt\` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s \`personId\` field."""
+  personId: Int
+
+  """Checks for equality with the object’s \`teamId\` field."""
+  teamId: Int
+}
+
+"""A connection to a list of \`Membership\` values."""
+type MembershipsConnection {
+  """
+  A list of edges which contains the \`Membership\` and cursor to aid in pagination.
+  """
+  edges: [MembershipsEdge!]!
+
+  """A list of \`Membership\` objects."""
+  nodes: [Membership]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Membership\` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A \`Membership\` edge in the connection."""
+type MembershipsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Membership\` at the end of the edge."""
+  node: Membership
+}
+
+"""Methods to use when ordering \`Membership\`."""
+enum MembershipsOrderBy {
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  NATURAL
+  PERSON_ID_ASC
+  PERSON_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  TEAM_ID_ASC
+  TEAM_ID_DESC
+}
+
 """An object with a globally unique \`ID\`."""
 interface Node {
   """
@@ -278,14 +349,8 @@ enum PeopleOrderBy {
 type Person implements Node {
   id: Int!
 
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  personName: String!
-
-  """Reads and enables pagination through a set of \`TeamMember\`."""
-  teamMembersByPersonId(
+  """Reads and enables pagination through a set of \`Membership\`."""
+  membershipsByPersonId(
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
@@ -295,7 +360,7 @@ type Person implements Node {
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: TeamMemberCondition
+    condition: MembershipCondition
 
     """Only read the first \`n\` values of the set."""
     first: Int
@@ -309,12 +374,18 @@ type Person implements Node {
     """
     offset: Int
 
-    """The method to use when ordering \`TeamMember\`."""
-    orderBy: [TeamMembersOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TeamMembersConnection!
+    """The method to use when ordering \`Membership\`."""
+    orderBy: [MembershipsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MembershipsConnection!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  personName: String!
 
   """Reads and enables pagination through a set of \`Team\`."""
-  teamsByTeamMemberPersonIdAndTeamId(
+  teamsByMembershipPersonIdAndTeamId(
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
@@ -443,6 +514,35 @@ type Query implements Node {
     orderBy: [FoosOrderBy!] = [PRIMARY_KEY_ASC]
   ): FoosConnection
 
+  """Reads and enables pagination through a set of \`Membership\`."""
+  allMemberships(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MembershipCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Membership\`."""
+    orderBy: [MembershipsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MembershipsConnection
+
   """Reads and enables pagination through a set of \`Person\`."""
   allPeople(
     """Read all values in the set after (below) this cursor."""
@@ -471,35 +571,6 @@ type Query implements Node {
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
   ): PeopleConnection
-
-  """Reads and enables pagination through a set of \`TeamMember\`."""
-  allTeamMembers(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: TeamMemberCondition
-
-    """Only read the first \`n\` values of the set."""
-    first: Int
-
-    """Only read the last \`n\` values of the set."""
-    last: Int
-
-    """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
-    based pagination. May not be used with \`last\`.
-    """
-    offset: Int
-
-    """The method to use when ordering \`TeamMember\`."""
-    orderBy: [TeamMembersOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TeamMembersConnection
 
   """Reads and enables pagination through a set of \`Team\`."""
   allTeams(
@@ -551,6 +622,15 @@ type Query implements Node {
   ): Foo
   fooById(id: Int!): Foo
 
+  """Reads a single \`Membership\` using its globally unique \`ID\`."""
+  membership(
+    """
+    The globally unique \`ID\` to be used in selecting a single \`Membership\`.
+    """
+    nodeId: ID!
+  ): Membership
+  membershipByPersonIdAndTeamId(personId: Int!, teamId: Int!): Membership
+
   """Fetches an object given its globally unique \`ID\`."""
   node(
     """The globally unique \`ID\`."""
@@ -581,15 +661,6 @@ type Query implements Node {
     nodeId: ID!
   ): Team
   teamById(id: Int!): Team
-
-  """Reads a single \`TeamMember\` using its globally unique \`ID\`."""
-  teamMember(
-    """
-    The globally unique \`ID\` to be used in selecting a single \`TeamMember\`.
-    """
-    nodeId: ID!
-  ): TeamMember
-  teamMemberByPersonIdAndTeamId(personId: Int!, teamId: Int!): TeamMember
 }
 
 type Team implements Node {
@@ -624,13 +695,8 @@ type Team implements Node {
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
   ): PeopleConnection!
 
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-
-  """Reads and enables pagination through a set of \`TeamMember\`."""
-  teamMembersByTeamId(
+  """Reads and enables pagination through a set of \`Membership\`."""
+  membershipsByTeamId(
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
@@ -640,7 +706,7 @@ type Team implements Node {
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: TeamMemberCondition
+    condition: MembershipCondition
 
     """Only read the first \`n\` values of the set."""
     first: Int
@@ -654,9 +720,14 @@ type Team implements Node {
     """
     offset: Int
 
-    """The method to use when ordering \`TeamMember\`."""
-    orderBy: [TeamMembersOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TeamMembersConnection!
+    """The method to use when ordering \`Membership\`."""
+    orderBy: [MembershipsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MembershipsConnection!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
   teamName: String!
 }
 
@@ -669,77 +740,6 @@ input TeamCondition {
 
   """Checks for equality with the object’s \`teamName\` field."""
   teamName: String
-}
-
-type TeamMember implements Node {
-  createdAt: Datetime!
-
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-
-  """Reads a single \`Person\` that is related to this \`TeamMember\`."""
-  personByPersonId: Person
-  personId: Int!
-
-  """Reads a single \`Team\` that is related to this \`TeamMember\`."""
-  teamByTeamId: Team
-  teamId: Int!
-}
-
-"""
-A condition to be used against \`TeamMember\` object types. All fields are tested
-for equality and combined with a logical ‘and.’
-"""
-input TeamMemberCondition {
-  """Checks for equality with the object’s \`createdAt\` field."""
-  createdAt: Datetime
-
-  """Checks for equality with the object’s \`personId\` field."""
-  personId: Int
-
-  """Checks for equality with the object’s \`teamId\` field."""
-  teamId: Int
-}
-
-"""A connection to a list of \`TeamMember\` values."""
-type TeamMembersConnection {
-  """
-  A list of edges which contains the \`TeamMember\` and cursor to aid in pagination.
-  """
-  edges: [TeamMembersEdge!]!
-
-  """A list of \`TeamMember\` objects."""
-  nodes: [TeamMember]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* \`TeamMember\` you could get from the connection."""
-  totalCount: Int
-}
-
-"""A \`TeamMember\` edge in the connection."""
-type TeamMembersEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The \`TeamMember\` at the end of the edge."""
-  node: TeamMember
-}
-
-"""Methods to use when ordering \`TeamMember\`."""
-enum TeamMembersOrderBy {
-  CREATED_AT_ASC
-  CREATED_AT_DESC
-  NATURAL
-  PERSON_ID_ASC
-  PERSON_ID_DESC
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  TEAM_ID_ASC
-  TEAM_ID_DESC
 }
 
 """A connection to a list of \`Team\` values."""

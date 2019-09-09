@@ -7,7 +7,7 @@ Object {
       "nodes": Array [
         Object {
           "personName": "Person1",
-          "teamsByTeamMemberPersonIdAndTeamId": Object {
+          "teamsByMembershipPersonIdAndTeamId": Object {
             "nodes": Array [
               Object {
                 "teamName": "Team1",
@@ -20,7 +20,7 @@ Object {
         },
         Object {
           "personName": "Person2",
-          "teamsByTeamMemberPersonIdAndTeamId": Object {
+          "teamsByMembershipPersonIdAndTeamId": Object {
             "nodes": Array [
               Object {
                 "teamName": "Team1",
@@ -30,7 +30,7 @@ Object {
         },
         Object {
           "personName": "Person3",
-          "teamsByTeamMemberPersonIdAndTeamId": Object {
+          "teamsByMembershipPersonIdAndTeamId": Object {
             "nodes": Array [],
           },
         },
