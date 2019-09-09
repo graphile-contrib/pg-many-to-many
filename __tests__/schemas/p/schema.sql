@@ -12,16 +12,16 @@ create table p.team (
   team_name text not null
 );
 
-create table p.team_member (
-  person_id int constraint team_member_person_id_fkey references p.person (id),
-  team_id int constraint team_member_team_id_fkey references p.team (id),
+create table p.membership (
+  person_id int constraint membership_person_id_fkey references p.person (id),
+  team_id int constraint membership_team_id_fkey references p.team (id),
   created_at timestamptz not null,
   primary key (person_id, team_id)
 );
 
-comment on constraint team_member_person_id_fkey on p.team_member is E'@manyToManyFieldName members\n@manyToManySimpleFieldName membersList';
+comment on constraint membership_person_id_fkey on p.membership is E'@manyToManyFieldName members\n@manyToManySimpleFieldName membersList';
 
-comment on constraint team_member_team_id_fkey on p.team_member is E'@simpleCollections omit';
+comment on constraint membership_team_id_fkey on p.membership is E'@simpleCollections omit';
 
 create table p.foo (
   id serial primary key,

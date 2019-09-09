@@ -2,7 +2,7 @@ query {
   a: allPeople {
     nodes {
       personName
-      teamsByTeamMemberPersonIdAndTeamId {
+      teamsByMembershipPersonIdAndTeamId {
         nodes {
           teamName
         }
