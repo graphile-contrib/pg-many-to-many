@@ -1,6 +1,6 @@
 {
   "name": "@graphile-contrib/pg-many-to-many",
-  "version": "1.0.0-beta.9",
+  "version": "1.0.0-beta.10",
   "description": "Add connection fields for many-to-many relations",
   "main": "index.js",
   "scripts": {
