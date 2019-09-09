@@ -1,7 +1,7 @@
 const printSchemaOrdered = require("../../printSchemaOrdered");
 const { withPgClient } = require("../../helpers");
 const { createPostGraphileSchema } = require("postgraphile-core");
-const { isSchema } = require("graphql/type/schema")
+const { isSchema } = require("graphql")
 
 const GraphQLSchemaSerializer = {
   test(val) {
