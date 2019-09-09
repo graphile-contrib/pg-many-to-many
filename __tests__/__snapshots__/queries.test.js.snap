@@ -1,5 +1,65 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`schema=f query=f.graphql 1`] = `
+Object {
+  "data": Object {
+    "allPeople": Object {
+      "nodes": Array [
+        Object {
+          "followers": Object {
+            "nodes": Array [
+              Object {
+                "name": "Bob",
+              },
+              Object {
+                "name": "Eve",
+              },
+            ],
+          },
+          "following": Object {
+            "nodes": Array [],
+          },
+          "name": "Alice",
+        },
+        Object {
+          "followers": Object {
+            "nodes": Array [
+              Object {
+                "name": "Eve",
+              },
+            ],
+          },
+          "following": Object {
+            "nodes": Array [
+              Object {
+                "name": "Alice",
+              },
+            ],
+          },
+          "name": "Bob",
+        },
+        Object {
+          "followers": Object {
+            "nodes": Array [],
+          },
+          "following": Object {
+            "nodes": Array [
+              Object {
+                "name": "Alice",
+              },
+              Object {
+                "name": "Bob",
+              },
+            ],
+          },
+          "name": "Eve",
+        },
+      ],
+    },
+  },
+}
+`;
+
 exports[`schema=p query=many-to-many.graphql 1`] = `
 Object {
   "data": Object {
