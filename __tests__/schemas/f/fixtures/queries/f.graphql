@@ -1,0 +1,17 @@
+query {
+  allPeople {
+    nodes {
+      name
+      followers {
+        nodes {
+          name
+        }
+      }
+      following {
+        nodes {
+          name
+        }
+      }
+    }
+  }
+}
