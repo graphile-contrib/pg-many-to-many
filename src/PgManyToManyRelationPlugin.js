@@ -1,3 +1,5 @@
+const isEqual = require("lodash/isEqual");
+
 // Given a `leftTable`, trace through the foreign key relations
 // and identify a `junctionTable` and `rightTable`.
 // Returns a list of data objects for these many-to-many relationships.
@@ -77,17 +79,17 @@ function manyToManyRelationships(leftTable, build) {
           const junctionLeftConstraintIsUnique = !!junctionTable.constraints.find(
             c =>
               (c.type === "p" || c.type === "u") &&
-              c.keyAttributeNums.length === junctionLeftKeyAttributes.length &&
-              c.keyAttributeNums.every(
-                (n, i) => junctionLeftKeyAttributes[i].num === n
+              isEqual(
+                c.keyAttributeNums,
+                junctionLeftKeyAttributes.map(a => a.num)
               )
           );
           const junctionRightConstraintIsUnique = !!junctionTable.constraints.find(
             c =>
               (c.type === "p" || c.type === "u") &&
-              c.keyAttributeNums.length === junctionRightKeyAttributes.length &&
-              c.keyAttributeNums.every(
-                (n, i) => junctionRightKeyAttributes[i].num === n
+              isEqual(
+                c.keyAttributeNums,
+                junctionRightKeyAttributes.map(a => a.num)
               )
           );
           if (
