@@ -183,7 +183,6 @@ function createManyToManyConnectionType(
     pgField,
     pgGetSelectValueForFieldAndTypeAndModifier: getSelectValueForFieldAndTypeAndModifier,
     getSafeAliasFromResolveInfo,
-    subscriptions = false,
   } = build;
   const nullableIf = (condition, Type) =>
     condition ? Type : new GraphQLNonNull(Type);
@@ -267,29 +266,18 @@ function createManyToManyConnectionType(
             {
               description: `The \`${TableType.name}\` at the end of the edge.`,
               type: nullableIf(!pgForbidSetofFunctionsToReturnNull, TableType),
-              resolve(data, _args, resolveContext, resolveInfo) {
+              resolve(data, _args, _context, resolveInfo) {
                 const safeAlias = getSafeAliasFromResolveInfo(resolveInfo);
                 const record = handleNullRow(
                   data[safeAlias],
                   data.__identifiers
                 );
-                const liveRecord =
-                  resolveInfo.rootValue && resolveInfo.rootValue.liveRecord;
-                if (record && primaryKeys && liveRecord && data.__identifiers) {
-                  liveRecord("pg", rightTable, data.__identifiers);
-                }
                 return record;
               },
             },
             {},
             false,
-            {
-              withQueryBuilder: queryBuilder => {
-                if (subscriptions) {
-                  queryBuilder.selectIdentifiers(rightTable);
-                }
-              },
-            }
+            {}
           ),
         };
 
@@ -428,41 +416,20 @@ function createManyToManyConnectionType(
                   nullableIf(!pgForbidSetofFunctionsToReturnNull, TableType)
                 )
               ),
-              resolve(data, _args, resolveContext, resolveInfo) {
+              resolve(data, _args, _context, resolveInfo) {
                 const safeAlias = getSafeAliasFromResolveInfo(resolveInfo);
-                const liveRecord =
-                  resolveInfo.rootValue && resolveInfo.rootValue.liveRecord;
                 return data.data.map(entry => {
                   const record = handleNullRow(
                     entry[safeAlias],
                     entry[safeAlias].__identifiers
                   );
-                  if (
-                    record &&
-                    liveRecord &&
-                    primaryKeys &&
-                    entry[safeAlias].__identifiers
-                  ) {
-                    liveRecord(
-                      "pg",
-                      rightTable,
-                      entry[safeAlias].__identifiers
-                    );
-                  }
-
                   return record;
                 });
               },
             },
             {},
             false,
-            {
-              withQueryBuilder: queryBuilder => {
-                if (subscriptions) {
-                  queryBuilder.selectIdentifiers(rightTable);
-                }
-              },
-            }
+            {}
           ),
           edges: pgField(
             build,
