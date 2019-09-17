@@ -16,6 +16,9 @@ type FollowersConnection {
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
+
+  """The count of *all* \`Person\` you could get from the connection."""
+  totalCount: Int
 }
 
 """A \`Person\` edge in the connection, with data from \`Junction\`."""
@@ -39,6 +42,9 @@ type FollowingConnection {
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
+
+  """The count of *all* \`Person\` you could get from the connection."""
+  totalCount: Int
 }
 
 """A \`Person\` edge in the connection, with data from \`Junction\`."""

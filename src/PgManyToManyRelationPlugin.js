@@ -471,6 +471,7 @@ function createManyToManyConnectionType(
       isPgRowConnectionType: true,
       edgeType: EdgeType,
       nodeType: TableType,
+      pgIntrospection: rightTable,
     }
   );
 }

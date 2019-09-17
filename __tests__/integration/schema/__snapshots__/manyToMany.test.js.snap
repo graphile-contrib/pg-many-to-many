@@ -407,6 +407,9 @@ type MembersConnection {
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
+
+  """The count of *all* \`Person\` you could get from the connection."""
+  totalCount: Int
 }
 
 """A \`Person\` edge in the connection, with data from \`Membership\`."""
@@ -1036,6 +1039,9 @@ type TeamsByMembershipPersonIdAndTeamIdConnection {
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
+
+  """The count of *all* \`Team\` you could get from the connection."""
+  totalCount: Int
 }
 
 """A \`Team\` edge in the connection, with data from \`Membership\`."""
