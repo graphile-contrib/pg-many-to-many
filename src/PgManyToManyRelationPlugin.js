@@ -153,7 +153,6 @@ const hasNonNullKey = row => {
 function createManyToManyConnectionType(
   relationship,
   build,
-  context,
   { pgForbidSetofFunctionsToReturnNull = false }
 ) {
   const {
@@ -165,23 +164,14 @@ function createManyToManyConnectionType(
     rightTable,
     junctionLeftConstraint,
     junctionRightConstraint,
-    allowsMultipleEdgesToNode,
   } = relationship;
   const {
-    extend,
     newWithHooks,
     inflection,
-    graphql: { GraphQLObjectType, GraphQLNonNull, GraphQLList, GraphQLString },
-    pgColumnFilter,
-    pgOmit: omit,
-    pgSql: sql,
-    pg2gql,
+    graphql: { GraphQLObjectType, GraphQLNonNull, GraphQLList },
     getTypeByName,
     pgGetGqlTypeByTypeIdAndModifier,
-    describePgEntity,
-    sqlCommentByAddingTags,
     pgField,
-    pgGetSelectValueForFieldAndTypeAndModifier: getSelectValueForFieldAndTypeAndModifier,
     getSafeAliasFromResolveInfo,
   } = build;
   const nullableIf = (condition, Type) =>
@@ -208,13 +198,6 @@ function createManyToManyConnectionType(
   const rightPrimaryKeyAttributes =
     rightPrimaryKeyConstraint && rightPrimaryKeyConstraint.keyAttributes;
 
-  const junctionAttributes = junctionTable.attributes.filter(
-    attr =>
-      pgColumnFilter(attr, build, context) &&
-      !omit(attr, "filter") &&
-      !junctionLeftKeyAttributes.includes(attr) &&
-      !junctionRightKeyAttributes.includes(attr)
-  );
   const junctionTypeName = inflection.tableType(junctionTable);
   const base64 = str => Buffer.from(String(str)).toString("base64");
 
@@ -235,7 +218,7 @@ function createManyToManyConnectionType(
         junctionRightConstraint
       ),
       fields: ({ fieldWithHooks }) => {
-        const edgeFields = {
+        return {
           cursor: fieldWithHooks(
             "cursor",
             ({ addDataGenerator }) => {
@@ -280,106 +263,12 @@ function createManyToManyConnectionType(
             {}
           ),
         };
-
-        const fieldsFromAttributes = attributes =>
-          attributes.reduce((memo, attr) => {
-            const fieldName = inflection.column(attr);
-            if (memo[fieldName]) {
-              throw new Error(
-                `Two columns produce the same GraphQL field name '${fieldName}' on class '${
-                  rightTable.namespaceName
-                }.${rightTable.name}'; one of them is '${attr.name}'`
-              );
-            }
-            memo = extend(
-              memo,
-              {
-                [fieldName]: fieldWithHooks(
-                  fieldName,
-                  fieldContext => {
-                    const { type, typeModifier } = attr;
-                    const { addDataGenerator } = fieldContext;
-                    const ReturnType =
-                      pgGetGqlTypeByTypeIdAndModifier(
-                        attr.typeId,
-                        attr.typeModifier
-                      ) || GraphQLString;
-                    addDataGenerator(parsedResolveInfoFragment => {
-                      return {
-                        pgQuery: queryBuilder => {
-                          // Since we're ignoring multi-column keys, we can simplify here
-                          const leftKeyAttribute = leftKeyAttributes[0];
-                          const junctionLeftKeyAttribute =
-                            junctionLeftKeyAttributes[0];
-                          const junctionRightKeyAttribute =
-                            junctionRightKeyAttributes[0];
-                          const rightKeyAttribute = rightKeyAttributes[0];
-
-                          queryBuilder.select(
-                            getSelectValueForFieldAndTypeAndModifier(
-                              ReturnType,
-                              fieldContext,
-                              parsedResolveInfoFragment,
-                              sql.fragment`(select ${sql.identifier(
-                                attr.name
-                              )} from ${sql.identifier(
-                                junctionTable.namespace.name,
-                                junctionTable.name
-                              )} where ${sql.identifier(
-                                junctionRightKeyAttribute.name
-                              )} = ${queryBuilder.getTableAlias()}.${sql.identifier(
-                                rightKeyAttribute.name
-                              )} and ${sql.identifier(
-                                junctionLeftKeyAttribute.name
-                              )} = ${queryBuilder.parentQueryBuilder.parentQueryBuilder.getTableAlias()}.${sql.identifier(
-                                leftKeyAttribute.name
-                              )})`,
-                              type,
-                              typeModifier
-                            ),
-                            fieldName
-                          );
-                        },
-                      };
-                    });
-                    return {
-                      description: attr.description,
-                      type: nullableIf(
-                        !attr.isNotNull &&
-                          !attr.type.domainIsNotNull &&
-                          !attr.tags.notNull,
-                        ReturnType
-                      ),
-                      resolve: data => {
-                        return pg2gql(data[fieldName], type);
-                      },
-                    };
-                  },
-                  { pgFieldIntrospection: attr }
-                ),
-              },
-              `Adding field for ${describePgEntity(
-                attr
-              )}. You can rename this field with:\n\n  ${sqlCommentByAddingTags(
-                attr,
-                {
-                  name: "newNameHere",
-                }
-              )}`
-            );
-            return memo;
-          }, {});
-
-        if (allowsMultipleEdgesToNode) {
-          return edgeFields;
-        } else {
-          return extend(edgeFields, fieldsFromAttributes(junctionAttributes));
-        }
       },
     },
     {
       isEdgeType: true,
       isPgRowEdgeType: true,
+      isPgManyToManyEdgeType: true,
       nodeType: TableType,
       pgManyToManyRelationship: relationship,
     }

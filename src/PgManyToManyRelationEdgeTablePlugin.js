@@ -17,11 +17,11 @@ module.exports = function PgManyToManyEdgeTablePlugin(
       describePgEntity,
     } = build;
     const {
-      scope: { isPgRowEdgeType, pgManyToManyRelationship },
+      scope: { isPgManyToManyEdgeType, pgManyToManyRelationship },
       fieldWithHooks,
       Self,
     } = context;
-    if (!isPgRowEdgeType || !pgManyToManyRelationship) {
+    if (!isPgManyToManyEdgeType || !pgManyToManyRelationship) {
       return fields;
     }
 
