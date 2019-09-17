@@ -204,9 +204,9 @@ function createManyToManyConnectionType(
     );
   }
 
-  const primaryKeyConstraint = rightTable.primaryKeyConstraint;
-  const primaryKeys =
-    primaryKeyConstraint && primaryKeyConstraint.keyAttributes;
+  const rightPrimaryKeyConstraint = rightTable.primaryKeyConstraint;
+  const rightPrimaryKeyAttributes =
+    rightPrimaryKeyConstraint && rightPrimaryKeyConstraint.keyAttributes;
 
   const junctionAttributes = junctionTable.attributes.filter(
     attr =>
@@ -242,7 +242,7 @@ function createManyToManyConnectionType(
               addDataGenerator(() => ({
                 usesCursor: [true],
                 pgQuery: queryBuilder => {
-                  if (primaryKeys) {
+                  if (rightPrimaryKeyAttributes) {
                     queryBuilder.selectIdentifiers(rightTable);
                   }
                 },
@@ -616,9 +616,7 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         );
         if (!RightTableType) {
           throw new Error(
-            `Could not determine type for table with id ${
-              junctionRightConstraint.classId
-            }`
+            `Could not determine type for table with id ${rightTable.type.id}`
           );
         }
         const RightTableConnectionType = createManyToManyConnectionType(
