@@ -191,13 +191,27 @@ Object {
           "members": Object {
             "edges": Array [
               Object {
-                "data": Array [],
+                "membershipsByPersonId": Object {
+                  "nodes": Array [
+                    Object {
+                      "endAt": null,
+                      "startAt": "2018-01-01T08:00:00-04:00",
+                    },
+                  ],
+                },
                 "node": Object {
                   "personName": "Person1",
                 },
               },
               Object {
-                "data": Array [],
+                "membershipsByPersonId": Object {
+                  "nodes": Array [
+                    Object {
+                      "endAt": null,
+                      "startAt": "2018-01-03T08:00:00-04:00",
+                    },
+                  ],
+                },
                 "node": Object {
                   "personName": "Person2",
                 },
@@ -210,7 +224,18 @@ Object {
           "members": Object {
             "edges": Array [
               Object {
-                "data": Array [],
+                "membershipsByPersonId": Object {
+                  "nodes": Array [
+                    Object {
+                      "endAt": "2018-01-03T08:00:00-04:00",
+                      "startAt": "2018-01-02T08:00:00-04:00",
+                    },
+                    Object {
+                      "endAt": "2018-01-05T08:00:00-04:00",
+                      "startAt": "2018-01-04T08:00:00-04:00",
+                    },
+                  ],
+                },
                 "node": Object {
                   "personName": "Person1",
                 },

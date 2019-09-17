@@ -31,18 +31,37 @@ type MembersEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """List of junction data"""
-  data: [MembersEdgeData!]!
+  """Reads and enables pagination through a set of \`Membership\`."""
+  membershipsByPersonId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MembershipCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Membership\`."""
+    orderBy: [MembershipsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MembershipsConnection!
 
   """The \`Person\` at the end of the edge."""
   node: Person
-}
-
-"""Edge data from \`Membership\`."""
-type MembersEdgeData {
-  endAt: Datetime
-  id: Int
-  startAt: Datetime
 }
 
 type Membership implements Node {
@@ -495,18 +514,37 @@ type TeamsByMembershipPersonIdAndTeamIdEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """List of junction data"""
-  data: [TeamsByMembershipPersonIdAndTeamIdEdgeData!]!
+  """Reads and enables pagination through a set of \`Membership\`."""
+  membershipsByTeamId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MembershipCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Membership\`."""
+    orderBy: [MembershipsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MembershipsConnection!
 
   """The \`Team\` at the end of the edge."""
   node: Team
-}
-
-"""Edge data from \`Membership\`."""
-type TeamsByMembershipPersonIdAndTeamIdEdgeData {
-  endAt: Datetime
-  id: Int
-  startAt: Datetime
 }
 
 """A connection to a list of \`Team\` values."""

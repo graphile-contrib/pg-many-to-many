@@ -32,4 +32,5 @@ module.exports = function PgManyToManyPlugin(builder, options) {
   });
 
   require("./src/PgManyToManyRelationPlugin.js")(builder, options);
+  require("./src/PgManyToManyRelationEdgeTablePlugin.js")(builder, options);
 };

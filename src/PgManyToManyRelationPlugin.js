@@ -474,43 +474,7 @@ function createManyToManyConnectionType(
           }, {});
 
         if (duplicateConnectionsAllowed) {
-          const JunctionDataType = newWithHooks(
-            GraphQLObjectType,
-            {
-              description: `Edge data from \`${junctionTypeName}\`.`,
-              name: inflection.manyToManyRelationEdgeData(
-                leftKeyAttributes,
-                junctionLeftKeyAttributes,
-                junctionRightKeyAttributes,
-                rightKeyAttributes,
-                junctionTable,
-                rightTable,
-                junctionLeftConstraint,
-                junctionRightConstraint
-              ),
-              fields: fieldsFromAttributes(junctionAttributes),
-            },
-            { isEdgeDataType: true }
-          );
-          return extend(edgeFields, {
-            data: fieldWithHooks(
-              "data",
-              {
-                description: "List of junction data",
-                // TODO: allow this to be a connection?
-                type: new GraphQLNonNull(
-                  new GraphQLList(new GraphQLNonNull(JunctionDataType))
-                ),
-                resolve() {
-                  // TODO
-                  return [];
-                },
-              },
-              {
-                isEdgeDataType: true,
-              }
-            ),
-          });
+          return edgeFields;
         } else {
           return extend(edgeFields, fieldsFromAttributes(junctionAttributes));
         }
@@ -520,6 +484,7 @@ function createManyToManyConnectionType(
       isEdgeType: true,
       isPgRowEdgeType: true,
       nodeType: TableType,
+      pgManyToManyRelationship: relationship,
     }
   );
   const PageInfo = getTypeByName(inflection.builtin("PageInfo"));
@@ -709,28 +674,6 @@ module.exports = function PgManyToManyRelationPlugin(
           junctionRightConstraint
         );
         return this.upperCamelCase(`${relationName}-edge`);
-      },
-      manyToManyRelationEdgeData(
-        leftKeyAttributes,
-        junctionLeftKeyAttributes,
-        junctionRightKeyAttributes,
-        rightKeyAttributes,
-        junctionTable,
-        rightTable,
-        junctionLeftConstraint,
-        junctionRightConstraint
-      ) {
-        const relationName = inflection.manyToManyRelationByKeys(
-          leftKeyAttributes,
-          junctionLeftKeyAttributes,
-          junctionRightKeyAttributes,
-          rightKeyAttributes,
-          junctionTable,
-          rightTable,
-          junctionLeftConstraint,
-          junctionRightConstraint
-        );
-        return this.upperCamelCase(`${relationName}-edge-data`);
       },
       manyToManyRelationConnection(
         leftKeyAttributes,

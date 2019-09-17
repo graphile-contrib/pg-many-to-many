@@ -7,9 +7,11 @@
           node {
             personName
           }
-          data {
-            startAt
-            endAt
+          membershipsByPersonId {
+            nodes {
+              startAt
+              endAt
+            }
           }
         }
       }
