@@ -311,7 +311,6 @@ function createManyToManyConnectionType(
                   fieldName,
                   fieldContext => {
                     const { type, typeModifier } = attr;
-                    // const sqlColumn = sql.identifier(attr.name);
                     const { addDataGenerator } = fieldContext;
                     const ReturnType =
                       pgGetGqlTypeByTypeIdAndModifier(
@@ -356,18 +355,15 @@ function createManyToManyConnectionType(
                         },
                       };
                     });
-                    // const convertFromPg = pg2gqlForType(type);
                     return {
                       description: attr.description,
-                      // type: nullableIf(
-                      //   !attr.isNotNull &&
-                      //     !attr.type.domainIsNotNull &&
-                      //     !attr.tags.notNull,
-                      //   ReturnType
-                      // ),
-                      type: ReturnType,
+                      type: nullableIf(
+                        !attr.isNotNull &&
+                          !attr.type.domainIsNotNull &&
+                          !attr.tags.notNull,
+                        ReturnType
+                      ),
                       resolve: data => {
-                        // return convertFromPg(data[fieldName]);
                         return pg2gql(data[fieldName], type);
                       },
                     };

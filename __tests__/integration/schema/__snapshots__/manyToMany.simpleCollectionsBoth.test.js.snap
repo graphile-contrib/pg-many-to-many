@@ -496,7 +496,7 @@ type MembersConnection {
 
 """A \`Person\` edge in the connection, with data from \`Membership\`."""
 type MembersEdge {
-  createdAt: Datetime
+  createdAt: Datetime!
 
   """A cursor for use in pagination."""
   cursor: Cursor
@@ -1278,7 +1278,7 @@ type TeamsByMembershipPersonIdAndTeamIdConnection {
 
 """A \`Team\` edge in the connection, with data from \`Membership\`."""
 type TeamsByMembershipPersonIdAndTeamIdEdge {
-  createdAt: Datetime
+  createdAt: Datetime!
 
   """A cursor for use in pagination."""
   cursor: Cursor
