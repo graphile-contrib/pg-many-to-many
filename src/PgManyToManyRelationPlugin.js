@@ -150,92 +150,6 @@ const hasNonNullKey = row => {
   return false;
 };
 
-function createManyToManyConditionInputType(leftTable, relationship, build) {
-  const {
-    leftKeyAttributes,
-    junctionLeftKeyAttributes,
-    junctionRightKeyAttributes,
-    rightKeyAttributes,
-    junctionTable,
-    rightTable,
-    junctionLeftConstraint,
-    junctionRightConstraint,
-  } = relationship;
-  const {
-    newWithHooks,
-    inflection,
-    pgGetGqlInputTypeByTypeIdAndModifier,
-    graphql: { GraphQLInputObjectType, GraphQLString },
-    pgColumnFilter,
-    pgOmit: omit,
-    describePgEntity,
-    sqlCommentByAddingTags,
-  } = build;
-  const relationName = inflection.manyToManyRelationByKeys(
-    leftKeyAttributes,
-    junctionLeftKeyAttributes,
-    junctionRightKeyAttributes,
-    rightKeyAttributes,
-    junctionTable,
-    rightTable,
-    junctionLeftConstraint,
-    junctionRightConstraint
-  );
-  newWithHooks(
-    GraphQLInputObjectType,
-    {
-      description: `A condition to be used against \`${relationName}\` object types. All fields are tested for equality and combined with a logical ‘and.’`,
-      name: inflection.conditionType(relationName),
-      fields: context => {
-        const { fieldWithHooks } = context;
-        return junctionTable.attributes.reduce((memo, attr) => {
-          // PERFORMANCE: These used to be .filter(...) calls
-          if (!pgColumnFilter(attr, build, context)) return memo;
-          if (omit(attr, "filter")) return memo;
-          if (junctionLeftKeyAttributes.includes(attr)) return memo;
-          if (junctionRightKeyAttributes.includes(attr)) return memo;
-
-          const fieldName = inflection.column(attr);
-          memo = build.extend(
-            memo,
-            {
-              [fieldName]: fieldWithHooks(
-                fieldName,
-                {
-                  description: `Checks for equality with the \`${fieldName}\` field in the junction table.`,
-                  type:
-                    pgGetGqlInputTypeByTypeIdAndModifier(
-                      attr.typeId,
-                      attr.typeModifier
-                    ) || GraphQLString,
-                },
-                {
-                  isPgConnectionConditionInputField: true,
-                }
-              ),
-            },
-            `Adding condition argument for ${describePgEntity(attr)}`
-          );
-          return memo;
-        }, {});
-      },
-    },
-    {
-      __origin: `Adding condition type for ${describePgEntity(
-        leftTable
-      )}. You can rename the table's GraphQL type via:\n\n  ${sqlCommentByAddingTags(
-        leftTable,
-        {
-          name: "newNameHere",
-        }
-      )}`,
-      pgIntrospection: leftTable,
-      isPgCondition: true,
-    },
-    true // Conditions might all be filtered
-  );
-}
-
 function createManyToManyConnectionType(
   _leftTable,
   relationship,
@@ -714,7 +628,6 @@ module.exports = function PgManyToManyRelationPlugin(
 
         const relationships = manyToManyRelationships(leftTable, build);
         relationships.forEach(relationship => {
-          createManyToManyConditionInputType(leftTable, relationship, build);
           createManyToManyConnectionType(
             leftTable,
             relationship,
