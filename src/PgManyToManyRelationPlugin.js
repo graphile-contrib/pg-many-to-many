@@ -151,10 +151,10 @@ const hasNonNullKey = row => {
 };
 
 function createManyToManyConnectionType(
-  _leftTable,
   relationship,
   build,
-  context
+  context,
+  { pgForbidSetofFunctionsToReturnNull = false }
 ) {
   const {
     leftKeyAttributes,
@@ -183,7 +183,6 @@ function createManyToManyConnectionType(
     pgField,
     pgGetSelectValueForFieldAndTypeAndModifier: getSelectValueForFieldAndTypeAndModifier,
     getSafeAliasFromResolveInfo,
-    pgForbidSetofFunctionsToReturnNull = false,
     subscriptions = false,
   } = build;
   const nullableIf = (condition, Type) =>
@@ -399,7 +398,7 @@ function createManyToManyConnectionType(
   );
   const PageInfo = getTypeByName(inflection.builtin("PageInfo"));
 
-  newWithHooks(
+  return newWithHooks(
     GraphQLObjectType,
     {
       description: `A connection to a list of \`${
@@ -509,10 +508,8 @@ function createManyToManyConnectionType(
   );
 }
 
-module.exports = function PgManyToManyRelationPlugin(
-  builder,
-  { pgSimpleCollections }
-) {
+module.exports = function PgManyToManyRelationPlugin(builder, options) {
+  const { pgSimpleCollections } = options;
   builder.hook("inflection", inflection => {
     return Object.assign(inflection, {
       manyToManyRelationByKeys(
@@ -613,7 +610,6 @@ module.exports = function PgManyToManyRelationPlugin(
   builder.hook("GraphQLObjectType:fields", (fields, build, context) => {
     const {
       extend,
-      getTypeByName,
       pgGetGqlTypeByTypeIdAndModifier,
       pgSql: sql,
       getSafeAliasFromResolveInfo,
@@ -637,8 +633,6 @@ module.exports = function PgManyToManyRelationPlugin(
     return extend(
       fields,
       relationships.reduce((memo, relationship) => {
-        createManyToManyConnectionType(leftTable, relationship, build, context);
-
         const {
           leftKeyAttributes,
           junctionLeftKeyAttributes,
@@ -660,17 +654,11 @@ module.exports = function PgManyToManyRelationPlugin(
             }`
           );
         }
-        const RightTableConnectionType = getTypeByName(
-          inflection.manyToManyRelationConnection(
-            leftKeyAttributes,
-            junctionLeftKeyAttributes,
-            junctionRightKeyAttributes,
-            rightKeyAttributes,
-            junctionTable,
-            rightTable,
-            junctionLeftConstraint,
-            junctionRightConstraint
-          )
+        const RightTableConnectionType = createManyToManyConnectionType(
+          relationship,
+          build,
+          context,
+          options
         );
 
         // Since we're ignoring multi-column keys, we can simplify here
