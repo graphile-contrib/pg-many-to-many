@@ -150,11 +150,7 @@ const hasNonNullKey = row => {
   return false;
 };
 
-function createManyToManyConnectionType(
-  relationship,
-  build,
-  { pgForbidSetofFunctionsToReturnNull = false }
-) {
+function createManyToManyConnectionType(relationship, build, options) {
   const {
     leftKeyAttributes,
     junctionLeftKeyAttributes,
@@ -174,6 +170,7 @@ function createManyToManyConnectionType(
     pgField,
     getSafeAliasFromResolveInfo,
   } = build;
+  const { pgForbidSetofFunctionsToReturnNull = false } = options;
   const nullableIf = (condition, Type) =>
     condition ? Type : new GraphQLNonNull(Type);
   const Cursor = getTypeByName("Cursor");
@@ -512,7 +509,6 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         const RightTableConnectionType = createManyToManyConnectionType(
           relationship,
           build,
-          context,
           options
         );
 
