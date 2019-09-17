@@ -103,7 +103,7 @@ function manyToManyRelationships(leftTable, build) {
             return memoRight;
           }
 
-          const duplicateConnectionsAllowed = !junctionTable.constraints.find(
+          const allowsMultipleEdgesToNode = !junctionTable.constraints.find(
             c =>
               ["p", "u"].includes(c.type) &&
               arraysAreEqual(
@@ -126,7 +126,7 @@ function manyToManyRelationships(leftTable, build) {
               rightTable,
               junctionLeftConstraint,
               junctionRightConstraint,
-              duplicateConnectionsAllowed,
+              allowsMultipleEdgesToNode,
             },
           ];
         }, []);
@@ -165,7 +165,7 @@ function createManyToManyConnectionType(
     rightTable,
     junctionLeftConstraint,
     junctionRightConstraint,
-    duplicateConnectionsAllowed,
+    allowsMultipleEdgesToNode,
   } = relationship;
   const {
     extend,
@@ -383,7 +383,7 @@ function createManyToManyConnectionType(
             return memo;
           }, {});
 
-        if (duplicateConnectionsAllowed) {
+        if (allowsMultipleEdgesToNode) {
           return edgeFields;
         } else {
           return extend(edgeFields, fieldsFromAttributes(junctionAttributes));

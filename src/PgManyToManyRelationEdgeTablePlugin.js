@@ -33,10 +33,10 @@ module.exports = function PgManyToManyEdgeTablePlugin(
       junctionRightKeyAttributes,
       junctionTable,
       junctionRightConstraint,
-      duplicateConnectionsAllowed,
+      allowsMultipleEdgesToNode,
     } = pgManyToManyRelationship;
 
-    if (!duplicateConnectionsAllowed) {
+    if (!allowsMultipleEdgesToNode) {
       return fields;
     }
 
