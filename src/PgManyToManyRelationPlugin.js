@@ -1,3 +1,9 @@
+function arraysAreEqual(array1, array2) {
+  return (
+    array1.length === array2.length && array1.every((el, i) => array2[i] === el)
+  );
+}
+
 // Given a `leftTable`, trace through the foreign key relations
 // and identify a `junctionTable` and `rightTable`.
 // Returns a list of data objects for these many-to-many relationships.
@@ -77,17 +83,17 @@ function manyToManyRelationships(leftTable, build) {
           const junctionLeftConstraintIsUnique = !!junctionTable.constraints.find(
             c =>
               (c.type === "p" || c.type === "u") &&
-              c.keyAttributeNums.length === junctionLeftKeyAttributes.length &&
-              c.keyAttributeNums.every(
-                (n, i) => junctionLeftKeyAttributes[i].num === n
+              arraysAreEqual(
+                c.keyAttributeNums,
+                junctionLeftKeyAttributes.map(attr => attr.num)
               )
           );
           const junctionRightConstraintIsUnique = !!junctionTable.constraints.find(
             c =>
               (c.type === "p" || c.type === "u") &&
-              c.keyAttributeNums.length === junctionRightKeyAttributes.length &&
-              c.keyAttributeNums.every(
-                (n, i) => junctionRightKeyAttributes[i].num === n
+              arraysAreEqual(
+                c.keyAttributeNums,
+                junctionRightKeyAttributes.map(attr => attr.num)
               )
           );
           if (
