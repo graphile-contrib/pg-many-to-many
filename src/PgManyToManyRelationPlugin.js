@@ -550,6 +550,16 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                   getDataFromParsedResolveInfoFragment,
                   addDataGenerator,
                 }) => {
+                  const sqlFrom = sql.identifier(
+                    rightTable.namespace.name,
+                    rightTable.name
+                  );
+                  const queryOptions = {
+                    useAsterisk: rightTable.canUseAsterisk,
+                    withPagination: isConnection,
+                    withPaginationAsFields: false,
+                    asJsonAggregate: !isConnection,
+                  };
                   addDataGenerator(parsedResolveInfoFragment => {
                     return {
                       pgQuery: queryBuilder => {
@@ -563,17 +573,10 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                           const rightTableAlias = sql.identifier(Symbol());
                           const leftTableAlias = queryBuilder.getTableAlias();
                           const query = queryFromResolveData(
-                            sql.identifier(
-                              rightTable.namespace.name,
-                              rightTable.name
-                            ),
+                            sqlFrom,
                             rightTableAlias,
                             resolveData,
-                            {
-                              withPagination: isConnection,
-                              withPaginationAsFields: false,
-                              asJsonAggregate: !isConnection,
-                            },
+                            queryOptions,
                             innerQueryBuilder => {
                               innerQueryBuilder.parentQueryBuilder = queryBuilder;
                               const rightPrimaryKeyConstraint =
@@ -625,9 +628,10 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                     };
                   });
 
-                  const rightTableTypeName = inflection.tableType(rightTable);
                   return {
-                    description: `Reads and enables pagination through a set of \`${rightTableTypeName}\`.`,
+                    description: `Reads and enables pagination through a set of \`${
+                      RightTableType.name
+                    }\`.`,
                     type: isConnection
                       ? new GraphQLNonNull(RightTableConnectionType)
                       : new GraphQLNonNull(
@@ -651,15 +655,6 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                   isPgFieldSimpleCollection: !isConnection,
                   isPgManyToManyRelationField: true,
                   pgFieldIntrospection: rightTable,
-                  pgManyToManyLeftTable: leftTable,
-                  pgManyToManyLeftKeyAttributes: leftKeyAttributes,
-                  pgManyToManyRightTable: rightTable,
-                  pgManyToManyRightKeyAttributes: rightKeyAttributes,
-                  pgManyToManyJunctionTable: junctionTable,
-                  pgManyToManyJunctionLeftConstraint: junctionLeftConstraint,
-                  pgManyToManyJunctionRightConstraint: junctionRightConstraint,
-                  pgManyToManyJunctionLeftKeyAttributes: junctionLeftKeyAttributes,
-                  pgManyToManyJunctionRightKeyAttributes: junctionRightKeyAttributes,
                 }
               ),
             },
