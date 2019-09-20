@@ -51,13 +51,6 @@ module.exports = function PgManyToManyRelationEdgeColumnsPlugin(builder) {
             return memo;
 
           const fieldName = inflection.column(attr);
-          if (memo[fieldName]) {
-            throw new Error(
-              `Two columns produce the same GraphQL field name '${fieldName}' on class '${
-                junctionTable.namespaceName
-              }.${junctionTable.name}'; one of them is '${attr.name}'`
-            );
-          }
           memo = extend(
             memo,
             {
