@@ -1,0 +1,436 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`prints a schema using the 'a' database schema 1`] = `
+type Bar implements Node {
+  barId: Int!
+  barName: String!
+
+  """Reads and enables pagination through a set of \`Foo\`."""
+  foosByJunctionJBarIdAndJFooId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Foo\`."""
+    orderBy: [FoosOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FoosByJunctionJBarIdAndJFooIdConnection!
+
+  """Reads and enables pagination through a set of \`Junction\`."""
+  junctionsByJBarId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Junction\`."""
+    orderBy: [JunctionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): JunctionsConnection!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+}
+
+"""A connection to a list of \`Bar\` values, with data from \`Junction\`."""
+type BarsByJunctionJFooIdAndJBarIdConnection {
+  """
+  A list of edges which contains the \`Bar\`, info from the \`Junction\`, and the cursor to aid in pagination.
+  """
+  edges: [BarsByJunctionJFooIdAndJBarIdEdge!]!
+
+  """A list of \`Bar\` objects."""
+  nodes: [Bar]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Bar\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Bar\` edge in the connection, with data from \`Junction\`."""
+type BarsByJunctionJFooIdAndJBarIdEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Bar\` at the end of the edge."""
+  node: Bar
+}
+
+"""A connection to a list of \`Bar\` values."""
+type BarsConnection {
+  """
+  A list of edges which contains the \`Bar\` and cursor to aid in pagination.
+  """
+  edges: [BarsEdge!]!
+
+  """A list of \`Bar\` objects."""
+  nodes: [Bar]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Bar\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Bar\` edge in the connection."""
+type BarsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Bar\` at the end of the edge."""
+  node: Bar
+}
+
+"""Methods to use when ordering \`Bar\`."""
+enum BarsOrderBy {
+  BAR_ID_ASC
+  BAR_ID_DESC
+  BAR_NAME_ASC
+  BAR_NAME_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""A location in a connection that can be used for resuming pagination."""
+scalar Cursor
+
+type Foo implements Node {
+  """Reads and enables pagination through a set of \`Bar\`."""
+  barsByJunctionJFooIdAndJBarId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Bar\`."""
+    orderBy: [BarsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): BarsByJunctionJFooIdAndJBarIdConnection!
+  fooId: Int!
+  fooName: String!
+
+  """Reads and enables pagination through a set of \`Junction\`."""
+  junctionsByJFooId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Junction\`."""
+    orderBy: [JunctionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): JunctionsConnection!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+}
+
+"""A connection to a list of \`Foo\` values, with data from \`Junction\`."""
+type FoosByJunctionJBarIdAndJFooIdConnection {
+  """
+  A list of edges which contains the \`Foo\`, info from the \`Junction\`, and the cursor to aid in pagination.
+  """
+  edges: [FoosByJunctionJBarIdAndJFooIdEdge!]!
+
+  """A list of \`Foo\` objects."""
+  nodes: [Foo]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Foo\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Foo\` edge in the connection, with data from \`Junction\`."""
+type FoosByJunctionJBarIdAndJFooIdEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Foo\` at the end of the edge."""
+  node: Foo
+}
+
+"""A connection to a list of \`Foo\` values."""
+type FoosConnection {
+  """
+  A list of edges which contains the \`Foo\` and cursor to aid in pagination.
+  """
+  edges: [FoosEdge!]!
+
+  """A list of \`Foo\` objects."""
+  nodes: [Foo]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Foo\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Foo\` edge in the connection."""
+type FoosEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Foo\` at the end of the edge."""
+  node: Foo
+}
+
+"""Methods to use when ordering \`Foo\`."""
+enum FoosOrderBy {
+  FOO_ID_ASC
+  FOO_ID_DESC
+  FOO_NAME_ASC
+  FOO_NAME_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type Junction implements Node {
+  """Reads a single \`Bar\` that is related to this \`Junction\`."""
+  barByJBarId: Bar
+
+  """Reads a single \`Foo\` that is related to this \`Junction\`."""
+  fooByJFooId: Foo
+  jBarId: Int!
+  jFooId: Int!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+}
+
+"""A connection to a list of \`Junction\` values."""
+type JunctionsConnection {
+  """
+  A list of edges which contains the \`Junction\` and cursor to aid in pagination.
+  """
+  edges: [JunctionsEdge!]!
+
+  """A list of \`Junction\` objects."""
+  nodes: [Junction]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Junction\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Junction\` edge in the connection."""
+type JunctionsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Junction\` at the end of the edge."""
+  node: Junction
+}
+
+"""Methods to use when ordering \`Junction\`."""
+enum JunctionsOrderBy {
+  J_BAR_ID_ASC
+  J_BAR_ID_DESC
+  J_FOO_ID_ASC
+  J_FOO_ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""An object with a globally unique \`ID\`."""
+interface Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, the cursor to continue."""
+  endCursor: Cursor
+
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: Cursor
+}
+
+"""The root query type which gives access points into the data universe."""
+type Query implements Node {
+  """Reads and enables pagination through a set of \`Bar\`."""
+  allBars(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Bar\`."""
+    orderBy: [BarsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): BarsConnection
+
+  """Reads and enables pagination through a set of \`Foo\`."""
+  allFoos(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Foo\`."""
+    orderBy: [FoosOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FoosConnection
+
+  """Reads and enables pagination through a set of \`Junction\`."""
+  allJunctions(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Junction\`."""
+    orderBy: [JunctionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): JunctionsConnection
+
+  """Reads a single \`Bar\` using its globally unique \`ID\`."""
+  bar(
+    """The globally unique \`ID\` to be used in selecting a single \`Bar\`."""
+    nodeId: ID!
+  ): Bar
+  barByBarId(barId: Int!): Bar
+
+  """Reads a single \`Foo\` using its globally unique \`ID\`."""
+  foo(
+    """The globally unique \`ID\` to be used in selecting a single \`Foo\`."""
+    nodeId: ID!
+  ): Foo
+  fooByFooId(fooId: Int!): Foo
+
+  """Reads a single \`Junction\` using its globally unique \`ID\`."""
+  junction(
+    """The globally unique \`ID\` to be used in selecting a single \`Junction\`."""
+    nodeId: ID!
+  ): Junction
+  junctionByJFooIdAndJBarId(jBarId: Int!, jFooId: Int!): Junction
+
+  """Fetches an object given its globally unique \`ID\`."""
+  node(
+    """The globally unique \`ID\`."""
+    nodeId: ID!
+  ): Node
+
+  """
+  The root query type must be a \`Node\` to work well with Relay 1 mutations. This just resolves to \`query\`.
+  """
+  nodeId: ID!
+
+  """
+  Exposes the root query type nested one level down. This is helpful for Relay 1
+  which can only query top level fields if they are in a particular form.
+  """
+  query: Query!
+}
+
+`;

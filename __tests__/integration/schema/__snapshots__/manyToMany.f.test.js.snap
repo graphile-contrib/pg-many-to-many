@@ -4,6 +4,58 @@ exports[`prints a schema with the many-to-many plugin 1`] = `
 """A location in a connection that can be used for resuming pagination."""
 scalar Cursor
 
+"""A connection to a list of \`Person\` values, with data from \`Junction\`."""
+type FollowersConnection {
+  """
+  A list of edges which contains the \`Person\`, info from the \`Junction\`, and the cursor to aid in pagination.
+  """
+  edges: [FollowersEdge!]!
+
+  """A list of \`Person\` objects."""
+  nodes: [Person]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Person\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Person\` edge in the connection, with data from \`Junction\`."""
+type FollowersEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Person\` at the end of the edge."""
+  node: Person
+}
+
+"""A connection to a list of \`Person\` values, with data from \`Junction\`."""
+type FollowingConnection {
+  """
+  A list of edges which contains the \`Person\`, info from the \`Junction\`, and the cursor to aid in pagination.
+  """
+  edges: [FollowingEdge!]!
+
+  """A list of \`Person\` objects."""
+  nodes: [Person]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Person\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Person\` edge in the connection, with data from \`Junction\`."""
+type FollowingEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Person\` at the end of the edge."""
+  node: Person
+}
+
 type Junction implements Node {
   followerId: Int!
   followingId: Int!
@@ -108,7 +160,7 @@ type Person implements Node {
 
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PeopleConnection!
+  ): FollowersConnection!
 
   """Reads and enables pagination through a set of \`Person\`."""
   following(
@@ -137,7 +189,7 @@ type Person implements Node {
 
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PeopleConnection!
+  ): FollowingConnection!
   id: Int!
   name: String
 
