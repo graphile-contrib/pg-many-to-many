@@ -64,28 +64,30 @@ module.exports = function PgManyToManyRelationEdgeColumnsPlugin(builder) {
                       attr.typeId,
                       attr.typeModifier
                     ) || GraphQLString;
+
+                  // Since we're ignoring multi-column keys, we can simplify here
+                  const leftKeyAttribute = leftKeyAttributes[0];
+                  const junctionLeftKeyAttribute = junctionLeftKeyAttributes[0];
+                  const junctionRightKeyAttribute =
+                    junctionRightKeyAttributes[0];
+                  const rightKeyAttribute = rightKeyAttributes[0];
+
+                  const sqlSelectFrom = sql.fragment`select ${sql.identifier(
+                    attr.name
+                  )} from ${sql.identifier(
+                    junctionTable.namespace.name,
+                    junctionTable.name
+                  )}`;
+
                   addDataGenerator(parsedResolveInfoFragment => {
                     return {
                       pgQuery: queryBuilder => {
-                        // Since we're ignoring multi-column keys, we can simplify here
-                        const leftKeyAttribute = leftKeyAttributes[0];
-                        const junctionLeftKeyAttribute =
-                          junctionLeftKeyAttributes[0];
-                        const junctionRightKeyAttribute =
-                          junctionRightKeyAttributes[0];
-                        const rightKeyAttribute = rightKeyAttributes[0];
-
                         queryBuilder.select(
                           getSelectValueForFieldAndTypeAndModifier(
                             ReturnType,
                             fieldContext,
                             parsedResolveInfoFragment,
-                            sql.fragment`(select ${sql.identifier(
-                              attr.name
-                            )} from ${sql.identifier(
-                              junctionTable.namespace.name,
-                              junctionTable.name
-                            )} where ${sql.identifier(
+                            sql.fragment`(${sqlSelectFrom} where ${sql.identifier(
                               junctionRightKeyAttribute.name
                             )} = ${queryBuilder.getTableAlias()}.${sql.identifier(
                               rightKeyAttribute.name
