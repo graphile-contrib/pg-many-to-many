@@ -117,7 +117,10 @@ module.exports = function PgManyToManyRelationEdgeColumnsPlugin(builder) {
                     },
                   };
                 },
-                { pgFieldIntrospection: attr }
+                {
+                  isPgManyToManyRelationEdgeColumnField: true,
+                  pgFieldIntrospection: attr,
+                }
               ),
             },
             `Adding field for ${describePgEntity(attr)}.`
