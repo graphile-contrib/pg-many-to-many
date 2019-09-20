@@ -54,7 +54,7 @@ module.exports = function PgManyToManyEdgeTablePlugin(
     );
 
     function makeFields(isConnection) {
-      const manyRelationFieldName = isConnection
+      const fieldName = isConnection
         ? inflection.manyRelationByKeys(
             junctionRightKeyAttributes,
             junctionTable,
@@ -77,8 +77,8 @@ module.exports = function PgManyToManyEdgeTablePlugin(
       fields = extend(
         fields,
         {
-          [manyRelationFieldName]: fieldWithHooks(
-            manyRelationFieldName,
+          [fieldName]: fieldWithHooks(
+            fieldName,
             ({ getDataFromParsedResolveInfoFragment, addDataGenerator }) => {
               const sqlFrom = sql.identifier(
                 junctionTable.namespace.name,
