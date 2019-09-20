@@ -127,7 +127,7 @@ type BarsConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Bar\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Bar\` edge in the connection."""
@@ -188,7 +188,7 @@ type BazsConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Baz\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Baz\` edge in the connection."""
@@ -251,7 +251,7 @@ type CorgesConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Corge\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Corge\` edge in the connection."""
@@ -455,7 +455,7 @@ type FoosConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Foo\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Foo\` edge in the connection."""
@@ -494,7 +494,7 @@ type MembersConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Person\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Person\` edge in the connection, with data from \`Membership\`."""
@@ -554,7 +554,7 @@ type MembershipsConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Membership\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Membership\` edge in the connection."""
@@ -616,7 +616,7 @@ type PeopleConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Person\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Person\` edge in the connection."""
@@ -1129,7 +1129,7 @@ type QuxesConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Qux\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Qux\` edge in the connection."""
@@ -1230,23 +1230,6 @@ type Team implements Node {
     orderBy: [MembershipsOrderBy!] = [PRIMARY_KEY_ASC]
   ): MembershipsConnection!
 
-  """Reads and enables pagination through a set of \`Membership\`."""
-  membershipsByTeamIdList(
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MembershipCondition
-
-    """Only read the first \`n\` values of the set."""
-    first: Int
-
-    """Skip the first \`n\` values."""
-    offset: Int
-
-    """The method to use when ordering \`Membership\`."""
-    orderBy: [MembershipsOrderBy!]
-  ): [Membership!]!
-
   """
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
   """
@@ -1279,7 +1262,7 @@ type TeamsByMembershipPersonIdAndTeamIdConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Team\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Team\` edge in the connection, with data from \`Membership\`."""
@@ -1307,7 +1290,7 @@ type TeamsConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Team\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Team\` edge in the connection."""

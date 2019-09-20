@@ -23,7 +23,7 @@ module.exports = function PgManyToManyPlugin(builder, options) {
         );
       }
     };
-    depends("graphile-build-pg", "^4.3.1");
+    depends("graphile-build-pg", "^4.4.0");
 
     // Register this plugin
     build.versions = build.extend(build.versions, { [pkg.name]: pkg.version });

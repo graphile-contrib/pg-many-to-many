@@ -18,7 +18,7 @@ type FollowersConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Person\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Person\` edge in the connection, with data from \`Junction\`."""
@@ -44,7 +44,7 @@ type FollowingConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Person\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Person\` edge in the connection, with data from \`Junction\`."""
@@ -109,7 +109,7 @@ type PeopleConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Person\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Person\` edge in the connection."""
