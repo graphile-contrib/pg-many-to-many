@@ -162,9 +162,10 @@ module.exports = function PgManyToManyEdgeTablePlugin(
                 };
               });
 
-              const junctionTableTypeName = inflection.tableType(junctionTable);
               return {
-                description: `Reads and enables pagination through a set of \`${junctionTableTypeName}\`.`,
+                description: `Reads and enables pagination through a set of \`${
+                  JunctionTableType.name
+                }\`.`,
                 type: isConnection
                   ? new GraphQLNonNull(JunctionTableConnectionType)
                   : new GraphQLNonNull(
