@@ -93,7 +93,7 @@ type BarsConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Bar\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Bar\` edge in the connection."""
@@ -154,7 +154,7 @@ type BazsConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Baz\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Baz\` edge in the connection."""
@@ -217,7 +217,7 @@ type CorgesConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Corge\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Corge\` edge in the connection."""
@@ -370,7 +370,7 @@ type FoosConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Foo\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Foo\` edge in the connection."""
@@ -439,7 +439,7 @@ type MembershipsConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Membership\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Membership\` edge in the connection."""
@@ -501,7 +501,7 @@ type PeopleConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Person\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Person\` edge in the connection."""
@@ -895,7 +895,7 @@ type QuxesConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Qux\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Qux\` edge in the connection."""
@@ -1011,7 +1011,7 @@ type TeamsConnection {
   pageInfo: PageInfo!
 
   """The count of *all* \`Team\` you could get from the connection."""
-  totalCount: Int
+  totalCount: Int!
 }
 
 """A \`Team\` edge in the connection."""

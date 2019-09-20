@@ -4,7 +4,7 @@
 
 This Graphile Engine plugin adds connection fields for many-to-many relations.
 
-> Requires `postgraphile@^4.3.1` or `graphile-build-pg@^4.3.1`
+> Requires `postgraphile@^4.4.0` or `graphile-build-pg@^4.4.0`
 
 Example:
 
