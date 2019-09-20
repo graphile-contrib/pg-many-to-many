@@ -41,7 +41,6 @@ module.exports = function PgManyToManyRelationEdgeColumnsPlugin(builder) {
       return extend(
         fields,
         junctionTable.attributes.reduce((memo, attr) => {
-          // PERFORMANCE: These used to be .filter(...) calls
           if (!pgColumnFilter(attr, build, context)) return memo;
           if (omit(attr, "read")) return memo;
 
