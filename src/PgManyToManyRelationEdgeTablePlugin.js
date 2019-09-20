@@ -67,6 +67,12 @@ module.exports = function PgManyToManyEdgeTablePlugin(
             rightTable,
             junctionRightConstraint
           );
+      const Type = isConnection
+        ? JunctionTableConnectionType
+        : JunctionTableType;
+      if (!Type) {
+        return;
+      }
 
       fields = extend(
         fields,
@@ -90,9 +96,7 @@ module.exports = function PgManyToManyEdgeTablePlugin(
                     queryBuilder.select(() => {
                       const resolveData = getDataFromParsedResolveInfoFragment(
                         parsedResolveInfoFragment,
-                        isConnection
-                          ? JunctionTableConnectionType
-                          : JunctionTableType
+                        Type
                       );
                       const junctionTableAlias = sql.identifier(Symbol());
                       const rightTableAlias = queryBuilder.getTableAlias();
