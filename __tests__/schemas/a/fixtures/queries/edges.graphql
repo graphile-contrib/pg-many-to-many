@@ -1,0 +1,22 @@
+{
+  allFoos {
+    nodes {
+      fooId
+      barsByJunctionJFooIdAndJBarId {
+        edges {
+          cursor
+          node {
+            nodeId
+            barId
+            barName
+          }
+        }
+        pageInfo {
+          startCursor
+          endCursor
+        }
+        totalCount
+      }
+    }
+  }
+}

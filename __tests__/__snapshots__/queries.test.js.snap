@@ -1,5 +1,654 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`schema=a query=edges.graphql 1`] = `
+Object {
+  "data": Object {
+    "allFoos": Object {
+      "nodes": Array [
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "edges": Array [
+              Object {
+                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+                "node": Object {
+                  "barId": 11,
+                  "barName": "Bar 11",
+                  "nodeId": "WyJiYXJzIiwxMV0=",
+                },
+              },
+              Object {
+                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
+                "node": Object {
+                  "barId": 12,
+                  "barName": "Bar 12",
+                  "nodeId": "WyJiYXJzIiwxMl0=",
+                },
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 2,
+          },
+          "fooId": 1,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "edges": Array [
+              Object {
+                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+                "node": Object {
+                  "barId": 11,
+                  "barName": "Bar 11",
+                  "nodeId": "WyJiYXJzIiwxMV0=",
+                },
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 1,
+          },
+          "fooId": 2,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "edges": Array [],
+            "pageInfo": Object {
+              "endCursor": null,
+              "startCursor": null,
+            },
+            "totalCount": 0,
+          },
+          "fooId": 3,
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`schema=a query=nodes.graphql 1`] = `
+Object {
+  "data": Object {
+    "allFoos": Object {
+      "nodes": Array [
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "nodes": Array [
+              Object {
+                "barId": 11,
+                "barName": "Bar 11",
+                "nodeId": "WyJiYXJzIiwxMV0=",
+              },
+              Object {
+                "barId": 12,
+                "barName": "Bar 12",
+                "nodeId": "WyJiYXJzIiwxMl0=",
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 2,
+          },
+          "fooId": 1,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "nodes": Array [
+              Object {
+                "barId": 11,
+                "barName": "Bar 11",
+                "nodeId": "WyJiYXJzIiwxMV0=",
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 1,
+          },
+          "fooId": 2,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "nodes": Array [],
+            "pageInfo": Object {
+              "endCursor": null,
+              "startCursor": null,
+            },
+            "totalCount": 0,
+          },
+          "fooId": 3,
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`schema=b query=edges.graphql 1`] = `
+Object {
+  "data": Object {
+    "allFoos": Object {
+      "nodes": Array [
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "edges": Array [
+              Object {
+                "createdAt": "2018-01-01T08:00:00-04:00",
+                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+                "node": Object {
+                  "barId": 11,
+                  "barName": "Bar 11",
+                  "nodeId": "WyJiYXJzIiwxMV0=",
+                },
+              },
+              Object {
+                "createdAt": "2018-01-02T08:00:00-04:00",
+                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
+                "node": Object {
+                  "barId": 12,
+                  "barName": "Bar 12",
+                  "nodeId": "WyJiYXJzIiwxMl0=",
+                },
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 2,
+          },
+          "fooId": 1,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "edges": Array [
+              Object {
+                "createdAt": "2018-01-03T08:00:00-04:00",
+                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+                "node": Object {
+                  "barId": 11,
+                  "barName": "Bar 11",
+                  "nodeId": "WyJiYXJzIiwxMV0=",
+                },
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 1,
+          },
+          "fooId": 2,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "edges": Array [],
+            "pageInfo": Object {
+              "endCursor": null,
+              "startCursor": null,
+            },
+            "totalCount": 0,
+          },
+          "fooId": 3,
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`schema=b query=nodes.graphql 1`] = `
+Object {
+  "data": Object {
+    "allFoos": Object {
+      "nodes": Array [
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "nodes": Array [
+              Object {
+                "barId": 11,
+                "barName": "Bar 11",
+                "nodeId": "WyJiYXJzIiwxMV0=",
+              },
+              Object {
+                "barId": 12,
+                "barName": "Bar 12",
+                "nodeId": "WyJiYXJzIiwxMl0=",
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 2,
+          },
+          "fooId": 1,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "nodes": Array [
+              Object {
+                "barId": 11,
+                "barName": "Bar 11",
+                "nodeId": "WyJiYXJzIiwxMV0=",
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 1,
+          },
+          "fooId": 2,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "nodes": Array [],
+            "pageInfo": Object {
+              "endCursor": null,
+              "startCursor": null,
+            },
+            "totalCount": 0,
+          },
+          "fooId": 3,
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`schema=c query=edges.graphql 1`] = `
+Object {
+  "data": Object {
+    "allFoos": Object {
+      "nodes": Array [
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "edges": Array [
+              Object {
+                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+                "junctionsByJBarId": Object {
+                  "edges": Array [
+                    Object {
+                      "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
+                      "node": Object {
+                        "jBarId": 11,
+                        "jFooId": 1,
+                        "nodeId": "WyJqdW5jdGlvbnMiLDFd",
+                      },
+                    },
+                  ],
+                  "pageInfo": Object {
+                    "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
+                    "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
+                  },
+                  "totalCount": 1,
+                },
+                "node": Object {
+                  "barId": 11,
+                  "barName": "Bar 11",
+                  "nodeId": "WyJiYXJzIiwxMV0=",
+                },
+              },
+              Object {
+                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
+                "junctionsByJBarId": Object {
+                  "edges": Array [
+                    Object {
+                      "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsyXV0=",
+                      "node": Object {
+                        "jBarId": 12,
+                        "jFooId": 1,
+                        "nodeId": "WyJqdW5jdGlvbnMiLDJd",
+                      },
+                    },
+                    Object {
+                      "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFszXV0=",
+                      "node": Object {
+                        "jBarId": 12,
+                        "jFooId": 1,
+                        "nodeId": "WyJqdW5jdGlvbnMiLDNd",
+                      },
+                    },
+                  ],
+                  "pageInfo": Object {
+                    "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFszXV0=",
+                    "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsyXV0=",
+                  },
+                  "totalCount": 2,
+                },
+                "node": Object {
+                  "barId": 12,
+                  "barName": "Bar 12",
+                  "nodeId": "WyJiYXJzIiwxMl0=",
+                },
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 2,
+          },
+          "fooId": 1,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "edges": Array [
+              Object {
+                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+                "junctionsByJBarId": Object {
+                  "edges": Array [
+                    Object {
+                      "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
+                      "node": Object {
+                        "jBarId": 11,
+                        "jFooId": 2,
+                        "nodeId": "WyJqdW5jdGlvbnMiLDRd",
+                      },
+                    },
+                  ],
+                  "pageInfo": Object {
+                    "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
+                    "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
+                  },
+                  "totalCount": 1,
+                },
+                "node": Object {
+                  "barId": 11,
+                  "barName": "Bar 11",
+                  "nodeId": "WyJiYXJzIiwxMV0=",
+                },
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 1,
+          },
+          "fooId": 2,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "edges": Array [],
+            "pageInfo": Object {
+              "endCursor": null,
+              "startCursor": null,
+            },
+            "totalCount": 0,
+          },
+          "fooId": 3,
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`schema=c query=nodes.graphql 1`] = `
+Object {
+  "data": Object {
+    "allFoos": Object {
+      "nodes": Array [
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "nodes": Array [
+              Object {
+                "barId": 11,
+                "barName": "Bar 11",
+                "nodeId": "WyJiYXJzIiwxMV0=",
+              },
+              Object {
+                "barId": 12,
+                "barName": "Bar 12",
+                "nodeId": "WyJiYXJzIiwxMl0=",
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 2,
+          },
+          "fooId": 1,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "nodes": Array [
+              Object {
+                "barId": 11,
+                "barName": "Bar 11",
+                "nodeId": "WyJiYXJzIiwxMV0=",
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 1,
+          },
+          "fooId": 2,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "nodes": Array [],
+            "pageInfo": Object {
+              "endCursor": null,
+              "startCursor": null,
+            },
+            "totalCount": 0,
+          },
+          "fooId": 3,
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`schema=d query=edges.graphql 1`] = `
+Object {
+  "data": Object {
+    "allFoos": Object {
+      "nodes": Array [
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "edges": Array [
+              Object {
+                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+                "junctionsByJBarId": Object {
+                  "edges": Array [
+                    Object {
+                      "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
+                      "node": Object {
+                        "createdAt": "2018-01-01T08:00:00-04:00",
+                        "jBarId": 11,
+                        "jFooId": 1,
+                        "nodeId": "WyJqdW5jdGlvbnMiLDFd",
+                      },
+                    },
+                  ],
+                  "pageInfo": Object {
+                    "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
+                    "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
+                  },
+                  "totalCount": 1,
+                },
+                "node": Object {
+                  "barId": 11,
+                  "barName": "Bar 11",
+                  "nodeId": "WyJiYXJzIiwxMV0=",
+                },
+              },
+              Object {
+                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
+                "junctionsByJBarId": Object {
+                  "edges": Array [
+                    Object {
+                      "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsyXV0=",
+                      "node": Object {
+                        "createdAt": "2018-01-02T08:00:00-04:00",
+                        "jBarId": 12,
+                        "jFooId": 1,
+                        "nodeId": "WyJqdW5jdGlvbnMiLDJd",
+                      },
+                    },
+                    Object {
+                      "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFszXV0=",
+                      "node": Object {
+                        "createdAt": "2018-01-04T08:00:00-04:00",
+                        "jBarId": 12,
+                        "jFooId": 1,
+                        "nodeId": "WyJqdW5jdGlvbnMiLDNd",
+                      },
+                    },
+                  ],
+                  "pageInfo": Object {
+                    "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFszXV0=",
+                    "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsyXV0=",
+                  },
+                  "totalCount": 2,
+                },
+                "node": Object {
+                  "barId": 12,
+                  "barName": "Bar 12",
+                  "nodeId": "WyJiYXJzIiwxMl0=",
+                },
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 2,
+          },
+          "fooId": 1,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "edges": Array [
+              Object {
+                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+                "junctionsByJBarId": Object {
+                  "edges": Array [
+                    Object {
+                      "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
+                      "node": Object {
+                        "createdAt": "2018-01-03T08:00:00-04:00",
+                        "jBarId": 11,
+                        "jFooId": 2,
+                        "nodeId": "WyJqdW5jdGlvbnMiLDRd",
+                      },
+                    },
+                  ],
+                  "pageInfo": Object {
+                    "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
+                    "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
+                  },
+                  "totalCount": 1,
+                },
+                "node": Object {
+                  "barId": 11,
+                  "barName": "Bar 11",
+                  "nodeId": "WyJiYXJzIiwxMV0=",
+                },
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 1,
+          },
+          "fooId": 2,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "edges": Array [],
+            "pageInfo": Object {
+              "endCursor": null,
+              "startCursor": null,
+            },
+            "totalCount": 0,
+          },
+          "fooId": 3,
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`schema=d query=nodes.graphql 1`] = `
+Object {
+  "data": Object {
+    "allFoos": Object {
+      "nodes": Array [
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "nodes": Array [
+              Object {
+                "barId": 11,
+                "barName": "Bar 11",
+                "nodeId": "WyJiYXJzIiwxMV0=",
+              },
+              Object {
+                "barId": 12,
+                "barName": "Bar 12",
+                "nodeId": "WyJiYXJzIiwxMl0=",
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 2,
+          },
+          "fooId": 1,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "nodes": Array [
+              Object {
+                "barId": 11,
+                "barName": "Bar 11",
+                "nodeId": "WyJiYXJzIiwxMV0=",
+              },
+            ],
+            "pageInfo": Object {
+              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+            },
+            "totalCount": 1,
+          },
+          "fooId": 2,
+        },
+        Object {
+          "barsByJunctionJFooIdAndJBarId": Object {
+            "nodes": Array [],
+            "pageInfo": Object {
+              "endCursor": null,
+              "startCursor": null,
+            },
+            "totalCount": 0,
+          },
+          "fooId": 3,
+        },
+      ],
+    },
+  },
+}
+`;
+
 exports[`schema=f query=f.graphql 1`] = `
 Object {
   "data": Object {
