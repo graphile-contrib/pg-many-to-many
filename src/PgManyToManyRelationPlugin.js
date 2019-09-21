@@ -424,17 +424,19 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         junctionLeftConstraint,
         junctionRightConstraint
       ) {
-        const relationName = inflection.manyToManyRelationByKeys(
-          leftKeyAttributes,
-          junctionLeftKeyAttributes,
-          junctionRightKeyAttributes,
-          rightKeyAttributes,
-          junctionTable,
-          rightTable,
-          junctionLeftConstraint,
-          junctionRightConstraint
-        );
-        return this.upperCamelCase(`${relationName}-edge`);
+        const baseName =
+          junctionRightConstraint.tags.manyToManyObjectTypeBaseName ||
+          inflection.manyToManyRelationByKeys(
+            leftKeyAttributes,
+            junctionLeftKeyAttributes,
+            junctionRightKeyAttributes,
+            rightKeyAttributes,
+            junctionTable,
+            rightTable,
+            junctionLeftConstraint,
+            junctionRightConstraint
+          );
+        return this.upperCamelCase(`${baseName}-edge`);
       },
       manyToManyRelationConnection(
         leftKeyAttributes,
@@ -446,17 +448,19 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         junctionLeftConstraint,
         junctionRightConstraint
       ) {
-        const relationName = inflection.manyToManyRelationByKeys(
-          leftKeyAttributes,
-          junctionLeftKeyAttributes,
-          junctionRightKeyAttributes,
-          rightKeyAttributes,
-          junctionTable,
-          rightTable,
-          junctionLeftConstraint,
-          junctionRightConstraint
-        );
-        return this.upperCamelCase(`${relationName}-connection`);
+        const baseName =
+          junctionRightConstraint.tags.manyToManyObjectTypeBaseName ||
+          inflection.manyToManyRelationByKeys(
+            leftKeyAttributes,
+            junctionLeftKeyAttributes,
+            junctionRightKeyAttributes,
+            rightKeyAttributes,
+            junctionTable,
+            rightTable,
+            junctionLeftConstraint,
+            junctionRightConstraint
+          );
+        return this.upperCamelCase(`${baseName}-connection`);
       },
     });
   });
