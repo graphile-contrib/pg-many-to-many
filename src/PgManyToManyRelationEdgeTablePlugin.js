@@ -163,9 +163,7 @@ module.exports = function PgManyToManyEdgeTablePlugin(
               });
 
               return {
-                description: `Reads and enables pagination through a set of \`${
-                  JunctionTableType.name
-                }\`.`,
+                description: `Reads and enables pagination through a set of \`${JunctionTableType.name}\`.`,
                 type: isConnection
                   ? new GraphQLNonNull(JunctionTableConnectionType)
                   : new GraphQLNonNull(
