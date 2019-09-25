@@ -132,11 +132,8 @@ module.exports = makeAddInflectorsPlugin(
       _junctionTable,
       rightTable,
       _junctionLeftConstraint,
-      junctionRightConstraint
+      _junctionRightConstraint
     ) {
-      if (junctionRightConstraint.tags.manyToManyFieldName) {
-        return junctionRightConstraint.tags.manyToManyFieldName;
-      }
       return this.camelCase(
         `${this.pluralize(this._singularizedTableName(rightTable))}`
       );
@@ -149,11 +146,8 @@ module.exports = makeAddInflectorsPlugin(
       _junctionTable,
       rightTable,
       _junctionLeftConstraint,
-      junctionRightConstraint
+      _junctionRightConstraint
     ) {
-      if (junctionRightConstraint.tags.manyToManySimpleFieldName) {
-        return junctionRightConstraint.tags.manyToManySimpleFieldName;
-      }
       return this.camelCase(
         `${this.pluralize(this._singularizedTableName(rightTable))}-list`
       );
