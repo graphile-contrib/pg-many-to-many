@@ -455,8 +455,8 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         _rightKeyAttributes,
         junctionTable,
         rightTable,
-        _junctionLeftConstraint,
-        _junctionRightConstraint
+        _junctionLeftConstraint, // eslint-disable-line no-unused-vars
+        _junctionRightConstraint // eslint-disable-line no-unused-vars
       ) {
         return this.camelCase(
           `${this.pluralize(
@@ -476,8 +476,8 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         _rightKeyAttributes,
         junctionTable,
         rightTable,
-        _junctionLeftConstraint,
-        _junctionRightConstraint
+        _junctionLeftConstraint, // eslint-disable-line no-unused-vars
+        _junctionRightConstraint // eslint-disable-line no-unused-vars
       ) {
         return this.camelCase(
           `${this.pluralize(
