@@ -649,6 +649,89 @@ Object {
 }
 `;
 
+exports[`schema=e query=multiple-tags-fields.graphql 1`] = `
+Object {
+  "data": Object {
+    "allPeople": Object {
+      "nodes": Array [
+        Object {
+          "personName": "Alice",
+          "tags": Object {
+            "nodes": Array [
+              Object {
+                "tagName": "awesome",
+              },
+            ],
+          },
+          "teams": Object {
+            "nodes": Array [
+              Object {
+                "tags": Object {
+                  "nodes": Array [
+                    Object {
+                      "tagName": "strange",
+                    },
+                  ],
+                },
+                "teamName": "Development",
+              },
+            ],
+          },
+        },
+        Object {
+          "personName": "Bob",
+          "tags": Object {
+            "nodes": Array [
+              Object {
+                "tagName": "strange",
+              },
+            ],
+          },
+          "teams": Object {
+            "nodes": Array [
+              Object {
+                "tags": Object {
+                  "nodes": Array [
+                    Object {
+                      "tagName": "high-performing",
+                    },
+                  ],
+                },
+                "teamName": "Sales",
+              },
+            ],
+          },
+        },
+        Object {
+          "personName": "Carol",
+          "tags": Object {
+            "nodes": Array [
+              Object {
+                "tagName": "high-performing",
+              },
+            ],
+          },
+          "teams": Object {
+            "nodes": Array [
+              Object {
+                "tags": Object {
+                  "nodes": Array [
+                    Object {
+                      "tagName": "awesome",
+                    },
+                  ],
+                },
+                "teamName": "Marketing",
+              },
+            ],
+          },
+        },
+      ],
+    },
+  },
+}
+`;
+
 exports[`schema=f query=f.graphql 1`] = `
 Object {
   "data": Object {

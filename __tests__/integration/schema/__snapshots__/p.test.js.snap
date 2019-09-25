@@ -393,36 +393,6 @@ enum FoosOrderBy {
   PRIMARY_KEY_DESC
 }
 
-"""
-A connection to a list of \`Person\` values, with data from \`Membership\`.
-"""
-type MembersConnection {
-  """
-  A list of edges which contains the \`Person\`, info from the \`Membership\`, and the cursor to aid in pagination.
-  """
-  edges: [MembersEdge!]!
-
-  """A list of \`Person\` objects."""
-  nodes: [Person]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* \`Person\` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A \`Person\` edge in the connection, with data from \`Membership\`."""
-type MembersEdge {
-  createdAt: Datetime!
-
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The \`Person\` at the end of the edge."""
-  node: Person
-}
-
 type Membership implements Node {
   createdAt: Datetime!
 
@@ -619,7 +589,7 @@ type Person implements Node {
 
     """The method to use when ordering \`Team\`."""
     orderBy: [TeamsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TeamsByMembershipPersonIdAndTeamIdConnection!
+  ): PersonTeamsByMembershipPersonIdAndTeamIdConnection!
 }
 
 """
@@ -631,6 +601,34 @@ input PersonCondition {
 
   """Checks for equality with the object’s \`personName\` field."""
   personName: String
+}
+
+"""A connection to a list of \`Team\` values, with data from \`Membership\`."""
+type PersonTeamsByMembershipPersonIdAndTeamIdConnection {
+  """
+  A list of edges which contains the \`Team\`, info from the \`Membership\`, and the cursor to aid in pagination.
+  """
+  edges: [PersonTeamsByMembershipPersonIdAndTeamIdEdge!]!
+
+  """A list of \`Team\` objects."""
+  nodes: [Team]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Team\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Team\` edge in the connection, with data from \`Membership\`."""
+type PersonTeamsByMembershipPersonIdAndTeamIdEdge {
+  createdAt: Datetime!
+
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Team\` at the end of the edge."""
+  node: Team
 }
 
 """The root query type which gives access points into the data universe."""
@@ -978,7 +976,7 @@ type Team implements Node {
 
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
-  ): MembersConnection!
+  ): TeamMembersConnection!
 
   """Reads and enables pagination through a set of \`Membership\`."""
   membershipsByTeamId(
@@ -1027,32 +1025,34 @@ input TeamCondition {
   teamName: String
 }
 
-"""A connection to a list of \`Team\` values, with data from \`Membership\`."""
-type TeamsByMembershipPersonIdAndTeamIdConnection {
+"""
+A connection to a list of \`Person\` values, with data from \`Membership\`.
+"""
+type TeamMembersConnection {
   """
-  A list of edges which contains the \`Team\`, info from the \`Membership\`, and the cursor to aid in pagination.
+  A list of edges which contains the \`Person\`, info from the \`Membership\`, and the cursor to aid in pagination.
   """
-  edges: [TeamsByMembershipPersonIdAndTeamIdEdge!]!
+  edges: [TeamMembersEdge!]!
 
-  """A list of \`Team\` objects."""
-  nodes: [Team]!
+  """A list of \`Person\` objects."""
+  nodes: [Person]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """The count of *all* \`Team\` you could get from the connection."""
+  """The count of *all* \`Person\` you could get from the connection."""
   totalCount: Int!
 }
 
-"""A \`Team\` edge in the connection, with data from \`Membership\`."""
-type TeamsByMembershipPersonIdAndTeamIdEdge {
+"""A \`Person\` edge in the connection, with data from \`Membership\`."""
+type TeamMembersEdge {
   createdAt: Datetime!
 
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The \`Team\` at the end of the edge."""
-  node: Team
+  """The \`Person\` at the end of the edge."""
+  node: Person
 }
 
 """A connection to a list of \`Team\` values."""
