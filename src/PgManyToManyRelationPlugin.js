@@ -133,6 +133,112 @@ function manyToManyRelationships(leftTable, build) {
       return [...memoLeft, ...memoRight];
     }, []);
 }
+
+function getFieldNameForManyToManyRelationship(
+  relationship,
+  inflection,
+  isConnection
+) {
+  const {
+    leftKeyAttributes,
+    junctionLeftKeyAttributes,
+    junctionRightKeyAttributes,
+    rightKeyAttributes,
+    junctionTable,
+    rightTable,
+    junctionLeftConstraint,
+    junctionRightConstraint,
+  } = relationship;
+  const tags = junctionRightConstraint.tags;
+  if (isConnection) {
+    if (tags.manyToManyFieldName) {
+      return tags.manyToManyFieldName;
+    }
+    return inflection.manyToManyRelationByKeys(
+      leftKeyAttributes,
+      junctionLeftKeyAttributes,
+      junctionRightKeyAttributes,
+      rightKeyAttributes,
+      junctionTable,
+      rightTable,
+      junctionLeftConstraint,
+      junctionRightConstraint
+    );
+  } else {
+    if (tags.manyToManySimpleFieldName) {
+      return tags.manyToManySimpleFieldName;
+    }
+    return inflection.manyToManyRelationByKeysSimple(
+      leftKeyAttributes,
+      junctionLeftKeyAttributes,
+      junctionRightKeyAttributes,
+      rightKeyAttributes,
+      junctionTable,
+      rightTable,
+      junctionLeftConstraint,
+      junctionRightConstraint
+    );
+  }
+}
+
+function getEdgeNameForManyToManyRelationship(relationship, inflection) {
+  const {
+    leftKeyAttributes,
+    junctionLeftKeyAttributes,
+    junctionRightKeyAttributes,
+    rightKeyAttributes,
+    junctionTable,
+    rightTable,
+    junctionLeftConstraint,
+    junctionRightConstraint,
+  } = relationship;
+  const tags = junctionRightConstraint.tags;
+  const baseName =
+    tags.manyToManyObjectTypeBaseName || tags.manyToManyFieldName;
+  if (baseName) {
+    return inflection.upperCamelCase(`${baseName}-edge`);
+  }
+  return inflection.manyToManyRelationEdge(
+    leftKeyAttributes,
+    junctionLeftKeyAttributes,
+    junctionRightKeyAttributes,
+    rightKeyAttributes,
+    junctionTable,
+    rightTable,
+    junctionLeftConstraint,
+    junctionRightConstraint
+  );
+}
+
+function getConnectionNameForManyToManyRelationship(relationship, inflection) {
+  const {
+    leftKeyAttributes,
+    junctionLeftKeyAttributes,
+    junctionRightKeyAttributes,
+    rightKeyAttributes,
+    junctionTable,
+    rightTable,
+    junctionLeftConstraint,
+    junctionRightConstraint,
+  } = relationship;
+  const tags = junctionRightConstraint.tags;
+  const baseName =
+    tags.manyToManyObjectTypeBaseName || tags.manyToManyFieldName;
+  if (baseName) {
+    return inflection.upperCamelCase(`${baseName}-connection`);
+  }
+  return inflection.manyToManyRelationConnection(
+    leftKeyAttributes,
+    junctionLeftKeyAttributes,
+    junctionRightKeyAttributes,
+    rightKeyAttributes,
+    junctionTable,
+    rightTable,
+    junctionLeftConstraint,
+    junctionRightConstraint
+  );
+}
+
 const hasNonNullKey = row => {
   if (
     Array.isArray(row.__identifiers) &&
@@ -151,16 +257,7 @@ const hasNonNullKey = row => {
 };
 
 function createManyToManyConnectionType(relationship, build, options) {
-  const {
-    leftKeyAttributes,
-    junctionLeftKeyAttributes,
-    junctionRightKeyAttributes,
-    rightKeyAttributes,
-    junctionTable,
-    rightTable,
-    junctionLeftConstraint,
-    junctionRightConstraint,
-  } = relationship;
+  const { junctionTable, rightTable } = relationship;
   const {
     newWithHooks,
     inflection,
@@ -204,16 +301,7 @@ function createManyToManyConnectionType(relationship, build, options) {
       description: `A \`${
         TableType.name
       }\` edge in the connection, with data from \`${junctionTypeName}\`.`,
-      name: inflection.manyToManyRelationEdge(
-        leftKeyAttributes,
-        junctionLeftKeyAttributes,
-        junctionRightKeyAttributes,
-        rightKeyAttributes,
-        junctionTable,
-        rightTable,
-        junctionLeftConstraint,
-        junctionRightConstraint
-      ),
+      name: getEdgeNameForManyToManyRelationship(relationship, inflection),
       fields: ({ fieldWithHooks }) => {
         return {
           cursor: fieldWithHooks(
@@ -278,15 +366,9 @@ function createManyToManyConnectionType(relationship, build, options) {
       description: `A connection to a list of \`${
         TableType.name
       }\` values, with data from \`${junctionTypeName}\`.`,
-      name: inflection.manyToManyRelationConnection(
-        leftKeyAttributes,
-        junctionLeftKeyAttributes,
-        junctionRightKeyAttributes,
-        rightKeyAttributes,
-        junctionTable,
-        rightTable,
-        junctionLeftConstraint,
-        junctionRightConstraint
+      name: getConnectionNameForManyToManyRelationship(
+        relationship,
+        inflection
       ),
       fields: ({ recurseDataGeneratorsForField, fieldWithHooks }) => {
         recurseDataGeneratorsForField("pageInfo", true);
@@ -374,11 +456,8 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         junctionTable,
         rightTable,
         _junctionLeftConstraint,
-        junctionRightConstraint
+        _junctionRightConstraint
       ) {
-        if (junctionRightConstraint.tags.manyToManyFieldName) {
-          return junctionRightConstraint.tags.manyToManyFieldName;
-        }
         return this.camelCase(
           `${this.pluralize(
             this._singularizedTableName(rightTable)
@@ -398,11 +477,8 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         junctionTable,
         rightTable,
         _junctionLeftConstraint,
-        junctionRightConstraint
+        _junctionRightConstraint
       ) {
-        if (junctionRightConstraint.tags.manyToManySimpleFieldName) {
-          return junctionRightConstraint.tags.manyToManySimpleFieldName;
-        }
         return this.camelCase(
           `${this.pluralize(
             this._singularizedTableName(rightTable)
@@ -424,18 +500,16 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         junctionLeftConstraint,
         junctionRightConstraint
       ) {
-        const baseName =
-          junctionRightConstraint.tags.manyToManyObjectTypeBaseName ||
-          inflection.manyToManyRelationByKeys(
-            leftKeyAttributes,
-            junctionLeftKeyAttributes,
-            junctionRightKeyAttributes,
-            rightKeyAttributes,
-            junctionTable,
-            rightTable,
-            junctionLeftConstraint,
-            junctionRightConstraint
-          );
+        const baseName = inflection.manyToManyRelationByKeys(
+          leftKeyAttributes,
+          junctionLeftKeyAttributes,
+          junctionRightKeyAttributes,
+          rightKeyAttributes,
+          junctionTable,
+          rightTable,
+          junctionLeftConstraint,
+          junctionRightConstraint
+        );
         return this.upperCamelCase(`${baseName}-edge`);
       },
       manyToManyRelationConnection(
@@ -448,18 +522,16 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         junctionLeftConstraint,
         junctionRightConstraint
       ) {
-        const baseName =
-          junctionRightConstraint.tags.manyToManyObjectTypeBaseName ||
-          inflection.manyToManyRelationByKeys(
-            leftKeyAttributes,
-            junctionLeftKeyAttributes,
-            junctionRightKeyAttributes,
-            rightKeyAttributes,
-            junctionTable,
-            rightTable,
-            junctionLeftConstraint,
-            junctionRightConstraint
-          );
+        const baseName = inflection.manyToManyRelationByKeys(
+          leftKeyAttributes,
+          junctionLeftKeyAttributes,
+          junctionRightKeyAttributes,
+          rightKeyAttributes,
+          junctionTable,
+          rightTable,
+          junctionLeftConstraint,
+          junctionRightConstraint
+        );
         return this.upperCamelCase(`${baseName}-connection`);
       },
     });
@@ -523,27 +595,11 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         const rightKeyAttribute = rightKeyAttributes[0];
 
         function makeFields(isConnection) {
-          const manyRelationFieldName = isConnection
-            ? inflection.manyToManyRelationByKeys(
-                leftKeyAttributes,
-                junctionLeftKeyAttributes,
-                junctionRightKeyAttributes,
-                rightKeyAttributes,
-                junctionTable,
-                rightTable,
-                junctionLeftConstraint,
-                junctionRightConstraint
-              )
-            : inflection.manyToManyRelationByKeysSimple(
-                leftKeyAttributes,
-                junctionLeftKeyAttributes,
-                junctionRightKeyAttributes,
-                rightKeyAttributes,
-                junctionTable,
-                rightTable,
-                junctionLeftConstraint,
-                junctionRightConstraint
-              );
+          const manyRelationFieldName = getFieldNameForManyToManyRelationship(
+            relationship,
+            inflection,
+            isConnection
+          );
 
           memo = extend(
             memo,
