@@ -27,7 +27,7 @@ type Bar implements Node {
 
     """The method to use when ordering \`Foo\`."""
     orderBy: [FoosOrderBy!] = [PRIMARY_KEY_ASC]
-  ): FoosByJunctionJBarIdAndJFooIdConnection!
+  ): BarFoosByJunctionJBarIdAndJFooIdConnection!
 
   """Reads and enables pagination through a set of \`Junction\`."""
   junctionsByJBarId(
@@ -59,30 +59,30 @@ type Bar implements Node {
   nodeId: ID!
 }
 
-"""A connection to a list of \`Bar\` values, with data from \`Junction\`."""
-type BarsByJunctionJFooIdAndJBarIdConnection {
+"""A connection to a list of \`Foo\` values, with data from \`Junction\`."""
+type BarFoosByJunctionJBarIdAndJFooIdConnection {
   """
-  A list of edges which contains the \`Bar\`, info from the \`Junction\`, and the cursor to aid in pagination.
+  A list of edges which contains the \`Foo\`, info from the \`Junction\`, and the cursor to aid in pagination.
   """
-  edges: [BarsByJunctionJFooIdAndJBarIdEdge!]!
+  edges: [BarFoosByJunctionJBarIdAndJFooIdEdge!]!
 
-  """A list of \`Bar\` objects."""
-  nodes: [Bar]!
+  """A list of \`Foo\` objects."""
+  nodes: [Foo]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """The count of *all* \`Bar\` you could get from the connection."""
+  """The count of *all* \`Foo\` you could get from the connection."""
   totalCount: Int!
 }
 
-"""A \`Bar\` edge in the connection, with data from \`Junction\`."""
-type BarsByJunctionJFooIdAndJBarIdEdge {
+"""A \`Foo\` edge in the connection, with data from \`Junction\`."""
+type BarFoosByJunctionJBarIdAndJFooIdEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
   """Reads and enables pagination through a set of \`Junction\`."""
-  junctionsByJBarId(
+  junctionsByJFooId(
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
@@ -105,8 +105,8 @@ type BarsByJunctionJFooIdAndJBarIdEdge {
     orderBy: [JunctionsOrderBy!] = [PRIMARY_KEY_ASC]
   ): JunctionsConnection!
 
-  """The \`Bar\` at the end of the edge."""
-  node: Bar
+  """The \`Foo\` at the end of the edge."""
+  node: Foo
 }
 
 """A connection to a list of \`Bar\` values."""
@@ -172,7 +172,7 @@ type Foo implements Node {
 
     """The method to use when ordering \`Bar\`."""
     orderBy: [BarsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BarsByJunctionJFooIdAndJBarIdConnection!
+  ): FooBarsByJunctionJFooIdAndJBarIdConnection!
   fooId: Int!
   fooName: String!
 
@@ -206,30 +206,30 @@ type Foo implements Node {
   nodeId: ID!
 }
 
-"""A connection to a list of \`Foo\` values, with data from \`Junction\`."""
-type FoosByJunctionJBarIdAndJFooIdConnection {
+"""A connection to a list of \`Bar\` values, with data from \`Junction\`."""
+type FooBarsByJunctionJFooIdAndJBarIdConnection {
   """
-  A list of edges which contains the \`Foo\`, info from the \`Junction\`, and the cursor to aid in pagination.
+  A list of edges which contains the \`Bar\`, info from the \`Junction\`, and the cursor to aid in pagination.
   """
-  edges: [FoosByJunctionJBarIdAndJFooIdEdge!]!
+  edges: [FooBarsByJunctionJFooIdAndJBarIdEdge!]!
 
-  """A list of \`Foo\` objects."""
-  nodes: [Foo]!
+  """A list of \`Bar\` objects."""
+  nodes: [Bar]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """The count of *all* \`Foo\` you could get from the connection."""
+  """The count of *all* \`Bar\` you could get from the connection."""
   totalCount: Int!
 }
 
-"""A \`Foo\` edge in the connection, with data from \`Junction\`."""
-type FoosByJunctionJBarIdAndJFooIdEdge {
+"""A \`Bar\` edge in the connection, with data from \`Junction\`."""
+type FooBarsByJunctionJFooIdAndJBarIdEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
   """Reads and enables pagination through a set of \`Junction\`."""
-  junctionsByJFooId(
+  junctionsByJBarId(
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
@@ -252,8 +252,8 @@ type FoosByJunctionJBarIdAndJFooIdEdge {
     orderBy: [JunctionsOrderBy!] = [PRIMARY_KEY_ASC]
   ): JunctionsConnection!
 
-  """The \`Foo\` at the end of the edge."""
-  node: Foo
+  """The \`Bar\` at the end of the edge."""
+  node: Bar
 }
 
 """A connection to a list of \`Foo\` values."""

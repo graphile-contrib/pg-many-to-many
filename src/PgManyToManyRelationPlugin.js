@@ -150,7 +150,12 @@ const hasNonNullKey = row => {
   return false;
 };
 
-function createManyToManyConnectionType(relationship, build, options) {
+function createManyToManyConnectionType(
+  relationship,
+  build,
+  options,
+  leftTable
+) {
   const {
     leftKeyAttributes,
     junctionLeftKeyAttributes,
@@ -184,6 +189,16 @@ function createManyToManyConnectionType(relationship, build, options) {
         }
       };
 
+  const LeftTableType = pgGetGqlTypeByTypeIdAndModifier(
+    leftTable.type.id,
+    null
+  );
+  if (!LeftTableType) {
+    throw new Error(
+      `Could not determine type for table with id ${leftTable.type.id}`
+    );
+  }
+
   const TableType = pgGetGqlTypeByTypeIdAndModifier(rightTable.type.id, null);
   if (!TableType) {
     throw new Error(
@@ -212,7 +227,8 @@ function createManyToManyConnectionType(relationship, build, options) {
         junctionTable,
         rightTable,
         junctionLeftConstraint,
-        junctionRightConstraint
+        junctionRightConstraint,
+        LeftTableType.name
       ),
       fields: ({ fieldWithHooks }) => {
         return {
@@ -286,7 +302,8 @@ function createManyToManyConnectionType(relationship, build, options) {
         junctionTable,
         rightTable,
         junctionLeftConstraint,
-        junctionRightConstraint
+        junctionRightConstraint,
+        LeftTableType.name
       ),
       fields: ({ recurseDataGeneratorsForField, fieldWithHooks }) => {
         recurseDataGeneratorsForField("pageInfo", true);
@@ -422,7 +439,8 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         junctionTable,
         rightTable,
         junctionLeftConstraint,
-        junctionRightConstraint
+        junctionRightConstraint,
+        leftTableTypeName
       ) {
         const relationName = inflection.manyToManyRelationByKeys(
           leftKeyAttributes,
@@ -434,7 +452,7 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
           junctionLeftConstraint,
           junctionRightConstraint
         );
-        return this.upperCamelCase(`${relationName}-edge`);
+        return this.upperCamelCase(`${leftTableTypeName}-${relationName}-edge`);
       },
       manyToManyRelationConnection(
         leftKeyAttributes,
@@ -444,7 +462,8 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         junctionTable,
         rightTable,
         junctionLeftConstraint,
-        junctionRightConstraint
+        junctionRightConstraint,
+        leftTableTypeName
       ) {
         const relationName = inflection.manyToManyRelationByKeys(
           leftKeyAttributes,
@@ -454,9 +473,12 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
           junctionTable,
           rightTable,
           junctionLeftConstraint,
-          junctionRightConstraint
+          junctionRightConstraint,
+          leftTableTypeName
         );
-        return this.upperCamelCase(`${relationName}-connection`);
+        return this.upperCamelCase(
+          `${leftTableTypeName}-${relationName}-connection`
+        );
       },
     });
   });
@@ -509,7 +531,8 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
         const RightTableConnectionType = createManyToManyConnectionType(
           relationship,
           build,
-          options
+          options,
+          leftTable
         );
 
         // Since we're ignoring multi-column keys, we can simplify here

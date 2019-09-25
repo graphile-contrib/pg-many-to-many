@@ -1,0 +1,22 @@
+query {
+  allPeople {
+    nodes {
+      personName
+      tags {
+        nodes {
+          tagName
+        }
+      }
+      teams {
+        nodes {
+          teamName
+          tags {
+            nodes {
+              tagName
+            }
+          }
+        }
+      }
+    }
+  }
+}
