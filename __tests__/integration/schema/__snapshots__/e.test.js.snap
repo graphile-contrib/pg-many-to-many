@@ -783,9 +783,7 @@ type TagPeopleConnection {
   totalCount: Int!
 }
 
-"""
-A \`Person\` edge in the connection, with data from \`PersonTagJunction\`.
-"""
+"""A \`Person\` edge in the connection, with data from \`PersonTagJunction\`."""
 type TagPeopleEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
