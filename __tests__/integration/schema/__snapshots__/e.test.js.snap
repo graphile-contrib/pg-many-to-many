@@ -222,7 +222,7 @@ type Person implements Node {
 
     """The method to use when ordering \`Tag\`."""
     orderBy: [TagsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PersonTagsConnection!
+  ): TagsConnection!
 
   """Reads and enables pagination through a set of \`Team\`."""
   teams(
@@ -251,7 +251,7 @@ type Person implements Node {
 
     """The method to use when ordering \`Team\`."""
     orderBy: [TeamsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PersonTeamsConnection!
+  ): TeamsConnection!
 }
 
 """
@@ -329,60 +329,6 @@ enum PersonTagJunctionsOrderBy {
   PRIMARY_KEY_DESC
   TAG_ID_ASC
   TAG_ID_DESC
-}
-
-"""
-A connection to a list of \`Tag\` values, with data from \`PersonTagJunction\`.
-"""
-type PersonTagsConnection {
-  """
-  A list of edges which contains the \`Tag\`, info from the \`PersonTagJunction\`, and the cursor to aid in pagination.
-  """
-  edges: [PersonTagsEdge!]!
-
-  """A list of \`Tag\` objects."""
-  nodes: [Tag!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* \`Tag\` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A \`Tag\` edge in the connection, with data from \`PersonTagJunction\`."""
-type PersonTagsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The \`Tag\` at the end of the edge."""
-  node: Tag!
-}
-
-"""A connection to a list of \`Team\` values, with data from \`Membership\`."""
-type PersonTeamsConnection {
-  """
-  A list of edges which contains the \`Team\`, info from the \`Membership\`, and the cursor to aid in pagination.
-  """
-  edges: [PersonTeamsEdge!]!
-
-  """A list of \`Team\` objects."""
-  nodes: [Team!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* \`Team\` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A \`Team\` edge in the connection, with data from \`Membership\`."""
-type PersonTeamsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The \`Team\` at the end of the edge."""
-  node: Team!
 }
 
 """The root query type which gives access points into the data universe."""
@@ -662,7 +608,7 @@ type Tag implements Node {
 
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TagPeopleConnection!
+  ): PeopleConnection!
 
   """Reads and enables pagination through a set of \`PersonTagJunction\`."""
   personTagJunctionsByTagId(
@@ -750,7 +696,7 @@ type Tag implements Node {
 
     """The method to use when ordering \`Team\`."""
     orderBy: [TeamsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TagTeamsConnection!
+  ): TeamsConnection!
 }
 
 """
@@ -762,34 +708,6 @@ input TagCondition {
 
   """Checks for equality with the object’s \`tagName\` field."""
   tagName: String
-}
-
-"""
-A connection to a list of \`Person\` values, with data from \`PersonTagJunction\`.
-"""
-type TagPeopleConnection {
-  """
-  A list of edges which contains the \`Person\`, info from the \`PersonTagJunction\`, and the cursor to aid in pagination.
-  """
-  edges: [TagPeopleEdge!]!
-
-  """A list of \`Person\` objects."""
-  nodes: [Person!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* \`Person\` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A \`Person\` edge in the connection, with data from \`PersonTagJunction\`."""
-type TagPeopleEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The \`Person\` at the end of the edge."""
-  node: Person!
 }
 
 """A connection to a list of \`Tag\` values."""
@@ -827,34 +745,6 @@ enum TagsOrderBy {
   PRIMARY_KEY_DESC
   TAG_NAME_ASC
   TAG_NAME_DESC
-}
-
-"""
-A connection to a list of \`Team\` values, with data from \`TeamTagJunction\`.
-"""
-type TagTeamsConnection {
-  """
-  A list of edges which contains the \`Team\`, info from the \`TeamTagJunction\`, and the cursor to aid in pagination.
-  """
-  edges: [TagTeamsEdge!]!
-
-  """A list of \`Team\` objects."""
-  nodes: [Team!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* \`Team\` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A \`Team\` edge in the connection, with data from \`TeamTagJunction\`."""
-type TagTeamsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The \`Team\` at the end of the edge."""
-  node: Team!
 }
 
 type Team implements Node {
@@ -921,7 +811,7 @@ type Team implements Node {
 
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TeamPeopleConnection!
+  ): PeopleConnection!
 
   """Reads and enables pagination through a set of \`Tag\`."""
   tags(
@@ -950,7 +840,7 @@ type Team implements Node {
 
     """The method to use when ordering \`Tag\`."""
     orderBy: [TagsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TeamTagsConnection!
+  ): TagsConnection!
   teamName: String!
 
   """Reads and enables pagination through a set of \`TeamTagJunction\`."""
@@ -992,34 +882,6 @@ input TeamCondition {
 
   """Checks for equality with the object’s \`teamName\` field."""
   teamName: String
-}
-
-"""
-A connection to a list of \`Person\` values, with data from \`Membership\`.
-"""
-type TeamPeopleConnection {
-  """
-  A list of edges which contains the \`Person\`, info from the \`Membership\`, and the cursor to aid in pagination.
-  """
-  edges: [TeamPeopleEdge!]!
-
-  """A list of \`Person\` objects."""
-  nodes: [Person!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* \`Person\` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A \`Person\` edge in the connection, with data from \`Membership\`."""
-type TeamPeopleEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The \`Person\` at the end of the edge."""
-  node: Person!
 }
 
 """A connection to a list of \`Team\` values."""
@@ -1123,34 +985,6 @@ enum TeamTagJunctionsOrderBy {
   TAG_ID_DESC
   TEAM_ID_ASC
   TEAM_ID_DESC
-}
-
-"""
-A connection to a list of \`Tag\` values, with data from \`TeamTagJunction\`.
-"""
-type TeamTagsConnection {
-  """
-  A list of edges which contains the \`Tag\`, info from the \`TeamTagJunction\`, and the cursor to aid in pagination.
-  """
-  edges: [TeamTagsEdge!]!
-
-  """A list of \`Tag\` objects."""
-  nodes: [Tag!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* \`Tag\` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A \`Tag\` edge in the connection, with data from \`TeamTagJunction\`."""
-type TeamTagsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The \`Tag\` at the end of the edge."""
-  node: Tag!
 }
 
 `;

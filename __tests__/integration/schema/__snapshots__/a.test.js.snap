@@ -27,7 +27,7 @@ type Bar implements Node {
 
     """The method to use when ordering \`Foo\`."""
     orderBy: [FoosOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BarFoosByJunctionJBarIdAndJFooIdConnection!
+  ): FoosConnection!
 
   """Reads and enables pagination through a set of \`Junction\`."""
   junctionsByJBarId(
@@ -57,32 +57,6 @@ type Bar implements Node {
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
   """
   nodeId: ID!
-}
-
-"""A connection to a list of \`Foo\` values, with data from \`Junction\`."""
-type BarFoosByJunctionJBarIdAndJFooIdConnection {
-  """
-  A list of edges which contains the \`Foo\`, info from the \`Junction\`, and the cursor to aid in pagination.
-  """
-  edges: [BarFoosByJunctionJBarIdAndJFooIdEdge!]!
-
-  """A list of \`Foo\` objects."""
-  nodes: [Foo]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* \`Foo\` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A \`Foo\` edge in the connection, with data from \`Junction\`."""
-type BarFoosByJunctionJBarIdAndJFooIdEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The \`Foo\` at the end of the edge."""
-  node: Foo
 }
 
 """A connection to a list of \`Bar\` values."""
@@ -148,7 +122,7 @@ type Foo implements Node {
 
     """The method to use when ordering \`Bar\`."""
     orderBy: [BarsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): FooBarsByJunctionJFooIdAndJBarIdConnection!
+  ): BarsConnection!
   fooId: Int!
   fooName: String!
 
@@ -180,32 +154,6 @@ type Foo implements Node {
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
   """
   nodeId: ID!
-}
-
-"""A connection to a list of \`Bar\` values, with data from \`Junction\`."""
-type FooBarsByJunctionJFooIdAndJBarIdConnection {
-  """
-  A list of edges which contains the \`Bar\`, info from the \`Junction\`, and the cursor to aid in pagination.
-  """
-  edges: [FooBarsByJunctionJFooIdAndJBarIdEdge!]!
-
-  """A list of \`Bar\` objects."""
-  nodes: [Bar]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* \`Bar\` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A \`Bar\` edge in the connection, with data from \`Junction\`."""
-type FooBarsByJunctionJFooIdAndJBarIdEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The \`Bar\` at the end of the edge."""
-  node: Bar
 }
 
 """A connection to a list of \`Foo\` values."""

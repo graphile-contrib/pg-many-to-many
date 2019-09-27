@@ -108,7 +108,7 @@ type Person implements Node {
 
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PersonFollowersConnection!
+  ): PeopleConnection!
 
   """Reads and enables pagination through a set of \`Person\`."""
   following(
@@ -137,7 +137,7 @@ type Person implements Node {
 
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PersonFollowingConnection!
+  ): PeopleConnection!
   id: Int!
   name: String
 
@@ -156,58 +156,6 @@ input PersonCondition {
 
   """Checks for equality with the object’s \`name\` field."""
   name: String
-}
-
-"""A connection to a list of \`Person\` values, with data from \`Junction\`."""
-type PersonFollowersConnection {
-  """
-  A list of edges which contains the \`Person\`, info from the \`Junction\`, and the cursor to aid in pagination.
-  """
-  edges: [PersonFollowersEdge!]!
-
-  """A list of \`Person\` objects."""
-  nodes: [Person]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* \`Person\` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A \`Person\` edge in the connection, with data from \`Junction\`."""
-type PersonFollowersEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The \`Person\` at the end of the edge."""
-  node: Person
-}
-
-"""A connection to a list of \`Person\` values, with data from \`Junction\`."""
-type PersonFollowingConnection {
-  """
-  A list of edges which contains the \`Person\`, info from the \`Junction\`, and the cursor to aid in pagination.
-  """
-  edges: [PersonFollowingEdge!]!
-
-  """A list of \`Person\` objects."""
-  nodes: [Person]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* \`Person\` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A \`Person\` edge in the connection, with data from \`Junction\`."""
-type PersonFollowingEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The \`Person\` at the end of the edge."""
-  node: Person
 }
 
 """The root query type which gives access points into the data universe."""

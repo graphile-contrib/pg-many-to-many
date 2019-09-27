@@ -151,6 +151,26 @@ module.exports = function createManyToManyConnectionType(
   );
   const PageInfo = getTypeByName(inflection.builtin("PageInfo"));
 
+  /**
+   * If our new Edge type would only contain `cursor` and `node` fields,
+   * then we'll just reuse the existing Connection type.
+   */
+  const hasAdditionalEdgeFields =
+    Object.keys(EdgeType.getFields()).filter(
+      key => key !== "cursor" && key !== "node"
+    ).length > 0;
+  if (!hasAdditionalEdgeFields) {
+    const RightTableConnectionType = getTypeByName(
+      inflection.connection(TableType.name)
+    );
+    if (!RightTableConnectionType) {
+      throw new Error(
+        `Could not find GraphQL connection type for table '${rightTable.name}'`
+      );
+    }
+    return RightTableConnectionType;
+  }
+
   return newWithHooks(
     GraphQLObjectType,
     {
