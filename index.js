@@ -31,6 +31,7 @@ module.exports = function PgManyToManyPlugin(builder, options) {
     return build;
   });
 
+  require("./src/PgManyToManyRelationInflectionPlugin.js")(builder, options);
   require("./src/PgManyToManyRelationPlugin.js")(builder, options);
   require("./src/PgManyToManyRelationEdgeColumnsPlugin.js")(builder, options);
   require("./src/PgManyToManyRelationEdgeTablePlugin.js")(builder, options);
