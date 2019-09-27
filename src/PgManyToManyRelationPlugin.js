@@ -26,9 +26,7 @@ function manyToManyRelationships(leftTable, build) {
         introspectionResultsByKind.classById[junctionLeftConstraint.classId];
       if (!junctionTable) {
         throw new Error(
-          `Could not find the table that referenced us (constraint: ${
-            junctionLeftConstraint.name
-          })`
+          `Could not find the table that referenced us (constraint: ${junctionLeftConstraint.name})`
         );
       }
       if (omit(junctionTable, "manyToMany")) {
@@ -141,7 +139,7 @@ const hasNonNullKey = row => {
     return true;
   }
   for (const k in row) {
-    if (row.hasOwnProperty(k)) {
+    if (Object.prototype.hasOwnProperty.call(row, k)) {
       if ((k[0] !== "_" || k[1] !== "_") && row[k] !== null) {
         return true;
       }
@@ -216,9 +214,7 @@ function createManyToManyConnectionType(
   const EdgeType = newWithHooks(
     GraphQLObjectType,
     {
-      description: `A \`${
-        TableType.name
-      }\` edge in the connection, with data from \`${junctionTypeName}\`.`,
+      description: `A \`${TableType.name}\` edge in the connection, with data from \`${junctionTypeName}\`.`,
       name: inflection.manyToManyRelationEdge(
         leftKeyAttributes,
         junctionLeftKeyAttributes,
@@ -291,9 +287,7 @@ function createManyToManyConnectionType(
   return newWithHooks(
     GraphQLObjectType,
     {
-      description: `A connection to a list of \`${
-        TableType.name
-      }\` values, with data from \`${junctionTypeName}\`.`,
+      description: `A connection to a list of \`${TableType.name}\` values, with data from \`${junctionTypeName}\`.`,
       name: inflection.manyToManyRelationConnection(
         leftKeyAttributes,
         junctionLeftKeyAttributes,
@@ -339,9 +333,7 @@ function createManyToManyConnectionType(
             fieldWithHooks,
             "edges",
             {
-              description: `A list of edges which contains the \`${
-                TableType.name
-              }\`, info from the \`${junctionTypeName}\`, and the cursor to aid in pagination.`,
+              description: `A list of edges which contains the \`${TableType.name}\`, info from the \`${junctionTypeName}\`, and the cursor to aid in pagination.`,
               type: new GraphQLNonNull(
                 new GraphQLList(new GraphQLNonNull(EdgeType))
               ),
@@ -652,9 +644,7 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                   });
 
                   return {
-                    description: `Reads and enables pagination through a set of \`${
-                      RightTableType.name
-                    }\`.`,
+                    description: `Reads and enables pagination through a set of \`${RightTableType.name}\`.`,
                     type: isConnection
                       ? new GraphQLNonNull(RightTableConnectionType)
                       : new GraphQLNonNull(
