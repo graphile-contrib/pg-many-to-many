@@ -1,0 +1,537 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`prints a schema with the many-to-many plugin 1`] = `
+"""A location in a connection that can be used for resuming pagination."""
+scalar Cursor
+
+"""
+A point in time as described by the [ISO
+8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
+"""
+scalar Datetime
+
+"""An object with a globally unique \`ID\`."""
+interface Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, the cursor to continue."""
+  endCursor: Cursor
+
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: Cursor
+}
+
+type Post implements Node {
+  """Reads and enables pagination through a set of \`User\`."""
+  authors(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: UserCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`User\`."""
+    orderBy: [UsersOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PostAuthorsManyToManyConnection!
+  content: String
+  createdAt: Datetime!
+  id: UUID!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  title: String!
+}
+
+type PostAuthor implements Node {
+  createdAt: Datetime!
+  id: UUID!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+
+  """Reads a single \`Post\` that is related to this \`PostAuthor\`."""
+  postByPostId: Post
+  postId: UUID!
+
+  """Reads a single \`User\` that is related to this \`PostAuthor\`."""
+  userByUserId: User
+  userId: UUID!
+}
+
+"""
+A condition to be used against \`PostAuthor\` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input PostAuthorCondition {
+  """Checks for equality with the object’s \`createdAt\` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s \`id\` field."""
+  id: UUID
+
+  """Checks for equality with the object’s \`postId\` field."""
+  postId: UUID
+
+  """Checks for equality with the object’s \`userId\` field."""
+  userId: UUID
+}
+
+"""A connection to a list of \`PostAuthor\` values."""
+type PostAuthorsConnection {
+  """
+  A list of edges which contains the \`PostAuthor\` and cursor to aid in pagination.
+  """
+  edges: [PostAuthorsEdge!]!
+
+  """A list of \`PostAuthor\` objects."""
+  nodes: [PostAuthor]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`PostAuthor\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`PostAuthor\` edge in the connection."""
+type PostAuthorsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`PostAuthor\` at the end of the edge."""
+  node: PostAuthor
+}
+
+"""A connection to a list of \`User\` values, with data from \`PostAuthor\`."""
+type PostAuthorsManyToManyConnection {
+  """
+  A list of edges which contains the \`User\`, info from the \`PostAuthor\`, and the cursor to aid in pagination.
+  """
+  edges: [PostAuthorsManyToManyEdge!]!
+
+  """A list of \`User\` objects."""
+  nodes: [User]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`User\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`User\` edge in the connection, with data from \`PostAuthor\`."""
+type PostAuthorsManyToManyEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`User\` at the end of the edge."""
+  node: User
+
+  """Reads and enables pagination through a set of \`PostAuthor\`."""
+  postAuthorsByUserId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PostAuthorCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`PostAuthor\`."""
+    orderBy: [PostAuthorsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PostAuthorsConnection!
+}
+
+"""Methods to use when ordering \`PostAuthor\`."""
+enum PostAuthorsOrderBy {
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  ID_ASC
+  ID_DESC
+  NATURAL
+  POST_ID_ASC
+  POST_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  USER_ID_ASC
+  USER_ID_DESC
+}
+
+"""
+A condition to be used against \`Post\` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input PostCondition {
+  """Checks for equality with the object’s \`content\` field."""
+  content: String
+
+  """Checks for equality with the object’s \`createdAt\` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s \`id\` field."""
+  id: UUID
+
+  """Checks for equality with the object’s \`title\` field."""
+  title: String
+}
+
+"""A connection to a list of \`Post\` values."""
+type PostsConnection {
+  """
+  A list of edges which contains the \`Post\` and cursor to aid in pagination.
+  """
+  edges: [PostsEdge!]!
+
+  """A list of \`Post\` objects."""
+  nodes: [Post]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Post\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Post\` edge in the connection."""
+type PostsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Post\` at the end of the edge."""
+  node: Post
+}
+
+"""Methods to use when ordering \`Post\`."""
+enum PostsOrderBy {
+  CONTENT_ASC
+  CONTENT_DESC
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  TITLE_ASC
+  TITLE_DESC
+}
+
+"""The root query type which gives access points into the data universe."""
+type Query implements Node {
+  """Reads and enables pagination through a set of \`PostAuthor\`."""
+  allPostAuthors(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PostAuthorCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`PostAuthor\`."""
+    orderBy: [PostAuthorsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PostAuthorsConnection
+
+  """Reads and enables pagination through a set of \`Post\`."""
+  allPosts(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PostCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Post\`."""
+    orderBy: [PostsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PostsConnection
+
+  """Reads and enables pagination through a set of \`User\`."""
+  allUsers(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: UserCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`User\`."""
+    orderBy: [UsersOrderBy!] = [PRIMARY_KEY_ASC]
+  ): UsersConnection
+
+  """Fetches an object given its globally unique \`ID\`."""
+  node(
+    """The globally unique \`ID\`."""
+    nodeId: ID!
+  ): Node
+
+  """
+  The root query type must be a \`Node\` to work well with Relay 1 mutations. This just resolves to \`query\`.
+  """
+  nodeId: ID!
+
+  """Reads a single \`Post\` using its globally unique \`ID\`."""
+  post(
+    """The globally unique \`ID\` to be used in selecting a single \`Post\`."""
+    nodeId: ID!
+  ): Post
+
+  """Reads a single \`PostAuthor\` using its globally unique \`ID\`."""
+  postAuthor(
+    """
+    The globally unique \`ID\` to be used in selecting a single \`PostAuthor\`.
+    """
+    nodeId: ID!
+  ): PostAuthor
+  postAuthorById(id: UUID!): PostAuthor
+  postById(id: UUID!): Post
+
+  """
+  Exposes the root query type nested one level down. This is helpful for Relay 1
+  which can only query top level fields if they are in a particular form.
+  """
+  query: Query!
+
+  """Reads a single \`User\` using its globally unique \`ID\`."""
+  user(
+    """The globally unique \`ID\` to be used in selecting a single \`User\`."""
+    nodeId: ID!
+  ): User
+  userById(id: UUID!): User
+}
+
+type User implements Node {
+  id: UUID!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+
+  """Reads and enables pagination through a set of \`Post\`."""
+  postsByPostAuthorUserIdAndPostId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PostCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Post\`."""
+    orderBy: [PostsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): UserPostsByPostAuthorUserIdAndPostIdManyToManyConnection!
+}
+
+"""
+A condition to be used against \`User\` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input UserCondition {
+  """Checks for equality with the object’s \`id\` field."""
+  id: UUID
+}
+
+"""A connection to a list of \`Post\` values, with data from \`PostAuthor\`."""
+type UserPostsByPostAuthorUserIdAndPostIdManyToManyConnection {
+  """
+  A list of edges which contains the \`Post\`, info from the \`PostAuthor\`, and the cursor to aid in pagination.
+  """
+  edges: [UserPostsByPostAuthorUserIdAndPostIdManyToManyEdge!]!
+
+  """A list of \`Post\` objects."""
+  nodes: [Post]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Post\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Post\` edge in the connection, with data from \`PostAuthor\`."""
+type UserPostsByPostAuthorUserIdAndPostIdManyToManyEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Post\` at the end of the edge."""
+  node: Post
+
+  """Reads and enables pagination through a set of \`PostAuthor\`."""
+  postAuthorsByPostId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PostAuthorCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`PostAuthor\`."""
+    orderBy: [PostAuthorsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PostAuthorsConnection!
+}
+
+"""A connection to a list of \`User\` values."""
+type UsersConnection {
+  """
+  A list of edges which contains the \`User\` and cursor to aid in pagination.
+  """
+  edges: [UsersEdge!]!
+
+  """A list of \`User\` objects."""
+  nodes: [User]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`User\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`User\` edge in the connection."""
+type UsersEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`User\` at the end of the edge."""
+  node: User
+}
+
+"""Methods to use when ordering \`User\`."""
+enum UsersOrderBy {
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A universally unique identifier as defined by [RFC 4122](https://tools.ietf.org/html/rfc4122).
+"""
+scalar UUID
+
+`;
