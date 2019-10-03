@@ -222,7 +222,7 @@ type Person implements Node {
 
     """The method to use when ordering \`Tag\`."""
     orderBy: [TagsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PersonTagsConnection!
+  ): PersonTagsManyToManyConnection!
 
   """Reads and enables pagination through a set of \`Team\`."""
   teams(
@@ -251,7 +251,7 @@ type Person implements Node {
 
     """The method to use when ordering \`Team\`."""
     orderBy: [TeamsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PersonTeamsConnection!
+  ): PersonTeamsManyToManyConnection!
 }
 
 """
@@ -334,11 +334,11 @@ enum PersonTagJunctionsOrderBy {
 """
 A connection to a list of \`Tag\` values, with data from \`PersonTagJunction\`.
 """
-type PersonTagsConnection {
+type PersonTagsManyToManyConnection {
   """
   A list of edges which contains the \`Tag\`, info from the \`PersonTagJunction\`, and the cursor to aid in pagination.
   """
-  edges: [PersonTagsEdge!]!
+  edges: [PersonTagsManyToManyEdge!]!
 
   """A list of \`Tag\` objects."""
   nodes: [Tag!]!
@@ -351,7 +351,7 @@ type PersonTagsConnection {
 }
 
 """A \`Tag\` edge in the connection, with data from \`PersonTagJunction\`."""
-type PersonTagsEdge {
+type PersonTagsManyToManyEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
@@ -360,11 +360,11 @@ type PersonTagsEdge {
 }
 
 """A connection to a list of \`Team\` values, with data from \`Membership\`."""
-type PersonTeamsConnection {
+type PersonTeamsManyToManyConnection {
   """
   A list of edges which contains the \`Team\`, info from the \`Membership\`, and the cursor to aid in pagination.
   """
-  edges: [PersonTeamsEdge!]!
+  edges: [PersonTeamsManyToManyEdge!]!
 
   """A list of \`Team\` objects."""
   nodes: [Team!]!
@@ -377,7 +377,7 @@ type PersonTeamsConnection {
 }
 
 """A \`Team\` edge in the connection, with data from \`Membership\`."""
-type PersonTeamsEdge {
+type PersonTeamsManyToManyEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
@@ -662,7 +662,7 @@ type Tag implements Node {
 
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TagPeopleConnection!
+  ): TagPeopleManyToManyConnection!
 
   """Reads and enables pagination through a set of \`PersonTagJunction\`."""
   personTagJunctionsByTagId(
@@ -750,7 +750,7 @@ type Tag implements Node {
 
     """The method to use when ordering \`Team\`."""
     orderBy: [TeamsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TagTeamsConnection!
+  ): TagTeamsManyToManyConnection!
 }
 
 """
@@ -767,11 +767,11 @@ input TagCondition {
 """
 A connection to a list of \`Person\` values, with data from \`PersonTagJunction\`.
 """
-type TagPeopleConnection {
+type TagPeopleManyToManyConnection {
   """
   A list of edges which contains the \`Person\`, info from the \`PersonTagJunction\`, and the cursor to aid in pagination.
   """
-  edges: [TagPeopleEdge!]!
+  edges: [TagPeopleManyToManyEdge!]!
 
   """A list of \`Person\` objects."""
   nodes: [Person!]!
@@ -784,7 +784,7 @@ type TagPeopleConnection {
 }
 
 """A \`Person\` edge in the connection, with data from \`PersonTagJunction\`."""
-type TagPeopleEdge {
+type TagPeopleManyToManyEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
@@ -832,11 +832,11 @@ enum TagsOrderBy {
 """
 A connection to a list of \`Team\` values, with data from \`TeamTagJunction\`.
 """
-type TagTeamsConnection {
+type TagTeamsManyToManyConnection {
   """
   A list of edges which contains the \`Team\`, info from the \`TeamTagJunction\`, and the cursor to aid in pagination.
   """
-  edges: [TagTeamsEdge!]!
+  edges: [TagTeamsManyToManyEdge!]!
 
   """A list of \`Team\` objects."""
   nodes: [Team!]!
@@ -849,7 +849,7 @@ type TagTeamsConnection {
 }
 
 """A \`Team\` edge in the connection, with data from \`TeamTagJunction\`."""
-type TagTeamsEdge {
+type TagTeamsManyToManyEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
@@ -921,7 +921,7 @@ type Team implements Node {
 
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TeamPeopleConnection!
+  ): TeamPeopleManyToManyConnection!
 
   """Reads and enables pagination through a set of \`Tag\`."""
   tags(
@@ -950,7 +950,7 @@ type Team implements Node {
 
     """The method to use when ordering \`Tag\`."""
     orderBy: [TagsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TeamTagsConnection!
+  ): TeamTagsManyToManyConnection!
   teamName: String!
 
   """Reads and enables pagination through a set of \`TeamTagJunction\`."""
@@ -997,11 +997,11 @@ input TeamCondition {
 """
 A connection to a list of \`Person\` values, with data from \`Membership\`.
 """
-type TeamPeopleConnection {
+type TeamPeopleManyToManyConnection {
   """
   A list of edges which contains the \`Person\`, info from the \`Membership\`, and the cursor to aid in pagination.
   """
-  edges: [TeamPeopleEdge!]!
+  edges: [TeamPeopleManyToManyEdge!]!
 
   """A list of \`Person\` objects."""
   nodes: [Person!]!
@@ -1014,7 +1014,7 @@ type TeamPeopleConnection {
 }
 
 """A \`Person\` edge in the connection, with data from \`Membership\`."""
-type TeamPeopleEdge {
+type TeamPeopleManyToManyEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
@@ -1128,11 +1128,11 @@ enum TeamTagJunctionsOrderBy {
 """
 A connection to a list of \`Tag\` values, with data from \`TeamTagJunction\`.
 """
-type TeamTagsConnection {
+type TeamTagsManyToManyConnection {
   """
   A list of edges which contains the \`Tag\`, info from the \`TeamTagJunction\`, and the cursor to aid in pagination.
   """
-  edges: [TeamTagsEdge!]!
+  edges: [TeamTagsManyToManyEdge!]!
 
   """A list of \`Tag\` objects."""
   nodes: [Tag!]!
@@ -1145,7 +1145,7 @@ type TeamTagsConnection {
 }
 
 """A \`Tag\` edge in the connection, with data from \`TeamTagJunction\`."""
-type TeamTagsEdge {
+type TeamTagsManyToManyEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 

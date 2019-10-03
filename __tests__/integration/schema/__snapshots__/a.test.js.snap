@@ -27,7 +27,7 @@ type Bar implements Node {
 
     """The method to use when ordering \`Foo\`."""
     orderBy: [FoosOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BarFoosByJunctionJBarIdAndJFooIdConnection!
+  ): BarFoosByJunctionJBarIdAndJFooIdManyToManyConnection!
 
   """Reads and enables pagination through a set of \`Junction\`."""
   junctionsByJBarId(
@@ -60,11 +60,11 @@ type Bar implements Node {
 }
 
 """A connection to a list of \`Foo\` values, with data from \`Junction\`."""
-type BarFoosByJunctionJBarIdAndJFooIdConnection {
+type BarFoosByJunctionJBarIdAndJFooIdManyToManyConnection {
   """
   A list of edges which contains the \`Foo\`, info from the \`Junction\`, and the cursor to aid in pagination.
   """
-  edges: [BarFoosByJunctionJBarIdAndJFooIdEdge!]!
+  edges: [BarFoosByJunctionJBarIdAndJFooIdManyToManyEdge!]!
 
   """A list of \`Foo\` objects."""
   nodes: [Foo]!
@@ -77,7 +77,7 @@ type BarFoosByJunctionJBarIdAndJFooIdConnection {
 }
 
 """A \`Foo\` edge in the connection, with data from \`Junction\`."""
-type BarFoosByJunctionJBarIdAndJFooIdEdge {
+type BarFoosByJunctionJBarIdAndJFooIdManyToManyEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
@@ -148,7 +148,7 @@ type Foo implements Node {
 
     """The method to use when ordering \`Bar\`."""
     orderBy: [BarsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): FooBarsByJunctionJFooIdAndJBarIdConnection!
+  ): FooBarsByJunctionJFooIdAndJBarIdManyToManyConnection!
   fooId: Int!
   fooName: String!
 
@@ -183,11 +183,11 @@ type Foo implements Node {
 }
 
 """A connection to a list of \`Bar\` values, with data from \`Junction\`."""
-type FooBarsByJunctionJFooIdAndJBarIdConnection {
+type FooBarsByJunctionJFooIdAndJBarIdManyToManyConnection {
   """
   A list of edges which contains the \`Bar\`, info from the \`Junction\`, and the cursor to aid in pagination.
   """
-  edges: [FooBarsByJunctionJFooIdAndJBarIdEdge!]!
+  edges: [FooBarsByJunctionJFooIdAndJBarIdManyToManyEdge!]!
 
   """A list of \`Bar\` objects."""
   nodes: [Bar]!
@@ -200,7 +200,7 @@ type FooBarsByJunctionJFooIdAndJBarIdConnection {
 }
 
 """A \`Bar\` edge in the connection, with data from \`Junction\`."""
-type FooBarsByJunctionJFooIdAndJBarIdEdge {
+type FooBarsByJunctionJFooIdAndJBarIdManyToManyEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 

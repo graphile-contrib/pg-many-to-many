@@ -12,9 +12,13 @@ const readFile = util.promisify(fs.readFile);
 
 const getSqlSchemas = () => fs.readdirSync(path.resolve(__dirname, "schemas"));
 const getFixturesForSqlSchema = sqlSchema =>
-  fs.readdirSync(
+  fs.existsSync(
     path.resolve(__dirname, "schemas", sqlSchema, "fixtures", "queries")
-  );
+  )
+    ? fs.readdirSync(
+        path.resolve(__dirname, "schemas", sqlSchema, "fixtures", "queries")
+      )
+    : [];
 const readFixtureForSqlSchema = (sqlSchema, fixture) =>
   readFile(
     path.resolve(
@@ -50,11 +54,13 @@ const queryResult = async (sqlSchema, fixture) => {
 const sqlSchemas = getSqlSchemas();
 describe.each(sqlSchemas)("schema=%s", sqlSchema => {
   const fixtures = getFixturesForSqlSchema(sqlSchema);
-  test.each(fixtures)("query=%s", async fixture => {
-    const result = await queryResult(sqlSchema, fixture);
-    if (result.errors) {
-      console.log(result.errors.map(e => e.originalError));
-    }
-    expect(result).toMatchSnapshot();
-  });
+  if (fixtures.length > 0) {
+    test.each(fixtures)("query=%s", async fixture => {
+      const result = await queryResult(sqlSchema, fixture);
+      if (result.errors) {
+        console.log(result.errors.map(e => e.originalError));
+      }
+      expect(result).toMatchSnapshot();
+    });
+  }
 });

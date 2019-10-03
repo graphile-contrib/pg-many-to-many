@@ -218,7 +218,7 @@ type Person implements Node {
 
     """The method to use when ordering \`Team\`."""
     orderBy: [TeamsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PersonTeamsByMembershipPersonIdAndTeamIdConnection!
+  ): PersonTeamsByMembershipPersonIdAndTeamIdManyToManyConnection!
 }
 
 """
@@ -233,11 +233,11 @@ input PersonCondition {
 }
 
 """A connection to a list of \`Team\` values, with data from \`Membership\`."""
-type PersonTeamsByMembershipPersonIdAndTeamIdConnection {
+type PersonTeamsByMembershipPersonIdAndTeamIdManyToManyConnection {
   """
   A list of edges which contains the \`Team\`, info from the \`Membership\`, and the cursor to aid in pagination.
   """
-  edges: [PersonTeamsByMembershipPersonIdAndTeamIdEdge!]!
+  edges: [PersonTeamsByMembershipPersonIdAndTeamIdManyToManyEdge!]!
 
   """A list of \`Team\` objects."""
   nodes: [Team]!
@@ -250,7 +250,7 @@ type PersonTeamsByMembershipPersonIdAndTeamIdConnection {
 }
 
 """A \`Team\` edge in the connection, with data from \`Membership\`."""
-type PersonTeamsByMembershipPersonIdAndTeamIdEdge {
+type PersonTeamsByMembershipPersonIdAndTeamIdManyToManyEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
@@ -447,7 +447,7 @@ type Team implements Node {
 
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
-  ): TeamMembersConnection!
+  ): TeamMembersManyToManyConnection!
 
   """Reads and enables pagination through a set of \`Membership\`."""
   membershipsByTeamId(
@@ -499,11 +499,11 @@ input TeamCondition {
 """
 A connection to a list of \`Person\` values, with data from \`Membership\`.
 """
-type TeamMembersConnection {
+type TeamMembersManyToManyConnection {
   """
   A list of edges which contains the \`Person\`, info from the \`Membership\`, and the cursor to aid in pagination.
   """
-  edges: [TeamMembersEdge!]!
+  edges: [TeamMembersManyToManyEdge!]!
 
   """A list of \`Person\` objects."""
   nodes: [Person]!
@@ -516,7 +516,7 @@ type TeamMembersConnection {
 }
 
 """A \`Person\` edge in the connection, with data from \`Membership\`."""
-type TeamMembersEdge {
+type TeamMembersManyToManyEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
