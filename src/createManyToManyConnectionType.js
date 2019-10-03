@@ -39,6 +39,7 @@ module.exports = function createManyToManyConnectionType(
     pgGetGqlTypeByTypeIdAndModifier,
     pgField,
     getSafeAliasFromResolveInfo,
+    describePgEntity,
   } = build;
   const { pgForbidSetofFunctionsToReturnNull = false } = options;
   const nullableIf = (condition, Type) =>
@@ -142,6 +143,11 @@ module.exports = function createManyToManyConnectionType(
       },
     },
     {
+      __origin: `Adding many-to-many edge type from ${describePgEntity(
+        leftTable
+      )} to ${describePgEntity(rightTable)} via ${describePgEntity(
+        junctionTable
+      )}.`,
       isEdgeType: true,
       isPgRowEdgeType: true,
       isPgManyToManyEdgeType: true,
@@ -229,6 +235,11 @@ module.exports = function createManyToManyConnectionType(
       },
     },
     {
+      __origin: `Adding many-to-many connection type from ${describePgEntity(
+        leftTable
+      )} to ${describePgEntity(rightTable)} via ${describePgEntity(
+        junctionTable
+      )}.`,
       isConnectionType: true,
       isPgRowConnectionType: true,
       edgeType: EdgeType,
