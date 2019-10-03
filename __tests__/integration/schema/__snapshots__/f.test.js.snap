@@ -108,7 +108,7 @@ type Person implements Node {
 
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PersonFollowersConnection!
+  ): PersonFollowersManyToManyConnection!
 
   """Reads and enables pagination through a set of \`Person\`."""
   following(
@@ -137,7 +137,7 @@ type Person implements Node {
 
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PersonFollowingConnection!
+  ): PersonFollowingManyToManyConnection!
   id: Int!
   name: String
 
@@ -159,11 +159,11 @@ input PersonCondition {
 }
 
 """A connection to a list of \`Person\` values, with data from \`Junction\`."""
-type PersonFollowersConnection {
+type PersonFollowersManyToManyConnection {
   """
   A list of edges which contains the \`Person\`, info from the \`Junction\`, and the cursor to aid in pagination.
   """
-  edges: [PersonFollowersEdge!]!
+  edges: [PersonFollowersManyToManyEdge!]!
 
   """A list of \`Person\` objects."""
   nodes: [Person]!
@@ -176,7 +176,7 @@ type PersonFollowersConnection {
 }
 
 """A \`Person\` edge in the connection, with data from \`Junction\`."""
-type PersonFollowersEdge {
+type PersonFollowersManyToManyEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
@@ -185,11 +185,11 @@ type PersonFollowersEdge {
 }
 
 """A connection to a list of \`Person\` values, with data from \`Junction\`."""
-type PersonFollowingConnection {
+type PersonFollowingManyToManyConnection {
   """
   A list of edges which contains the \`Person\`, info from the \`Junction\`, and the cursor to aid in pagination.
   """
-  edges: [PersonFollowingEdge!]!
+  edges: [PersonFollowingManyToManyEdge!]!
 
   """A list of \`Person\` objects."""
   nodes: [Person]!
@@ -202,7 +202,7 @@ type PersonFollowingConnection {
 }
 
 """A \`Person\` edge in the connection, with data from \`Junction\`."""
-type PersonFollowingEdge {
+type PersonFollowingManyToManyEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 

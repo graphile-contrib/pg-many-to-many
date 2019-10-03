@@ -70,7 +70,9 @@ module.exports = function PgManyToManyRelationInflectionPlugin(builder) {
           junctionLeftConstraint,
           junctionRightConstraint
         );
-        return this.upperCamelCase(`${leftTableTypeName}-${relationName}-edge`);
+        return this.upperCamelCase(
+          `${leftTableTypeName}-${relationName}-many-to-many-edge`
+        );
       },
       manyToManyRelationConnection(
         leftKeyAttributes,
@@ -95,7 +97,7 @@ module.exports = function PgManyToManyRelationInflectionPlugin(builder) {
           leftTableTypeName
         );
         return this.upperCamelCase(
-          `${leftTableTypeName}-${relationName}-connection`
+          `${leftTableTypeName}-${relationName}-many-to-many-connection`
         );
       },
     });
