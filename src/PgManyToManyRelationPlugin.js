@@ -214,6 +214,15 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                   isPgFieldSimpleCollection: !isConnection,
                   isPgManyToManyRelationField: true,
                   pgFieldIntrospection: rightTable,
+
+                  pgManyToManyLeftKeyAttributes: leftKeyAttributes,
+                  pgManyToManyJunctionLeftKeyAttributes: junctionLeftKeyAttributes,
+                  pgManyToManyJunctionRightKeyAttributes: junctionRightKeyAttributes,
+                  pgManyToManyRightKeyAttributes: rightKeyAttributes,
+                  pgManyToManyJunctionTable: junctionTable,
+                  pgManyToManyRightTable: rightTable,
+                  pgManyToManyJunctionLeftConstraint: junctionLeftConstraint,
+                  pgManyToManyJunctionRightConstraint: junctionRightConstraint,
                 }
               ),
             },

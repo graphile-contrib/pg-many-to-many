@@ -207,6 +207,11 @@ type Person implements Node {
     """Only read the first \`n\` values of the set."""
     first: Int
 
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    junctionCondition: PersonTeamsByMembershipPersonIdAndTeamIdManyToManyCondition
+
     """Only read the last \`n\` values of the set."""
     last: Int
 
@@ -230,6 +235,20 @@ input PersonCondition {
 
   """Checks for equality with the object’s \`personName\` field."""
   personName: String
+}
+
+"""
+A condition to be used against \`Team\` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input PersonTeamsByMembershipPersonIdAndTeamIdManyToManyCondition {
+  """Checks for equality with the \`Membership\` object’s \`endAt\` field."""
+  endAt: Datetime
+
+  """Checks for equality with the \`Membership\` object’s \`id\` field."""
+  id: Int
+
+  """Checks for equality with the \`Membership\` object’s \`startAt\` field."""
+  startAt: Datetime
 }
 
 """A connection to a list of \`Team\` values, with data from \`Membership\`."""
@@ -436,6 +455,11 @@ type Team implements Node {
     """Only read the first \`n\` values of the set."""
     first: Int
 
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    junctionCondition: TeamMembersManyToManyCondition
+
     """Only read the last \`n\` values of the set."""
     last: Int
 
@@ -494,6 +518,20 @@ input TeamCondition {
 
   """Checks for equality with the object’s \`teamName\` field."""
   teamName: String
+}
+
+"""
+A condition to be used against \`Person\` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input TeamMembersManyToManyCondition {
+  """Checks for equality with the \`Membership\` object’s \`endAt\` field."""
+  endAt: Datetime
+
+  """Checks for equality with the \`Membership\` object’s \`id\` field."""
+  id: Int
+
+  """Checks for equality with the \`Membership\` object’s \`startAt\` field."""
+  startAt: Datetime
 }
 
 """

@@ -100,6 +100,32 @@ module.exports = function PgManyToManyRelationInflectionPlugin(builder) {
           `${leftTableTypeName}-${relationName}-many-to-many-connection`
         );
       },
+      manyToManyRelationConditionType(
+        leftKeyAttributes,
+        junctionLeftKeyAttributes,
+        junctionRightKeyAttributes,
+        rightKeyAttributes,
+        junctionTable,
+        rightTable,
+        junctionLeftConstraint,
+        junctionRightConstraint,
+        leftTableTypeName
+      ) {
+        const relationName = inflection.manyToManyRelationByKeys(
+          leftKeyAttributes,
+          junctionLeftKeyAttributes,
+          junctionRightKeyAttributes,
+          rightKeyAttributes,
+          junctionTable,
+          rightTable,
+          junctionLeftConstraint,
+          junctionRightConstraint,
+          leftTableTypeName
+        );
+        return this.upperCamelCase(
+          `${leftTableTypeName}-${relationName}-many-to-many-condition`
+        );
+      },
       /* eslint-disable no-unused-vars */
       manyToManyRelationSubqueryName(
         leftKeyAttributes,

@@ -16,8 +16,11 @@ create table b.bar (
 );
 
 create table b.junction (
-  j_foo_id integer references b.foo (foo_id),
+  j_foo_id integer constraint junction_j_foo_id_fkey references b.foo (foo_id),
   j_bar_id integer references b.bar (bar_id),
   created_at timestamptz not null,
   primary key (j_foo_id, j_bar_id)
 );
+
+comment on constraint junction_j_foo_id_fkey on b.junction is
+  E'@manyToManyCombinedConditionArg';
