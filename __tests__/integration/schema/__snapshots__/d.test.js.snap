@@ -16,6 +16,11 @@ type Bar implements Node {
     """Only read the first \`n\` values of the set."""
     first: Int
 
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    junctionCondition: BarFoosByJunctionJBarIdAndJFooIdManyToManyCondition
+
     """Only read the last \`n\` values of the set."""
     last: Int
 
@@ -57,6 +62,17 @@ type Bar implements Node {
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
   """
   nodeId: ID!
+}
+
+"""
+A condition to be used against \`Foo\` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input BarFoosByJunctionJBarIdAndJFooIdManyToManyCondition {
+  """Checks for equality with the \`Junction\` object’s \`createdAt\` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the \`Junction\` object’s \`id\` field."""
+  id: Int
 }
 
 """A connection to a list of \`Foo\` values, with data from \`Junction\`."""
@@ -167,6 +183,11 @@ type Foo implements Node {
     """Only read the first \`n\` values of the set."""
     first: Int
 
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    junctionCondition: FooBarsByJunctionJFooIdAndJBarIdManyToManyCondition
+
     """Only read the last \`n\` values of the set."""
     last: Int
 
@@ -210,6 +231,17 @@ type Foo implements Node {
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
   """
   nodeId: ID!
+}
+
+"""
+A condition to be used against \`Bar\` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input FooBarsByJunctionJFooIdAndJBarIdManyToManyCondition {
+  """Checks for equality with the \`Junction\` object’s \`createdAt\` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the \`Junction\` object’s \`id\` field."""
+  id: Int
 }
 
 """A connection to a list of \`Bar\` values, with data from \`Junction\`."""

@@ -19,7 +19,7 @@ module.exports = function PgManyToManyPlugin(builder, options) {
         );
       }
     };
-    depends("graphile-build-pg", "^4.4.0");
+    depends("graphile-build-pg", "^4.5.0");
 
     // Register this plugin
     build.versions = build.extend(build.versions, { [pkg.name]: pkg.version });
@@ -31,4 +31,5 @@ module.exports = function PgManyToManyPlugin(builder, options) {
   require("./src/PgManyToManyRelationPlugin.js")(builder, options);
   require("./src/PgManyToManyRelationEdgeColumnsPlugin.js")(builder, options);
   require("./src/PgManyToManyRelationEdgeTablePlugin.js")(builder, options);
+  require("./src/PgManyToManyRelationFilterPlugin.js")(builder, options);
 };

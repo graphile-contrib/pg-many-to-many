@@ -50,6 +50,11 @@ type Post implements Node {
     """Only read the first \`n\` values of the set."""
     first: Int
 
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    junctionCondition: PostAuthorsManyToManyCondition
+
     """Only read the last \`n\` values of the set."""
     last: Int
 
@@ -133,6 +138,17 @@ type PostAuthorsEdge {
 
   """The \`PostAuthor\` at the end of the edge."""
   node: PostAuthor
+}
+
+"""
+A condition to be used against \`User\` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input PostAuthorsManyToManyCondition {
+  """Checks for equality with the \`PostAuthor\` object’s \`createdAt\` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the \`PostAuthor\` object’s \`id\` field."""
+  id: UUID
 }
 
 """A connection to a list of \`User\` values, with data from \`PostAuthor\`."""
@@ -417,6 +433,11 @@ type User implements Node {
     """Only read the first \`n\` values of the set."""
     first: Int
 
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    junctionCondition: UserPostsByPostAuthorUserIdAndPostIdManyToManyCondition
+
     """Only read the last \`n\` values of the set."""
     last: Int
 
@@ -436,6 +457,17 @@ A condition to be used against \`User\` object types. All fields are tested for 
 """
 input UserCondition {
   """Checks for equality with the object’s \`id\` field."""
+  id: UUID
+}
+
+"""
+A condition to be used against \`Post\` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input UserPostsByPostAuthorUserIdAndPostIdManyToManyCondition {
+  """Checks for equality with the \`PostAuthor\` object’s \`createdAt\` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the \`PostAuthor\` object’s \`id\` field."""
   id: UUID
 }
 

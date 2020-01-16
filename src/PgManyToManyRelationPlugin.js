@@ -147,19 +147,37 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                                 });
                               }
 
-                              innerQueryBuilder.where(
-                                sql.fragment`${rightTableAlias}.${sql.identifier(
-                                  rightKeyAttribute.name
-                                )} in (select ${sql.identifier(
-                                  junctionRightKeyAttribute.name
-                                )} from ${sql.identifier(
+                              const subqueryName = inflection.manyToManyRelationSubqueryName(
+                                leftKeyAttributes,
+                                junctionLeftKeyAttributes,
+                                junctionRightKeyAttributes,
+                                rightKeyAttributes,
+                                junctionTable,
+                                rightTable,
+                                junctionLeftConstraint,
+                                junctionRightConstraint
+                              );
+                              const subqueryBuilder = innerQueryBuilder.buildNamedChildSelecting(
+                                subqueryName,
+                                sql.identifier(
                                   junctionTable.namespace.name,
                                   junctionTable.name
-                                )} where ${sql.identifier(
+                                ),
+                                sql.identifier(junctionRightKeyAttribute.name)
+                              );
+                              subqueryBuilder.where(
+                                sql.fragment`${sql.identifier(
                                   junctionLeftKeyAttribute.name
                                 )} = ${leftTableAlias}.${sql.identifier(
                                   leftKeyAttribute.name
-                                )})`
+                                )}`
+                              );
+
+                              innerQueryBuilder.where(
+                                () =>
+                                  sql.fragment`${rightTableAlias}.${sql.identifier(
+                                    rightKeyAttribute.name
+                                  )} in (${subqueryBuilder.build()})`
                               );
                             },
                             queryBuilder.context,
@@ -196,6 +214,15 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                   isPgFieldSimpleCollection: !isConnection,
                   isPgManyToManyRelationField: true,
                   pgFieldIntrospection: rightTable,
+
+                  pgManyToManyLeftKeyAttributes: leftKeyAttributes,
+                  pgManyToManyJunctionLeftKeyAttributes: junctionLeftKeyAttributes,
+                  pgManyToManyJunctionRightKeyAttributes: junctionRightKeyAttributes,
+                  pgManyToManyRightKeyAttributes: rightKeyAttributes,
+                  pgManyToManyJunctionTable: junctionTable,
+                  pgManyToManyRightTable: rightTable,
+                  pgManyToManyJunctionLeftConstraint: junctionLeftConstraint,
+                  pgManyToManyJunctionRightConstraint: junctionRightConstraint,
                 }
               ),
             },
