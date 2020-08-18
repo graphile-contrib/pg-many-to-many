@@ -11,7 +11,7 @@ const debug = require("debug")("graphile-build:schema");
 const readFile = util.promisify(fs.readFile);
 
 const getSqlSchemas = () => fs.readdirSync(path.resolve(__dirname, "schemas"));
-const getFixturesForSqlSchema = sqlSchema =>
+const getFixturesForSqlSchema = (sqlSchema) =>
   fs.existsSync(
     path.resolve(__dirname, "schemas", sqlSchema, "fixtures", "queries")
   )
@@ -33,7 +33,7 @@ const readFixtureForSqlSchema = (sqlSchema, fixture) =>
   );
 
 const queryResult = async (sqlSchema, fixture) => {
-  return await withPgClient(async pgClient => {
+  return await withPgClient(async (pgClient) => {
     const data = await readFile(
       path.resolve(__dirname, "schemas", sqlSchema, "data.sql"),
       "utf8"
@@ -52,13 +52,13 @@ const queryResult = async (sqlSchema, fixture) => {
 };
 
 const sqlSchemas = getSqlSchemas();
-describe.each(sqlSchemas)("schema=%s", sqlSchema => {
+describe.each(sqlSchemas)("schema=%s", (sqlSchema) => {
   const fixtures = getFixturesForSqlSchema(sqlSchema);
   if (fixtures.length > 0) {
-    test.each(fixtures)("query=%s", async fixture => {
+    test.each(fixtures)("query=%s", async (fixture) => {
       const result = await queryResult(sqlSchema, fixture);
       if (result.errors) {
-        console.log(result.errors.map(e => e.originalError));
+        console.log(result.errors.map((e) => e.originalError));
       }
       expect(result).toMatchSnapshot();
     });

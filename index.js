@@ -1,5 +1,5 @@
 module.exports = function PgManyToManyPlugin(builder, options) {
-  builder.hook("build", build => {
+  builder.hook("build", (build) => {
     const pkg = require("./package.json");
 
     // Check dependencies

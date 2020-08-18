@@ -1,5 +1,5 @@
 module.exports = function PgManyToManyRelationInflectionPlugin(builder) {
-  builder.hook("inflection", inflection => {
+  builder.hook("inflection", (inflection) => {
     return Object.assign(inflection, {
       manyToManyRelationByKeys(
         _leftKeyAttributes,
@@ -21,7 +21,7 @@ module.exports = function PgManyToManyRelationInflectionPlugin(builder) {
             ...junctionLeftKeyAttributes,
             ...junctionRightKeyAttributes,
           ]
-            .map(attr => this.column(attr))
+            .map((attr) => this.column(attr))
             .join("-and-")}`
         );
       },
@@ -45,7 +45,7 @@ module.exports = function PgManyToManyRelationInflectionPlugin(builder) {
             ...junctionLeftKeyAttributes,
             ...junctionRightKeyAttributes,
           ]
-            .map(attr => this.column(attr))
+            .map((attr) => this.column(attr))
             .join("-and-")}-list`
         );
       },

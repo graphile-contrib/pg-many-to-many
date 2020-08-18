@@ -103,9 +103,9 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                     withPaginationAsFields: false,
                     asJsonAggregate: !isConnection,
                   };
-                  addDataGenerator(parsedResolveInfoFragment => {
+                  addDataGenerator((parsedResolveInfoFragment) => {
                     return {
-                      pgQuery: queryBuilder => {
+                      pgQuery: (queryBuilder) => {
                         queryBuilder.select(() => {
                           const resolveData = getDataFromParsedResolveInfoFragment(
                             parsedResolveInfoFragment,
@@ -120,7 +120,7 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                             rightTableAlias,
                             resolveData,
                             queryOptions,
-                            innerQueryBuilder => {
+                            (innerQueryBuilder) => {
                               innerQueryBuilder.parentQueryBuilder = queryBuilder;
                               const rightPrimaryKeyConstraint =
                                 rightTable.primaryKeyConstraint;
@@ -134,14 +134,16 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                                     innerQueryBuilder.data.cursorPrefix = [
                                       "primary_key_asc",
                                     ];
-                                    rightPrimaryKeyAttributes.forEach(attr => {
-                                      innerQueryBuilder.orderBy(
-                                        sql.fragment`${innerQueryBuilder.getTableAlias()}.${sql.identifier(
-                                          attr.name
-                                        )}`,
-                                        true
-                                      );
-                                    });
+                                    rightPrimaryKeyAttributes.forEach(
+                                      (attr) => {
+                                        innerQueryBuilder.orderBy(
+                                          sql.fragment`${innerQueryBuilder.getTableAlias()}.${sql.identifier(
+                                            attr.name
+                                          )}`,
+                                          true
+                                        );
+                                      }
+                                    );
                                     innerQueryBuilder.setOrderIsUnique();
                                   }
                                 });

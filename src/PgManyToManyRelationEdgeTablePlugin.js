@@ -90,9 +90,9 @@ module.exports = function PgManyToManyEdgeTablePlugin(
                 withPaginationAsFields: false,
                 asJsonAggregate: !isConnection,
               };
-              addDataGenerator(parsedResolveInfoFragment => {
+              addDataGenerator((parsedResolveInfoFragment) => {
                 return {
-                  pgQuery: queryBuilder => {
+                  pgQuery: (queryBuilder) => {
                     queryBuilder.select(() => {
                       const resolveData = getDataFromParsedResolveInfoFragment(
                         parsedResolveInfoFragment,
@@ -106,7 +106,7 @@ module.exports = function PgManyToManyEdgeTablePlugin(
                         junctionTableAlias,
                         resolveData,
                         queryOptions,
-                        innerQueryBuilder => {
+                        (innerQueryBuilder) => {
                           innerQueryBuilder.parentQueryBuilder = queryBuilder;
                           const junctionPrimaryKeyConstraint =
                             junctionTable.primaryKeyConstraint;
@@ -120,7 +120,7 @@ module.exports = function PgManyToManyEdgeTablePlugin(
                                 innerQueryBuilder.data.cursorPrefix = [
                                   "primary_key_asc",
                                 ];
-                                junctionPrimaryKeyAttributes.forEach(attr => {
+                                junctionPrimaryKeyAttributes.forEach((attr) => {
                                   innerQueryBuilder.orderBy(
                                     sql.fragment`${innerQueryBuilder.getTableAlias()}.${sql.identifier(
                                       attr.name
