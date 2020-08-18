@@ -29,7 +29,7 @@ module.exports = function manyToManyRelationships(leftTable, build) {
           `Could not find the table that referenced us (constraint: ${junctionLeftConstraint.name})`
         );
       }
-      if (omit(junctionTable, "manyToMany")) {
+      if (omit(junctionTable, "read") || omit(junctionTable, "manyToMany")) {
         return memoLeft;
       }
       const memoRight = junctionTable.constraints
@@ -42,6 +42,9 @@ module.exports = function manyToManyRelationships(leftTable, build) {
         )
         .reduce((memoRight, junctionRightConstraint) => {
           const rightTable = junctionRightConstraint.foreignClass;
+          if (omit(rightTable, "read") || omit(rightTable, "manyToMany")) {
+            return memoRight;
+          }
 
           const leftKeyAttributes = junctionLeftConstraint.foreignKeyAttributes;
           const junctionLeftKeyAttributes =
