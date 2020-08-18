@@ -1,7 +1,7 @@
-const hasNonNullKey = row => {
+const hasNonNullKey = (row) => {
   if (
     Array.isArray(row.__identifiers) &&
-    row.__identifiers.every(i => i != null)
+    row.__identifiers.every((i) => i != null)
   ) {
     return true;
   }
@@ -46,7 +46,7 @@ module.exports = function createManyToManyConnectionType(
     condition ? Type : new GraphQLNonNull(Type);
   const Cursor = getTypeByName("Cursor");
   const handleNullRow = pgForbidSetofFunctionsToReturnNull
-    ? row => row
+    ? (row) => row
     : (row, identifiers) => {
         if ((identifiers && hasNonNullKey(identifiers)) || hasNonNullKey(row)) {
           return row;
@@ -77,7 +77,7 @@ module.exports = function createManyToManyConnectionType(
     rightPrimaryKeyConstraint && rightPrimaryKeyConstraint.keyAttributes;
 
   const junctionTypeName = inflection.tableType(junctionTable);
-  const base64 = str => Buffer.from(String(str)).toString("base64");
+  const base64 = (str) => Buffer.from(String(str)).toString("base64");
 
   const EdgeType = newWithHooks(
     GraphQLObjectType,
@@ -101,7 +101,7 @@ module.exports = function createManyToManyConnectionType(
             ({ addDataGenerator }) => {
               addDataGenerator(() => ({
                 usesCursor: [true],
-                pgQuery: queryBuilder => {
+                pgQuery: (queryBuilder) => {
                   if (rightPrimaryKeyAttributes) {
                     queryBuilder.selectIdentifiers(rightTable);
                   }
@@ -188,7 +188,7 @@ module.exports = function createManyToManyConnectionType(
               ),
               resolve(data, _args, _context, resolveInfo) {
                 const safeAlias = getSafeAliasFromResolveInfo(resolveInfo);
-                return data.data.map(entry => {
+                return data.data.map((entry) => {
                   const record = handleNullRow(
                     entry[safeAlias],
                     entry[safeAlias].__identifiers
@@ -212,7 +212,7 @@ module.exports = function createManyToManyConnectionType(
               ),
               resolve(data, _args, _context, resolveInfo) {
                 const safeAlias = getSafeAliasFromResolveInfo(resolveInfo);
-                return data.data.map(entry => ({
+                return data.data.map((entry) => ({
                   ...entry,
                   ...entry[safeAlias],
                 }));

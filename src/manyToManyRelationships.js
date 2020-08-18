@@ -14,7 +14,7 @@ module.exports = function manyToManyRelationships(leftTable, build) {
   } = build;
 
   return leftTable.foreignConstraints
-    .filter(con => con.type === "f")
+    .filter((con) => con.type === "f")
     .reduce((memoLeft, junctionLeftConstraint) => {
       if (
         omit(junctionLeftConstraint, "read") ||
@@ -34,7 +34,7 @@ module.exports = function manyToManyRelationships(leftTable, build) {
       }
       const memoRight = junctionTable.constraints
         .filter(
-          con =>
+          (con) =>
             con.id !== junctionLeftConstraint.id && // Don't follow the same constraint back to the left table
             con.type === "f" &&
             !omit(con, "read") &&
@@ -56,20 +56,20 @@ module.exports = function manyToManyRelationships(leftTable, build) {
 
           // Ensure keys were found
           if (
-            !leftKeyAttributes.every(_ => _) ||
-            !junctionLeftKeyAttributes.every(_ => _) ||
-            !junctionRightKeyAttributes.every(_ => _) ||
-            !rightKeyAttributes.every(_ => _)
+            !leftKeyAttributes.every((_) => _) ||
+            !junctionLeftKeyAttributes.every((_) => _) ||
+            !junctionRightKeyAttributes.every((_) => _) ||
+            !rightKeyAttributes.every((_) => _)
           ) {
             throw new Error("Could not find key columns!");
           }
 
           // Ensure keys can be read
           if (
-            leftKeyAttributes.some(attr => omit(attr, "read")) ||
-            junctionLeftKeyAttributes.some(attr => omit(attr, "read")) ||
-            junctionRightKeyAttributes.some(attr => omit(attr, "read")) ||
-            rightKeyAttributes.some(attr => omit(attr, "read"))
+            leftKeyAttributes.some((attr) => omit(attr, "read")) ||
+            junctionLeftKeyAttributes.some((attr) => omit(attr, "read")) ||
+            junctionRightKeyAttributes.some((attr) => omit(attr, "read")) ||
+            rightKeyAttributes.some((attr) => omit(attr, "read"))
           ) {
             return memoRight;
           }
@@ -82,19 +82,19 @@ module.exports = function manyToManyRelationships(leftTable, build) {
 
           // Ensure junction constraint keys are not unique (which would result in a one-to-one relation)
           const junctionLeftConstraintIsUnique = !!junctionTable.constraints.find(
-            c =>
+            (c) =>
               ["p", "u"].includes(c.type) &&
               arraysAreEqual(
                 c.keyAttributeNums,
-                junctionLeftKeyAttributes.map(attr => attr.num)
+                junctionLeftKeyAttributes.map((attr) => attr.num)
               )
           );
           const junctionRightConstraintIsUnique = !!junctionTable.constraints.find(
-            c =>
+            (c) =>
               ["p", "u"].includes(c.type) &&
               arraysAreEqual(
                 c.keyAttributeNums,
-                junctionRightKeyAttributes.map(attr => attr.num)
+                junctionRightKeyAttributes.map((attr) => attr.num)
               )
           );
           if (
@@ -105,13 +105,13 @@ module.exports = function manyToManyRelationships(leftTable, build) {
           }
 
           const allowsMultipleEdgesToNode = !junctionTable.constraints.find(
-            c =>
+            (c) =>
               ["p", "u"].includes(c.type) &&
               arraysAreEqual(
                 c.keyAttributeNums.concat().sort(),
                 [
-                  ...junctionLeftKeyAttributes.map(obj => obj.num),
-                  ...junctionRightKeyAttributes.map(obj => obj.num),
+                  ...junctionLeftKeyAttributes.map((obj) => obj.num),
+                  ...junctionRightKeyAttributes.map((obj) => obj.num),
                 ].sort()
               )
           );

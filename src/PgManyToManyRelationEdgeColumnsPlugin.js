@@ -45,9 +45,9 @@ module.exports = function PgManyToManyRelationEdgeColumnsPlugin(builder) {
           if (omit(attr, "read")) return memo;
 
           // Skip left and right key attributes
-          if (junctionLeftKeyAttributes.map(a => a.name).includes(attr.name))
+          if (junctionLeftKeyAttributes.map((a) => a.name).includes(attr.name))
             return memo;
-          if (junctionRightKeyAttributes.map(a => a.name).includes(attr.name))
+          if (junctionRightKeyAttributes.map((a) => a.name).includes(attr.name))
             return memo;
 
           const fieldName = inflection.column(attr);
@@ -56,7 +56,7 @@ module.exports = function PgManyToManyRelationEdgeColumnsPlugin(builder) {
             {
               [fieldName]: fieldWithHooks(
                 fieldName,
-                fieldContext => {
+                (fieldContext) => {
                   const { type, typeModifier } = attr;
                   const { addDataGenerator } = fieldContext;
                   const ReturnType =
@@ -79,9 +79,9 @@ module.exports = function PgManyToManyRelationEdgeColumnsPlugin(builder) {
                     junctionTable.name
                   )}`;
 
-                  addDataGenerator(parsedResolveInfoFragment => {
+                  addDataGenerator((parsedResolveInfoFragment) => {
                     return {
-                      pgQuery: queryBuilder => {
+                      pgQuery: (queryBuilder) => {
                         queryBuilder.select(
                           getSelectValueForFieldAndTypeAndModifier(
                             ReturnType,
@@ -112,7 +112,7 @@ module.exports = function PgManyToManyRelationEdgeColumnsPlugin(builder) {
                         !attr.tags.notNull,
                       ReturnType
                     ),
-                    resolve: data => {
+                    resolve: (data) => {
                       return pg2gql(data[fieldName], attr.type);
                     },
                   };

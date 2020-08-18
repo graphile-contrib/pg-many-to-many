@@ -34,7 +34,7 @@ const withPgClient = async (url, fn) => {
 };
 
 const withDbFromUrl = async (url, fn) => {
-  return withPgClient(url, async client => {
+  return withPgClient(url, async (client) => {
     try {
       await client.query("BEGIN ISOLATION LEVEL SERIALIZABLE;");
       return fn(client);
@@ -44,14 +44,14 @@ const withDbFromUrl = async (url, fn) => {
   });
 };
 
-const withRootDb = fn => withDbFromUrl(process.env.TEST_DATABASE_URL, fn);
+const withRootDb = (fn) => withDbFromUrl(process.env.TEST_DATABASE_URL, fn);
 
 let prepopulatedDBKeepalive;
 
-const populateDatabase = async client => {
+const populateDatabase = async (client) => {
   const sqlSchemas = fs.readdirSync(path.resolve(__dirname, "schemas"));
   await Promise.all(
-    sqlSchemas.map(async sqlSchema => {
+    sqlSchemas.map(async (sqlSchema) => {
       const sqlData = await readFile(
         path.resolve(__dirname, "schemas", sqlSchema, "data.sql"),
         "utf8"
@@ -62,7 +62,7 @@ const populateDatabase = async client => {
   return {};
 };
 
-const withPrepopulatedDb = async fn => {
+const withPrepopulatedDb = async (fn) => {
   if (!prepopulatedDBKeepalive) {
     throw new Error("You must call setup and teardown to use this");
   }
@@ -87,7 +87,7 @@ const withPrepopulatedDb = async fn => {
   }
 };
 
-withPrepopulatedDb.setup = done => {
+withPrepopulatedDb.setup = (done) => {
   if (prepopulatedDBKeepalive) {
     throw new Error("There's already a prepopulated DB running");
   }
@@ -99,7 +99,7 @@ withPrepopulatedDb.setup = done => {
   });
   prepopulatedDBKeepalive.resolve = res;
   prepopulatedDBKeepalive.reject = rej;
-  withRootDb(async client => {
+  withRootDb(async (client) => {
     prepopulatedDBKeepalive.client = client;
     try {
       prepopulatedDBKeepalive.vars = await populateDatabase(client);
