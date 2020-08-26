@@ -57,7 +57,7 @@ app.listen(5000);
 
 ## Excluding Fields
 
-To exclude certain many-to-many fields from appering in your GraphQL schema, you can use `@omit manyToMany` [smart comments](https://www.graphile.org/postgraphile/smart-comments/) on constraints and tables.
+To exclude certain many-to-many fields from appearing in your GraphQL schema, you can use `@omit manyToMany` [smart comments](https://www.graphile.org/postgraphile/smart-comments/) on constraints and tables.
 
 Here is an example of using a smart comment on a constraint:
 
