@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Add connection fields for many-to-many relations",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "lint": "eslint .",
     "test": "scripts/test"
@@ -35,7 +36,8 @@
     ]
   },
   "files": [
-    "src"
+    "src",
+    "index.d.ts"
   ],
   "engines": {
     "node": ">=10"
