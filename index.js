@@ -1,6 +1,11 @@
+const pkg = require("./package.json");
+const PgManyToManyRelationInflectionPlugin = require("./src/PgManyToManyRelationInflectionPlugin.js");
+const PgManyToManyRelationPlugin = require("./src/PgManyToManyRelationPlugin.js");
+const PgManyToManyRelationEdgeColumnsPlugin = require("./src/PgManyToManyRelationEdgeColumnsPlugin.js");
+const PgManyToManyRelationEdgeTablePlugin = require("./src/PgManyToManyRelationEdgeTablePlugin.js");
+
 module.exports = function PgManyToManyPlugin(builder, options) {
   builder.hook("build", (build) => {
-    const pkg = require("./package.json");
 
     // Check dependencies
     if (!build.versions) {
@@ -26,9 +31,9 @@ module.exports = function PgManyToManyPlugin(builder, options) {
 
     return build;
   });
-
-  require("./src/PgManyToManyRelationInflectionPlugin.js")(builder, options);
-  require("./src/PgManyToManyRelationPlugin.js")(builder, options);
-  require("./src/PgManyToManyRelationEdgeColumnsPlugin.js")(builder, options);
-  require("./src/PgManyToManyRelationEdgeTablePlugin.js")(builder, options);
+  
+  PgManyToManyRelationInflectionPlugin(builder, options);
+  PgManyToManyRelationPlugin(builder, options);
+  PgManyToManyRelationEdgeColumnsPlugin(builder, options);
+  PgManyToManyRelationEdgeTablePlugin(builder, options);
 };
