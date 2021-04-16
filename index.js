@@ -6,7 +6,6 @@ const PgManyToManyRelationEdgeTablePlugin = require("./src/PgManyToManyRelationE
 
 module.exports = function PgManyToManyPlugin(builder, options) {
   builder.hook("build", (build) => {
-
     // Check dependencies
     if (!build.versions) {
       throw new Error(
@@ -31,7 +30,7 @@ module.exports = function PgManyToManyPlugin(builder, options) {
 
     return build;
   });
-  
+
   PgManyToManyRelationInflectionPlugin(builder, options);
   PgManyToManyRelationPlugin(builder, options);
   PgManyToManyRelationEdgeColumnsPlugin(builder, options);
