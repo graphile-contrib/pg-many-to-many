@@ -1,3 +1,16 @@
+import { PgManyToManyRelationDetails } from "./PgManyToManyRelationInflectionPlugin";
+
+declare global {
+  namespace GraphileBuild {
+    interface ScopeObjectFields {
+      isPgManyToManyEdgeType?: boolean;
+      pgManyToManyRelationship?: PgManyToManyRelationDetails & {
+        allowsMultipleEdgesToNode: boolean;
+      };
+    }
+  }
+}
+
 const hasNonNullKey = (row) => {
   if (
     Array.isArray(row.__identifiers) &&

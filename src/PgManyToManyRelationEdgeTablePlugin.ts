@@ -13,18 +13,8 @@ export const PgManyToManyRelationEdgeTablePlugin: GraphileConfig.Plugin = {
         const {
           extend,
           getTypeByName,
-          pgGetGqlTypeByTypeIdAndModifier,
           graphql: { GraphQLNonNull, GraphQLList },
           inflection,
-          getSafeAliasFromResolveInfo,
-          getSafeAliasFromAlias,
-          pgQueryFromResolveData: queryFromResolveData,
-          pgAddStartEndCursor: addStartEndCursor,
-          pgSql: sql,
-          describePgEntity,
-          options: {
-            pgSimpleCollections, // TODO: FIX ME
-          },
         } = build;
         const {
           scope: { isPgManyToManyEdgeType, pgManyToManyRelationship },
@@ -42,7 +32,7 @@ export const PgManyToManyRelationEdgeTablePlugin: GraphileConfig.Plugin = {
           rightKeyAttributes,
           junctionRightKeyAttributes,
           junctionTable,
-          junctionRightConstraint,
+          junctionRightRelation,
           allowsMultipleEdgesToNode,
         } = pgManyToManyRelationship;
 
@@ -50,32 +40,32 @@ export const PgManyToManyRelationEdgeTablePlugin: GraphileConfig.Plugin = {
           return fields;
         }
 
-        const JunctionTableType = pgGetGqlTypeByTypeIdAndModifier(
-          junctionTable.type.id,
-          null
+        const JunctionTableType = build.getGraphQLTypeByPgCodec(
+          junctionTable.codec,
+          "output"
         );
         if (!JunctionTableType) {
           throw new Error(
-            `Could not determine type for table with id ${junctionTable.type.id}`
+            `Could not determine output type for ${junctionTable.name}`
           );
         }
         const JunctionTableConnectionType = getTypeByName(
-          inflection.connection(JunctionTableType.name)
+          inflection.tableConnectionType(junctionTable.codec)
         );
 
-        function makeFields(isConnection) {
+        function makeFields(isConnection: boolean) {
           const fieldName = isConnection
-            ? inflection.manyRelationByKeys(
+            ? inflection.manyRelationConnection({
+                source: junctionTable,
+                codec: sourceCodec,
+                identifier: sourceRelationName,
+                relation: junctionRightRelation,
+              })
+            : inflection.manyRelationList(
                 junctionRightKeyAttributes,
                 junctionTable,
                 rightTable,
-                junctionRightConstraint
-              )
-            : inflection.manyRelationByKeysSimple(
-                junctionRightKeyAttributes,
-                junctionTable,
-                rightTable,
-                junctionRightConstraint
+                junctionRightRelation
               );
           const Type = isConnection
             ? JunctionTableConnectionType
@@ -211,12 +201,12 @@ export const PgManyToManyRelationEdgeTablePlugin: GraphileConfig.Plugin = {
             `Many-to-many relation edge table (${
               isConnection ? "connection" : "simple collection"
             }) on ${Self.name} type for ${describePgEntity(
-              junctionRightConstraint
+              junctionRightRelation
             )}.`
           );
         }
         const simpleCollections =
-          junctionRightConstraint.tags.simpleCollections ||
+          junctionRightRelation.tags.simpleCollections ||
           junctionTable.tags.simpleCollections ||
           pgSimpleCollections;
         const hasConnections = simpleCollections !== "only";

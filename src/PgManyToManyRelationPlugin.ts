@@ -14,25 +14,16 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
       GraphQLObjectType_fields(fields, build, context) {
         const {
           extend,
-          pgGetGqlTypeByTypeIdAndModifier,
-          pgSql: sql,
-          getSafeAliasFromResolveInfo,
-          getSafeAliasFromAlias,
+          sql,
           graphql: { GraphQLNonNull, GraphQLList },
           inflection,
-          pgQueryFromResolveData: queryFromResolveData,
-          pgAddStartEndCursor: addStartEndCursor,
-          describePgEntity,
-          options: {
-            pgSimpleCollections, // TODO: FIXME!
-          },
         } = build;
         const {
-          scope: { isPgRowType, pgIntrospection: leftTable },
+          scope: { isPgTableType, pgCodec: leftTable },
           fieldWithHooks,
           Self,
         } = context;
-        if (!isPgRowType || !leftTable || leftTable.kind !== "class") {
+        if (!isPgTableType || !leftTable || !leftTable.columns) {
           return fields;
         }
 

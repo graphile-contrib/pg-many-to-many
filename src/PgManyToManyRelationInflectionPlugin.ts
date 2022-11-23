@@ -1,4 +1,9 @@
-import { PgSourceRelation, PgTypeCodec, PgTypeColumn } from "@dataplan/pg";
+import {
+  PgSource,
+  PgSourceRelation,
+  PgTypeCodec,
+  PgTypeColumn,
+} from "@dataplan/pg";
 import type {} from "graphile-config";
 import type {} from "postgraphile";
 
@@ -15,8 +20,8 @@ export interface PgManyToManyRelationDetails {
   junctionLeftKeyAttributes: InflectionColumn[];
   junctionRightKeyAttributes: InflectionColumn[];
   rightKeyAttributes: InflectionColumn[];
-  junctionTable: PgTypeCodec<any, any, any, any>;
-  rightTable: PgTypeCodec<any, any, any, any>;
+  junctionTable: PgSource<any, any, any, any>;
+  rightTable: PgSource<any, any, any, any>;
   junctionLeftRelation: PgSourceRelation<any, any>;
   junctionRightRelation: PgSourceRelation<any, any>;
 }
@@ -77,8 +82,8 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
         }
         return this.camelCase(
           `${this.pluralize(
-            this._singularizedCodecName(rightTable)
-          )}-by-${this._singularizedCodecName(junctionTable)}-${[
+            this._singularizedCodecName(rightTable.codec)
+          )}-by-${this._singularizedCodecName(junctionTable.codec)}-${[
             ...junctionLeftKeyAttributes,
             ...junctionRightKeyAttributes,
           ]
@@ -105,8 +110,8 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
         }
         return this.camelCase(
           `${this.pluralize(
-            this._singularizedCodecName(rightTable)
-          )}-by-${this._singularizedCodecName(junctionTable)}-${[
+            this._singularizedCodecName(rightTable.codec)
+          )}-by-${this._singularizedCodecName(junctionTable.codec)}-${[
             ...junctionLeftKeyAttributes,
             ...junctionRightKeyAttributes,
           ]
@@ -130,7 +135,7 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
       manyToManyRelationSubqueryName(preset, details) {
         /* eslint-enable no-unused-vars */
         return `many-to-many-subquery-by-${this._singularizedCodecName(
-          details.junctionTable
+          details.junctionTable.codec
         )}`;
       },
     },

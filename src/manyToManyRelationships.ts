@@ -1,138 +1,138 @@
-function arraysAreEqual(array1, array2) {
+import {
+  PgSource,
+  PgSourceBuilder,
+  PgSourceRelation,
+  PgSourceUnique,
+  PgTypeCodec,
+  PgTypeColumns,
+  resolveSource,
+} from "@dataplan/pg";
+import { PgManyToManyRelationDetails } from "./PgManyToManyRelationInflectionPlugin";
+
+function arraysAreEqual<A extends readonly any[]>(
+  array1: A,
+  array2: readonly any[]
+): boolean {
   return (
     array1.length === array2.length && array1.every((el, i) => array2[i] === el)
   );
 }
 
+type PgTableSource = PgSource<
+  PgTypeColumns,
+  PgSourceUnique[],
+  {
+    [relationName: string]: PgSourceRelation<
+      PgTypeColumns<string>,
+      PgTypeColumns<string>
+    >;
+  }
+>;
+
 // Given a `leftTable`, trace through the foreign key relations
 // and identify a `junctionTable` and `rightTable`.
 // Returns a list of data objects for these many-to-many relationships.
-export default function manyToManyRelationships(leftTable, build) {
-  const {
-    pgIntrospectionResultsByKind: introspectionResultsByKind,
-    pgOmit: omit,
-  } = build;
+export default function manyToManyRelationships(
+  leftTable: PgTableSource,
+  build: GraphileBuild.Build
+) {
+  return Object.entries(leftTable.getRelations()).reduce(
+    (memoLeft, [junctionLeftRelationName, junctionLeftRelation]) => {
+      const relationBehavior = build.pgGetBehavior(
+        junctionLeftRelation.extensions
+      );
+      if (!build.behavior.matches(relationBehavior, "manyToMany")) {
+        return memoLeft;
+      }
 
-  return leftTable.foreignConstraints
-    .filter((con) => con.type === "f")
-    .reduce((memoLeft, junctionLeftConstraint) => {
+      const junctionTable: PgTableSource = resolveSource(
+        junctionLeftRelation.source
+      );
+
+      const junctionBehavior = build.pgGetBehavior(
+        junctionLeftRelation.extensions
+      );
       if (
-        omit(junctionLeftConstraint, "read") ||
-        omit(junctionLeftConstraint, "manyToMany")
+        !build.behavior.matches(junctionBehavior, "manyToMany") ||
+        !build.behavior.matches(junctionBehavior, "select")
       ) {
         return memoLeft;
       }
-      const junctionTable =
-        introspectionResultsByKind.classById[junctionLeftConstraint.classId];
-      if (!junctionTable) {
-        throw new Error(
-          `Could not find the table that referenced us (constraint: ${junctionLeftConstraint.name})`
-        );
-      }
-      if (omit(junctionTable, "read") || omit(junctionTable, "manyToMany")) {
-        return memoLeft;
-      }
-      const memoRight = junctionTable.constraints
-        .filter(
-          (con) =>
-            con.id !== junctionLeftConstraint.id && // Don't follow the same constraint back to the left table
-            con.type === "f" &&
-            !omit(con, "read") &&
-            !omit(con, "manyToMany")
-        )
-        .reduce((memoRight, junctionRightConstraint) => {
-          const rightTable = junctionRightConstraint.foreignClass;
-          if (omit(rightTable, "read") || omit(rightTable, "manyToMany")) {
-            return memoRight;
+
+      const memoRight = Object.entries(junctionTable.getRelations())
+        .filter(([relName, rel]) => {
+          if (rel.isReferencee) {
+            return false;
           }
-
-          const leftKeyAttributes = junctionLeftConstraint.foreignKeyAttributes;
-          const junctionLeftKeyAttributes =
-            junctionLeftConstraint.keyAttributes;
-          const junctionRightKeyAttributes =
-            junctionRightConstraint.keyAttributes;
-          const rightKeyAttributes =
-            junctionRightConstraint.foreignKeyAttributes;
-
-          // Ensure keys were found
           if (
-            !leftKeyAttributes.every((_) => _) ||
-            !junctionLeftKeyAttributes.every((_) => _) ||
-            !junctionRightKeyAttributes.every((_) => _) ||
-            !rightKeyAttributes.every((_) => _)
+            rel.source === leftTable &&
+            arraysAreEqual(rel.localColumns, junctionLeftRelation.remoteColumns)
           ) {
-            throw new Error("Could not find key columns!");
+            return false;
           }
-
-          // Ensure keys can be read
-          if (
-            leftKeyAttributes.some((attr) => omit(attr, "read")) ||
-            junctionLeftKeyAttributes.some((attr) => omit(attr, "read")) ||
-            junctionRightKeyAttributes.some((attr) => omit(attr, "read")) ||
-            rightKeyAttributes.some((attr) => omit(attr, "read"))
-          ) {
-            return memoRight;
+          const otherRelationBehavior = build.pgGetBehavior(rel.extensions);
+          if (!build.behavior.matches(otherRelationBehavior, "manyToMany")) {
+            return false;
           }
+          return true;
+        })
+        .reduce(
+          (memoRight, [junctionRightRelationName, junctionRightRelation]) => {
+            const rightTable = resolveSource(junctionRightRelation.source);
 
-          // Ensure both constraints are single-column
-          // TODO: handle multi-column
-          if (leftKeyAttributes.length > 1 || rightKeyAttributes.length > 1) {
-            return memoRight;
-          }
-
-          // Ensure junction constraint keys are not unique (which would result in a one-to-one relation)
-          const junctionLeftConstraintIsUnique =
-            !!junctionTable.constraints.find(
-              (c) =>
-                ["p", "u"].includes(c.type) &&
-                arraysAreEqual(
-                  c.keyAttributeNums,
-                  junctionLeftKeyAttributes.map((attr) => attr.num)
-                )
+            const rightTableBehavior = build.pgGetBehavior(
+              rightTable.extensions
             );
-          const junctionRightConstraintIsUnique =
-            !!junctionTable.constraints.find(
-              (c) =>
-                ["p", "u"].includes(c.type) &&
-                arraysAreEqual(
-                  c.keyAttributeNums,
-                  junctionRightKeyAttributes.map((attr) => attr.num)
-                )
-            );
-          if (
-            junctionLeftConstraintIsUnique ||
-            junctionRightConstraintIsUnique
-          ) {
-            return memoRight;
-          }
+            if (
+              !build.behavior.matches(rightTableBehavior, "manyToMany") ||
+              !build.behavior.matches(rightTableBehavior, "select")
+            ) {
+              return memoRight;
+            }
 
-          const allowsMultipleEdgesToNode = !junctionTable.constraints.find(
-            (c) =>
-              ["p", "u"].includes(c.type) &&
+            // Ensure junction constraint keys are not unique (which would result in a one-to-one relation)
+            const junctionLeftConstraintIsUnique = !!junctionTable.uniques.find(
+              (c) =>
+                // TODO: order is unimportant
+                arraysAreEqual(c.columns, junctionLeftRelation.remoteColumns)
+            );
+            const junctionRightConstraintIsUnique =
+              !!junctionTable.uniques.find((c) =>
+                arraysAreEqual(c.columns, junctionRightRelation.localColumns)
+              );
+            if (
+              junctionLeftConstraintIsUnique ||
+              junctionRightConstraintIsUnique
+            ) {
+              return memoRight;
+            }
+
+            const allowsMultipleEdgesToNode = !junctionTable.uniques.find((c) =>
               arraysAreEqual(
-                c.keyAttributeNums.concat().sort(),
+                c.columns.concat().sort(),
                 [
-                  ...junctionLeftKeyAttributes.map((obj) => obj.num),
-                  ...junctionRightKeyAttributes.map((obj) => obj.num),
+                  ...junctionLeftRelation.remoteColumns,
+                  ...junctionRightRelation.localColumns,
                 ].sort()
               )
-          );
+            );
 
-          return [
-            ...memoRight,
-            {
-              leftKeyAttributes,
-              junctionLeftKeyAttributes,
-              junctionRightKeyAttributes,
-              rightKeyAttributes,
-              junctionTable,
-              rightTable,
-              junctionLeftConstraint,
-              junctionRightConstraint,
-              allowsMultipleEdgesToNode,
-            },
-          ];
-        }, []);
+            return [
+              ...memoRight,
+              {
+                leftTable,
+                junctionLeftRelationName,
+                junctionTable,
+                junctionRightRelationName,
+                rightTable,
+                allowsMultipleEdgesToNode,
+              },
+            ];
+          },
+          [] as PgManyToManyRelationDetails[]
+        );
       return [...memoLeft, ...memoRight];
-    }, []);
+    },
+    []
+  );
 }
