@@ -1,0 +1,35 @@
+{
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "ts-node": {
+    "experimentalResolver": true
+  },
+  "compilerOptions": {
+    "rootDir": "src",
+    "declarationDir": "./dist",
+    "outDir": "./dist",
+
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "allowJs": false,
+
+    "module": "CommonJS",
+    "moduleResolution": "nodenext",
+    "target": "ES2022",
+
+    "sourceMap": true,
+    "pretty": true,
+    "importHelpers": false,
+    "experimentalDecorators": false,
+    "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "strictNullChecks": true,
+    "noFallthroughCasesInSwitch": true,
+    "preserveWatchOutput": true,
+
+    // Use eslint for these "lint"-y checks
+    "noUnusedParameters": false,
+    "noUnusedLocals": false
+  },
+  "exclude": ["node_modules", "dist", ".yarn"]
+}
