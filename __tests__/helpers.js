@@ -2,7 +2,6 @@ const pg = require("pg");
 const fs = require("fs");
 const util = require("util");
 const path = require("path");
-const pgConnectionString = require("pg-connection-string");
 
 const readFile = util.promisify(fs.readFile);
 
@@ -14,7 +13,7 @@ const withPgClient = async (url, fn) => {
     fn = url;
     url = process.env.TEST_DATABASE_URL;
   }
-  const pgPool = new pg.Pool(pgConnectionString.parse(url));
+  const pgPool = new pg.Pool({ connectionString: url });
   let client;
   try {
     client = await pgPool.connect();
