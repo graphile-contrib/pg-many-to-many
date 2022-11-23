@@ -6,6 +6,7 @@ import {
 } from "@dataplan/pg";
 import type {} from "graphile-config";
 import type {} from "postgraphile";
+import { PgTableSource } from "./interfaces";
 
 const version = require("../../package.json").version;
 
@@ -16,14 +17,12 @@ type InflectionColumn = {
 };
 
 export interface PgManyToManyRelationDetails {
-  leftKeyAttributes: InflectionColumn[];
-  junctionLeftKeyAttributes: InflectionColumn[];
-  junctionRightKeyAttributes: InflectionColumn[];
-  rightKeyAttributes: InflectionColumn[];
-  junctionTable: PgSource<any, any, any, any>;
-  rightTable: PgSource<any, any, any, any>;
-  junctionLeftRelation: PgSourceRelation<any, any>;
-  junctionRightRelation: PgSourceRelation<any, any>;
+  leftTable: PgTableSource;
+  leftRelationName: string;
+  junctionTable: PgTableSource;
+  rightRelationName: string;
+  rightTable: PgTableSource;
+  allowsMultipleEdgesToNode: boolean;
 }
 
 export interface PgManyToManyRelationDetailsWithExtras

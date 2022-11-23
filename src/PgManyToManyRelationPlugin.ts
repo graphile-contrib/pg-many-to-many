@@ -11,6 +11,26 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
 
   schema: {
     hooks: {
+      init(_, build, context) {
+        for (const leftTable of build.input.pgSources) {
+          if (!leftTable.codec.columns || leftTable.parameters) {
+            continue;
+          }
+
+          const relationships = manyToManyRelationships(leftTable, build);
+
+          for (const relationship of relationships) {
+            const {
+              leftRelationName,
+              junctionTable,
+              rightRelationName,
+              rightTable,
+            } = relationship;
+            createManyToManyConnectionType(relationship, build, leftTable);
+          }
+        }
+        return _;
+      },
       GraphQLObjectType_fields(fields, build, context) {
         const {
           extend,
@@ -19,41 +39,50 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
           inflection,
         } = build;
         const {
-          scope: { isPgTableType, pgCodec: leftTable },
+          scope: { isPgTableType, pgCodec: leftTableCodec },
           fieldWithHooks,
           Self,
         } = context;
-        if (!isPgTableType || !leftTable || !leftTable.columns) {
+        if (!isPgTableType || !leftTableCodec || !leftTableCodec.columns) {
           return fields;
         }
+
+        const leftTables = build.input.pgSources.filter(
+          (s) => s.codec === leftTableCodec && !s.parameters
+        );
+        if (leftTables.length !== 1) {
+          if (leftTables.length > 2) {
+            throw new Error(
+              `PgManyToMany: there are multiple parameterless sources for codec '${leftTableCodec.name}', we can't determine which one to use.`
+            );
+          }
+          return fields;
+        }
+        const leftTable = leftTables[0];
 
         const relationships = manyToManyRelationships(leftTable, build);
         return extend(
           fields,
           relationships.reduce((memo, relationship) => {
             const {
-              leftKeyAttributes,
-              junctionLeftKeyAttributes,
-              junctionRightKeyAttributes,
-              rightKeyAttributes,
+              leftTable,
+              leftRelationName,
               junctionTable,
+              rightRelationName,
               rightTable,
-              junctionLeftConstraint,
-              junctionRightConstraint,
             } = relationship;
-            const RightTableType = pgGetGqlTypeByTypeIdAndModifier(
-              rightTable.type.id,
-              null
+            const RightTableType = build.getGraphQLTypeByPgCodec(
+              rightTable.codec,
+              "output"
             );
             if (!RightTableType) {
               throw new Error(
-                `Could not determine type for table with id ${rightTable.type.id}`
+                `Could not determine output type for table ${rightTable.name}`
               );
             }
             const RightTableConnectionType = createManyToManyConnectionType(
               relationship,
               build,
-              options,
               leftTable
             );
 

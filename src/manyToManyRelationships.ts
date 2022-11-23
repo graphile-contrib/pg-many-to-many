@@ -7,6 +7,8 @@ import {
   PgTypeColumns,
   resolveSource,
 } from "@dataplan/pg";
+import { PgTableSource } from "./interfaces";
+import { PgManyToManyRelationPlugin } from "./PgManyToManyRelationPlugin";
 import { PgManyToManyRelationDetails } from "./PgManyToManyRelationInflectionPlugin";
 
 function arraysAreEqual<A extends readonly any[]>(
@@ -18,26 +20,15 @@ function arraysAreEqual<A extends readonly any[]>(
   );
 }
 
-type PgTableSource = PgSource<
-  PgTypeColumns,
-  PgSourceUnique[],
-  {
-    [relationName: string]: PgSourceRelation<
-      PgTypeColumns<string>,
-      PgTypeColumns<string>
-    >;
-  }
->;
-
 // Given a `leftTable`, trace through the foreign key relations
 // and identify a `junctionTable` and `rightTable`.
 // Returns a list of data objects for these many-to-many relationships.
 export default function manyToManyRelationships(
   leftTable: PgTableSource,
   build: GraphileBuild.Build
-) {
+): PgManyToManyRelationDetails[] {
   return Object.entries(leftTable.getRelations()).reduce(
-    (memoLeft, [junctionLeftRelationName, junctionLeftRelation]) => {
+    (memoLeft, [leftRelationName, junctionLeftRelation]) => {
       const relationBehavior = build.pgGetBehavior(
         junctionLeftRelation.extensions
       );
@@ -76,63 +67,55 @@ export default function manyToManyRelationships(
           }
           return true;
         })
-        .reduce(
-          (memoRight, [junctionRightRelationName, junctionRightRelation]) => {
-            const rightTable = resolveSource(junctionRightRelation.source);
+        .reduce((memoRight, [rightRelationName, junctionRightRelation]) => {
+          const rightTable = resolveSource(junctionRightRelation.source);
 
-            const rightTableBehavior = build.pgGetBehavior(
-              rightTable.extensions
-            );
-            if (
-              !build.behavior.matches(rightTableBehavior, "manyToMany") ||
-              !build.behavior.matches(rightTableBehavior, "select")
-            ) {
-              return memoRight;
-            }
+          const rightTableBehavior = build.pgGetBehavior(rightTable.extensions);
+          if (
+            !build.behavior.matches(rightTableBehavior, "manyToMany") ||
+            !build.behavior.matches(rightTableBehavior, "select")
+          ) {
+            return memoRight;
+          }
 
-            // Ensure junction constraint keys are not unique (which would result in a one-to-one relation)
-            const junctionLeftConstraintIsUnique = !!junctionTable.uniques.find(
-              (c) =>
-                // TODO: order is unimportant
-                arraysAreEqual(c.columns, junctionLeftRelation.remoteColumns)
-            );
-            const junctionRightConstraintIsUnique =
-              !!junctionTable.uniques.find((c) =>
-                arraysAreEqual(c.columns, junctionRightRelation.localColumns)
-              );
-            if (
-              junctionLeftConstraintIsUnique ||
-              junctionRightConstraintIsUnique
-            ) {
-              return memoRight;
-            }
+          // Ensure junction constraint keys are not unique (which would result in a one-to-one relation)
+          const junctionLeftConstraintIsUnique = !!junctionTable.uniques.find(
+            (c) =>
+              // TODO: order is unimportant
+              arraysAreEqual(c.columns, junctionLeftRelation.remoteColumns)
+          );
+          const junctionRightConstraintIsUnique = !!junctionTable.uniques.find(
+            (c) => arraysAreEqual(c.columns, junctionRightRelation.localColumns)
+          );
+          if (
+            junctionLeftConstraintIsUnique ||
+            junctionRightConstraintIsUnique
+          ) {
+            return memoRight;
+          }
 
-            const allowsMultipleEdgesToNode = !junctionTable.uniques.find((c) =>
-              arraysAreEqual(
-                c.columns.concat().sort(),
-                [
-                  ...junctionLeftRelation.remoteColumns,
-                  ...junctionRightRelation.localColumns,
-                ].sort()
-              )
-            );
+          const allowsMultipleEdgesToNode = !junctionTable.uniques.find((c) =>
+            arraysAreEqual(
+              c.columns.concat().sort(),
+              [
+                ...junctionLeftRelation.remoteColumns,
+                ...junctionRightRelation.localColumns,
+              ].sort()
+            )
+          );
 
-            return [
-              ...memoRight,
-              {
-                leftTable,
-                junctionLeftRelationName,
-                junctionTable,
-                junctionRightRelationName,
-                rightTable,
-                allowsMultipleEdgesToNode,
-              },
-            ];
-          },
-          [] as PgManyToManyRelationDetails[]
-        );
+          memoRight.push({
+            leftTable,
+            leftRelationName,
+            junctionTable,
+            rightRelationName,
+            rightTable,
+            allowsMultipleEdgesToNode,
+          });
+          return memoRight;
+        }, [] as PgManyToManyRelationDetails[]);
       return [...memoLeft, ...memoRight];
     },
-    []
+    [] as PgManyToManyRelationDetails[]
   );
 }

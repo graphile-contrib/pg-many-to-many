@@ -1,263 +1,191 @@
+import { PgTableSource } from "./interfaces";
+import { PgSelectSingleStep, PgSource } from "@dataplan/pg";
 import { PgManyToManyRelationDetails } from "./PgManyToManyRelationInflectionPlugin";
+import { ConnectionStep, each, EdgeStep, ExecutableStep } from "grafast";
+import { GraphQLObjectType, GraphQLOutputType } from "graphql";
 
 declare global {
   namespace GraphileBuild {
-    interface ScopeObjectFields {
+    interface ScopeObject {
       isPgManyToManyEdgeType?: boolean;
-      pgManyToManyRelationship?: PgManyToManyRelationDetails & {
-        allowsMultipleEdgesToNode: boolean;
-      };
+      pgManyToManyRelationship?: PgManyToManyRelationDetails;
     }
   }
 }
 
-const hasNonNullKey = (row) => {
-  if (
-    Array.isArray(row.__identifiers) &&
-    row.__identifiers.every((i) => i != null)
-  ) {
-    return true;
-  }
-  for (const k in row) {
-    if (Object.prototype.hasOwnProperty.call(row, k)) {
-      if ((k[0] !== "_" || k[1] !== "_") && row[k] !== null) {
-        return true;
-      }
-    }
-  }
-  return false;
-};
+const base64 = (str: string) => Buffer.from(String(str)).toString("base64");
 
 export default function createManyToManyConnectionType(
-  relationship,
-  build,
-  options,
-  leftTable
+  relationship: PgManyToManyRelationDetails,
+  build: GraphileBuild.Build,
+  leftTable: PgTableSource
 ) {
+  const { leftRelationName, junctionTable, rightRelationName, rightTable } =
+    relationship;
   const {
-    leftKeyAttributes,
-    junctionLeftKeyAttributes,
-    junctionRightKeyAttributes,
-    rightKeyAttributes,
-    junctionTable,
-    rightTable,
-    junctionLeftConstraint,
-    junctionRightConstraint,
-  } = relationship;
-  const {
-    newWithHooks,
     inflection,
     graphql: { GraphQLObjectType, GraphQLNonNull, GraphQLList },
     getTypeByName,
-    pgGetGqlTypeByTypeIdAndModifier,
-    pgField,
-    getSafeAliasFromResolveInfo,
-    describePgEntity,
+    options: { pgForbidSetofFunctionsToReturnNull = false },
+    nullableIf,
   } = build;
-  const { pgForbidSetofFunctionsToReturnNull = false } = options;
-  const nullableIf = (condition, Type) =>
-    condition ? Type : new GraphQLNonNull(Type);
-  const Cursor = getTypeByName("Cursor");
-  const handleNullRow = pgForbidSetofFunctionsToReturnNull
-    ? (row) => row
-    : (row, identifiers) => {
-        if ((identifiers && hasNonNullKey(identifiers)) || hasNonNullKey(row)) {
-          return row;
-        } else {
-          return null;
-        }
-      };
 
-  const LeftTableType = pgGetGqlTypeByTypeIdAndModifier(
-    leftTable.type.id,
-    null
-  );
-  if (!LeftTableType) {
+  const leftTableTypeName = inflection.tableType(leftTable.codec);
+  if (!leftTableTypeName) {
     throw new Error(
-      `Could not determine type for table with id ${leftTable.type.id}`
+      `Could not determine type name for table '${leftTable.name}'`
     );
   }
 
-  const TableType = pgGetGqlTypeByTypeIdAndModifier(rightTable.type.id, null);
-  if (!TableType) {
+  const TableTypeName = inflection.tableType(rightTable.codec);
+  if (!TableTypeName) {
     throw new Error(
-      `Could not determine type for table with id ${rightTable.type.id}`
+      `Could not determine type name for table '${rightTable.name}'`
     );
   }
 
-  const rightPrimaryKeyConstraint = rightTable.primaryKeyConstraint;
-  const rightPrimaryKeyAttributes =
-    rightPrimaryKeyConstraint && rightPrimaryKeyConstraint.keyAttributes;
+  const junctionTypeName = inflection.tableType(junctionTable.codec);
 
-  const junctionTypeName = inflection.tableType(junctionTable);
-  const base64 = (str) => Buffer.from(String(str)).toString("base64");
+  const inflectorInfo = {
+    ...relationship,
+    leftTableTypeName,
+  };
 
-  const EdgeType = newWithHooks(
-    GraphQLObjectType,
+  const edgeTypeName = inflection.manyToManyRelationEdge(inflectorInfo);
+  build.registerObjectType(
+    edgeTypeName,
     {
-      description: `A \`${TableType.name}\` edge in the connection, with data from \`${junctionTypeName}\`.`,
-      name: inflection.manyToManyRelationEdge(
-        leftKeyAttributes,
-        junctionLeftKeyAttributes,
-        junctionRightKeyAttributes,
-        rightKeyAttributes,
-        junctionTable,
-        rightTable,
-        junctionLeftConstraint,
-        junctionRightConstraint,
-        LeftTableType.name
-      ),
+      __origin: `Adding many-to-many edge type from ${leftTable.name} to ${rightTable.name} via ${junctionTable.name}.`,
+      isConnectionEdgeType: true,
+      // isPgRowEdgeType: true,
+      isPgManyToManyEdgeType: true,
+      // nodeType: TableType,
+      pgManyToManyRelationship: relationship,
+    },
+    ExecutableStep as any,
+    () => ({
+      description: `A \`${TableTypeName}\` edge in the connection, with data from \`${junctionTypeName}\`.`,
       fields: ({ fieldWithHooks }) => {
         return {
           cursor: fieldWithHooks(
-            "cursor",
-            ({ addDataGenerator }) => {
-              addDataGenerator(() => ({
-                usesCursor: [true],
-                pgQuery: (queryBuilder) => {
-                  if (rightPrimaryKeyAttributes) {
-                    queryBuilder.selectIdentifiers(rightTable);
-                  }
-                },
-              }));
-              return {
-                description: "A cursor for use in pagination.",
-                type: Cursor,
-                resolve(data) {
-                  return data.__cursor && base64(JSON.stringify(data.__cursor));
-                },
-              };
-            },
             {
+              fieldName: "cursor",
               isCursorField: true,
-            }
-          ),
-          node: pgField(
-            build,
-            fieldWithHooks,
-            "node",
-            {
-              description: `The \`${TableType.name}\` at the end of the edge.`,
-              type: nullableIf(!pgForbidSetofFunctionsToReturnNull, TableType),
-              resolve(data, _args, _context, resolveInfo) {
-                const safeAlias = getSafeAliasFromResolveInfo(resolveInfo);
-                const record = handleNullRow(
-                  data[safeAlias],
-                  data.__identifiers
-                );
-                return record;
-              },
             },
-            {},
-            false,
-            {}
+            () => ({
+              description: "A cursor for use in pagination.",
+              type: getTypeByName(
+                inflection.builtin("Cursor")
+              ) as GraphQLOutputType,
+              plan($edge: EdgeStep<any, any, any, any>) {
+                return $edge.cursor();
+              },
+            })
+          ),
+          node: fieldWithHooks(
+            {
+              fieldName: "node",
+            },
+            () => ({
+              description: `The \`${TableTypeName}\` at the end of the edge.`,
+              type: nullableIf(
+                !pgForbidSetofFunctionsToReturnNull,
+                getTypeByName(TableTypeName) as GraphQLObjectType
+              ),
+              plan(
+                $edge: EdgeStep<
+                  any,
+                  any,
+                  any,
+                  PgSelectSingleStep<any, any, any>
+                >
+              ) {
+                const $junction = $edge.node();
+                const $right = $junction.singleRelation(rightRelationName);
+                return $right;
+              },
+            })
           ),
         };
       },
-    },
-    {
-      __origin: `Adding many-to-many edge type from ${describePgEntity(
-        leftTable
-      )} to ${describePgEntity(rightTable)} via ${describePgEntity(
-        junctionTable
-      )}.`,
-      isEdgeType: true,
-      isPgRowEdgeType: true,
-      isPgManyToManyEdgeType: true,
-      nodeType: TableType,
-      pgManyToManyRelationship: relationship,
-    }
+    }),
+    `PgManyToMany edge type for ${leftTable.name}-${junctionTable.name}-${rightTable.name}`
   );
-  const PageInfo = getTypeByName(inflection.builtin("PageInfo"));
+  const connectionTypeName =
+    inflection.manyToManyRelationConnection(inflectorInfo);
 
-  return newWithHooks(
-    GraphQLObjectType,
+  build.registerObjectType(
+    connectionTypeName,
     {
-      description: `A connection to a list of \`${TableType.name}\` values, with data from \`${junctionTypeName}\`.`,
-      name: inflection.manyToManyRelationConnection(
-        leftKeyAttributes,
-        junctionLeftKeyAttributes,
-        junctionRightKeyAttributes,
-        rightKeyAttributes,
-        junctionTable,
-        rightTable,
-        junctionLeftConstraint,
-        junctionRightConstraint,
-        LeftTableType.name
-      ),
-      fields: ({ recurseDataGeneratorsForField, fieldWithHooks }) => {
-        recurseDataGeneratorsForField("pageInfo", true);
+      isConnectionType: true,
+      // isPgRowConnectionType: true,
+      // edgeType: EdgeType,
+      // nodeType: TableType,
+      // pgIntrospection: rightTable,
+    },
+    ExecutableStep as any,
+    () => ({
+      description: `A connection to a list of \`${TableTypeName}\` values, with data from \`${junctionTypeName}\`.`,
+      fields: ({ fieldWithHooks }) => {
+        const PageInfo = getTypeByName(inflection.builtin("PageInfo")) as
+          | GraphQLObjectType
+          | undefined;
         return {
-          nodes: pgField(
-            build,
-            fieldWithHooks,
-            "nodes",
+          nodes: fieldWithHooks(
             {
-              description: `A list of \`${TableType.name}\` objects.`,
+              fieldName: "nodes",
+            },
+            () => ({
+              description: `A list of \`${TableTypeName}\` objects.`,
               type: new GraphQLNonNull(
                 new GraphQLList(
-                  nullableIf(!pgForbidSetofFunctionsToReturnNull, TableType)
+                  nullableIf(
+                    !pgForbidSetofFunctionsToReturnNull,
+                    getTypeByName(TableTypeName) as GraphQLObjectType
+                  )
                 )
               ),
-              resolve(data, _args, _context, resolveInfo) {
-                const safeAlias = getSafeAliasFromResolveInfo(resolveInfo);
-                return data.data.map((entry) => {
-                  const record = handleNullRow(
-                    entry[safeAlias],
-                    entry[safeAlias].__identifiers
-                  );
-                  return record;
-                });
+              plan($connection: ConnectionStep<any, any, any, any>) {
+                const $junctions = $connection.nodes();
+                return each($junctions, ($junction) => {
+                  const $right = $junction.singleRelation(rightRelationName);
+                  return $right;
+                }) as any;
               },
-            },
-            {},
-            false,
-            {}
+            })
           ),
-          edges: pgField(
-            build,
-            fieldWithHooks,
-            "edges",
+          edges: fieldWithHooks(
             {
-              description: `A list of edges which contains the \`${TableType.name}\`, info from the \`${junctionTypeName}\`, and the cursor to aid in pagination.`,
+              fieldName: "edges",
+            },
+            () => ({
+              description: `A list of edges which contains the \`${TableTypeName}\`, info from the \`${junctionTypeName}\`, and the cursor to aid in pagination.`,
               type: new GraphQLNonNull(
-                new GraphQLList(new GraphQLNonNull(EdgeType))
+                new GraphQLList(
+                  new GraphQLNonNull(
+                    getTypeByName(edgeTypeName) as GraphQLObjectType
+                  )
+                )
               ),
-              resolve(data, _args, _context, resolveInfo) {
-                const safeAlias = getSafeAliasFromResolveInfo(resolveInfo);
-                return data.data.map((entry) => ({
-                  ...entry,
-                  ...entry[safeAlias],
-                }));
+              plan($connection: ConnectionStep<any, any, any, any>) {
+                return $connection.edges();
               },
-            },
-            {},
-            false,
-            {
-              hoistCursor: true,
-            }
+            })
           ),
-          pageInfo: PageInfo && {
-            description: "Information to aid in pagination.",
-            type: new GraphQLNonNull(PageInfo),
-            resolve(data) {
-              return data;
-            },
-          },
+          ...(PageInfo
+            ? {
+                pageInfo: fieldWithHooks({ fieldName: "pageInfo" }, () => ({
+                  description: "Information to aid in pagination.",
+                  type: new GraphQLNonNull(PageInfo),
+                  plan($connection: ConnectionStep<any, any, any, any>) {
+                    return $connection.pageInfo() as any;
+                  },
+                })),
+              }
+            : null),
         };
       },
-    },
-    {
-      __origin: `Adding many-to-many connection type from ${describePgEntity(
-        leftTable
-      )} to ${describePgEntity(rightTable)} via ${describePgEntity(
-        junctionTable
-      )}.`,
-      isConnectionType: true,
-      isPgRowConnectionType: true,
-      edgeType: EdgeType,
-      nodeType: TableType,
-      pgIntrospection: rightTable,
-    }
+    }),
+    `Adding many-to-many connection type from ${leftTable.name} to ${rightTable.name} via ${junctionTable.name}.`
   );
 }
