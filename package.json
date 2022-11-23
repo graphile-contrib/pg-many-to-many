@@ -2,11 +2,12 @@
   "name": "@graphile-contrib/pg-many-to-many",
   "version": "1.0.1",
   "description": "Add connection fields for many-to-many relations",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "lint": "eslint .",
-    "test": "scripts/test"
+    "watch": "tsc --watch",
+    "test": "tsc && scripts/test"
   },
   "repository": {
     "type": "git",
@@ -18,17 +19,19 @@
     "url": "https://github.com/graphile-contrib/pg-many-to-many/issues"
   },
   "devDependencies": {
-    "eslint_d": "^12.2.1",
+    "@tsconfig/node16": "^1.0.3",
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^27.1.5",
     "eslint-plugin-prettier": "^4.2.1",
+    "eslint_d": "^12.2.1",
     "graphql": "16.1.0-experimental-stream-defer.6",
     "jest": "^29.3.1",
     "jest-serializer-graphql-schema": "4.10.0",
     "pg": ">=6.1.0 <9",
     "postgraphile-core": "4.5.0",
-    "prettier": "2.8.0"
+    "prettier": "2.8.0",
+    "typescript": "^4.9.3"
   },
   "jest": {
     "testRegex": "__tests__/.*\\.test\\.js$",
@@ -37,8 +40,7 @@
     ]
   },
   "files": [
-    "src",
-    "index.d.ts"
+    "dist"
   ],
   "engines": {
     "node": ">=10"

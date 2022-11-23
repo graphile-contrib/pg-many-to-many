@@ -1,3 +1,4 @@
+/** @type {GraphileConfig.Plugin } */
 const PgManyToManyRelationEdgeColumnsPlugin = {
   name: "PgManyToManyRelationEdgeColumnsPlugin",
 
