@@ -7,7 +7,7 @@ function arraysAreEqual(array1, array2) {
 // Given a `leftTable`, trace through the foreign key relations
 // and identify a `junctionTable` and `rightTable`.
 // Returns a list of data objects for these many-to-many relationships.
-module.exports = function manyToManyRelationships(leftTable, build) {
+export default function manyToManyRelationships(leftTable, build) {
   const {
     pgIntrospectionResultsByKind: introspectionResultsByKind,
     pgOmit: omit,
@@ -81,22 +81,24 @@ module.exports = function manyToManyRelationships(leftTable, build) {
           }
 
           // Ensure junction constraint keys are not unique (which would result in a one-to-one relation)
-          const junctionLeftConstraintIsUnique = !!junctionTable.constraints.find(
-            (c) =>
-              ["p", "u"].includes(c.type) &&
-              arraysAreEqual(
-                c.keyAttributeNums,
-                junctionLeftKeyAttributes.map((attr) => attr.num)
-              )
-          );
-          const junctionRightConstraintIsUnique = !!junctionTable.constraints.find(
-            (c) =>
-              ["p", "u"].includes(c.type) &&
-              arraysAreEqual(
-                c.keyAttributeNums,
-                junctionRightKeyAttributes.map((attr) => attr.num)
-              )
-          );
+          const junctionLeftConstraintIsUnique =
+            !!junctionTable.constraints.find(
+              (c) =>
+                ["p", "u"].includes(c.type) &&
+                arraysAreEqual(
+                  c.keyAttributeNums,
+                  junctionLeftKeyAttributes.map((attr) => attr.num)
+                )
+            );
+          const junctionRightConstraintIsUnique =
+            !!junctionTable.constraints.find(
+              (c) =>
+                ["p", "u"].includes(c.type) &&
+                arraysAreEqual(
+                  c.keyAttributeNums,
+                  junctionRightKeyAttributes.map((attr) => attr.num)
+                )
+            );
           if (
             junctionLeftConstraintIsUnique ||
             junctionRightConstraintIsUnique
@@ -133,4 +135,4 @@ module.exports = function manyToManyRelationships(leftTable, build) {
         }, []);
       return [...memoLeft, ...memoRight];
     }, []);
-};
+}

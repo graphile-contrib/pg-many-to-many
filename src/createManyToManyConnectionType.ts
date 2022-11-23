@@ -15,7 +15,7 @@ const hasNonNullKey = (row) => {
   return false;
 };
 
-module.exports = function createManyToManyConnectionType(
+export default function createManyToManyConnectionType(
   relationship,
   build,
   options,
@@ -247,4 +247,4 @@ module.exports = function createManyToManyConnectionType(
       pgIntrospection: rightTable,
     }
   );
-};
+}

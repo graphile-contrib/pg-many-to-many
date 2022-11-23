@@ -1,5 +1,11 @@
-const PgManyToManyEdgeTablePlugin = {
-  name: "PgManyToManyEdgeTablePlugin",
+import type {} from "graphile-config";
+import type {} from "postgraphile";
+
+const version = require("../../package.json").version;
+
+export const PgManyToManyRelationEdgeTablePlugin: GraphileConfig.Plugin = {
+  name: "PgManyToManyRelationEdgeTablePlugin",
+  version,
 
   schema: {
     hooks: {
@@ -227,4 +233,3 @@ const PgManyToManyEdgeTablePlugin = {
     },
   },
 };
-module.exports = PgManyToManyEdgeTablePlugin;

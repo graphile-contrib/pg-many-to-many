@@ -1,10 +1,9 @@
-const PgManyToManyRelationInflectionPlugin = require("./src/PgManyToManyRelationInflectionPlugin.js");
-const PgManyToManyRelationPlugin = require("./src/PgManyToManyRelationPlugin.js");
-const PgManyToManyRelationEdgeColumnsPlugin = require("./src/PgManyToManyRelationEdgeColumnsPlugin.js");
-const PgManyToManyRelationEdgeTablePlugin = require("./src/PgManyToManyRelationEdgeTablePlugin.js");
+import { PgManyToManyRelationInflectionPlugin } from "./PgManyToManyRelationInflectionPlugin.js";
+import { PgManyToManyRelationPlugin } from "./PgManyToManyRelationPlugin.js";
+import { PgManyToManyRelationEdgeColumnsPlugin } from "./PgManyToManyRelationEdgeColumnsPlugin.js";
+import { PgManyToManyRelationEdgeTablePlugin } from "./PgManyToManyRelationEdgeTablePlugin.js";
 
-/** @type {GraphileConfig.Preset} */
-const preset = {
+const preset: GraphileConfig.Preset = {
   plugins: [
     PgManyToManyRelationInflectionPlugin,
     PgManyToManyRelationPlugin,
@@ -13,4 +12,4 @@ const preset = {
   ],
 };
 
-module.exports = preset;
+export default preset;

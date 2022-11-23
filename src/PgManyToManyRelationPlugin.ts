@@ -1,8 +1,13 @@
-const createManyToManyConnectionType = require("./createManyToManyConnectionType");
-const manyToManyRelationships = require("./manyToManyRelationships");
+import type {} from "graphile-config";
+import type {} from "postgraphile";
+import createManyToManyConnectionType from "./createManyToManyConnectionType";
+import manyToManyRelationships from "./manyToManyRelationships";
 
-const PgManyToManyRelationPlugin = {
+const version = require("../../package.json").version;
+
+export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
   name: "PgManyToManyRelationPlugin",
+  version,
 
   schema: {
     hooks: {
@@ -269,4 +274,3 @@ const PgManyToManyRelationPlugin = {
     },
   },
 };
-module.exports = PgManyToManyRelationPlugin;
