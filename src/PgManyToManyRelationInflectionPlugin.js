@@ -1,7 +1,10 @@
-module.exports = function PgManyToManyRelationInflectionPlugin(builder) {
-  builder.hook("inflection", (inflection) => {
-    return Object.assign(inflection, {
+const PgManyToManyRelationInflectionPlugin = {
+  name: "PgManyToManyRelationInflectionPlugin",
+
+  inflection: {
+    add: {
       manyToManyRelationByKeys(
+        info,
         _leftKeyAttributes,
         junctionLeftKeyAttributes,
         junctionRightKeyAttributes,
@@ -26,6 +29,7 @@ module.exports = function PgManyToManyRelationInflectionPlugin(builder) {
         );
       },
       manyToManyRelationByKeysSimple(
+        info,
         _leftKeyAttributes,
         junctionLeftKeyAttributes,
         junctionRightKeyAttributes,
@@ -50,6 +54,7 @@ module.exports = function PgManyToManyRelationInflectionPlugin(builder) {
         );
       },
       manyToManyRelationEdge(
+        info,
         leftKeyAttributes,
         junctionLeftKeyAttributes,
         junctionRightKeyAttributes,
@@ -75,6 +80,7 @@ module.exports = function PgManyToManyRelationInflectionPlugin(builder) {
         );
       },
       manyToManyRelationConnection(
+        info,
         leftKeyAttributes,
         junctionLeftKeyAttributes,
         junctionRightKeyAttributes,
@@ -102,6 +108,7 @@ module.exports = function PgManyToManyRelationInflectionPlugin(builder) {
       },
       /* eslint-disable no-unused-vars */
       manyToManyRelationSubqueryName(
+        info,
         leftKeyAttributes,
         junctionLeftKeyAttributes,
         junctionRightKeyAttributes,
@@ -117,6 +124,8 @@ module.exports = function PgManyToManyRelationInflectionPlugin(builder) {
           junctionTable
         )}`;
       },
-    });
-  });
+    },
+  },
 };
+
+module.exports = PgManyToManyRelationInflectionPlugin;

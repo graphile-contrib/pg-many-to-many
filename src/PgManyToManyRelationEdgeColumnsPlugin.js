@@ -1,135 +1,144 @@
-module.exports = function PgManyToManyRelationEdgeColumnsPlugin(builder) {
-  builder.hook(
-    "GraphQLObjectType:fields",
-    (fields, build, context) => {
-      const {
-        extend,
-        pgGetGqlTypeByTypeIdAndModifier,
-        pgSql: sql,
-        pg2gql,
-        graphql: { GraphQLString, GraphQLNonNull },
-        pgColumnFilter,
-        inflection,
-        pgOmit: omit,
-        pgGetSelectValueForFieldAndTypeAndModifier: getSelectValueForFieldAndTypeAndModifier,
-        describePgEntity,
-      } = build;
-      const {
-        scope: { isPgManyToManyEdgeType, pgManyToManyRelationship },
-        fieldWithHooks,
-      } = context;
-      const nullableIf = (condition, Type) =>
-        condition ? Type : new GraphQLNonNull(Type);
+const PgManyToManyRelationEdgeColumnsPlugin = {
+  name: "PgManyToManyRelationEdgeColumnsPlugin",
 
-      if (!isPgManyToManyEdgeType || !pgManyToManyRelationship) {
-        return fields;
-      }
+  schema: {
+    hooks: {
+      GraphQLObjectType_fields(fields, build, context) {
+        const {
+          extend,
+          pgGetGqlTypeByTypeIdAndModifier,
+          pgSql: sql,
+          pg2gql,
+          graphql: { GraphQLString, GraphQLNonNull },
+          pgColumnFilter,
+          inflection,
+          pgOmit: omit,
+          pgGetSelectValueForFieldAndTypeAndModifier:
+            getSelectValueForFieldAndTypeAndModifier,
+          describePgEntity,
+        } = build;
+        const {
+          scope: { isPgManyToManyEdgeType, pgManyToManyRelationship },
+          fieldWithHooks,
+        } = context;
+        const nullableIf = (condition, Type) =>
+          condition ? Type : new GraphQLNonNull(Type);
 
-      const {
-        leftKeyAttributes,
-        junctionTable,
-        junctionLeftKeyAttributes,
-        junctionRightKeyAttributes,
-        rightKeyAttributes,
-        allowsMultipleEdgesToNode,
-      } = pgManyToManyRelationship;
+        if (!isPgManyToManyEdgeType || !pgManyToManyRelationship) {
+          return fields;
+        }
 
-      if (allowsMultipleEdgesToNode) {
-        return fields;
-      }
+        const {
+          leftKeyAttributes,
+          junctionTable,
+          junctionLeftKeyAttributes,
+          junctionRightKeyAttributes,
+          rightKeyAttributes,
+          allowsMultipleEdgesToNode,
+        } = pgManyToManyRelationship;
 
-      return extend(
-        fields,
-        junctionTable.attributes.reduce((memo, attr) => {
-          if (!pgColumnFilter(attr, build, context)) return memo;
-          if (omit(attr, "read")) return memo;
+        if (allowsMultipleEdgesToNode) {
+          return fields;
+        }
 
-          // Skip left and right key attributes
-          if (junctionLeftKeyAttributes.map((a) => a.name).includes(attr.name))
-            return memo;
-          if (junctionRightKeyAttributes.map((a) => a.name).includes(attr.name))
-            return memo;
+        return extend(
+          fields,
+          junctionTable.attributes.reduce((memo, attr) => {
+            if (!pgColumnFilter(attr, build, context)) return memo;
+            if (omit(attr, "read")) return memo;
 
-          const fieldName = inflection.column(attr);
-          memo = extend(
-            memo,
-            {
-              [fieldName]: fieldWithHooks(
-                fieldName,
-                (fieldContext) => {
-                  const { type, typeModifier } = attr;
-                  const { addDataGenerator } = fieldContext;
-                  const ReturnType =
-                    pgGetGqlTypeByTypeIdAndModifier(
-                      attr.typeId,
-                      attr.typeModifier
-                    ) || GraphQLString;
+            // Skip left and right key attributes
+            if (
+              junctionLeftKeyAttributes.map((a) => a.name).includes(attr.name)
+            )
+              return memo;
+            if (
+              junctionRightKeyAttributes.map((a) => a.name).includes(attr.name)
+            )
+              return memo;
 
-                  // Since we're ignoring multi-column keys, we can simplify here
-                  const leftKeyAttribute = leftKeyAttributes[0];
-                  const junctionLeftKeyAttribute = junctionLeftKeyAttributes[0];
-                  const junctionRightKeyAttribute =
-                    junctionRightKeyAttributes[0];
-                  const rightKeyAttribute = rightKeyAttributes[0];
+            const fieldName = inflection.column(attr);
+            memo = extend(
+              memo,
+              {
+                [fieldName]: fieldWithHooks(
+                  fieldName,
+                  (fieldContext) => {
+                    const { type, typeModifier } = attr;
+                    const { addDataGenerator } = fieldContext;
+                    const ReturnType =
+                      pgGetGqlTypeByTypeIdAndModifier(
+                        attr.typeId,
+                        attr.typeModifier
+                      ) || GraphQLString;
 
-                  const sqlSelectFrom = sql.fragment`select ${sql.identifier(
-                    attr.name
-                  )} from ${sql.identifier(
-                    junctionTable.namespace.name,
-                    junctionTable.name
-                  )}`;
+                    // Since we're ignoring multi-column keys, we can simplify here
+                    const leftKeyAttribute = leftKeyAttributes[0];
+                    const junctionLeftKeyAttribute =
+                      junctionLeftKeyAttributes[0];
+                    const junctionRightKeyAttribute =
+                      junctionRightKeyAttributes[0];
+                    const rightKeyAttribute = rightKeyAttributes[0];
 
-                  addDataGenerator((parsedResolveInfoFragment) => {
+                    const sqlSelectFrom = sql.fragment`select ${sql.identifier(
+                      attr.name
+                    )} from ${sql.identifier(
+                      junctionTable.namespace.name,
+                      junctionTable.name
+                    )}`;
+
+                    addDataGenerator((parsedResolveInfoFragment) => {
+                      return {
+                        pgQuery: (queryBuilder) => {
+                          queryBuilder.select(
+                            getSelectValueForFieldAndTypeAndModifier(
+                              ReturnType,
+                              fieldContext,
+                              parsedResolveInfoFragment,
+                              sql.fragment`(${sqlSelectFrom} where ${sql.identifier(
+                                junctionRightKeyAttribute.name
+                              )} = ${queryBuilder.getTableAlias()}.${sql.identifier(
+                                rightKeyAttribute.name
+                              )} and ${sql.identifier(
+                                junctionLeftKeyAttribute.name
+                              )} = ${queryBuilder.parentQueryBuilder.parentQueryBuilder.getTableAlias()}.${sql.identifier(
+                                leftKeyAttribute.name
+                              )})`,
+                              type,
+                              typeModifier
+                            ),
+                            fieldName
+                          );
+                        },
+                      };
+                    });
                     return {
-                      pgQuery: (queryBuilder) => {
-                        queryBuilder.select(
-                          getSelectValueForFieldAndTypeAndModifier(
-                            ReturnType,
-                            fieldContext,
-                            parsedResolveInfoFragment,
-                            sql.fragment`(${sqlSelectFrom} where ${sql.identifier(
-                              junctionRightKeyAttribute.name
-                            )} = ${queryBuilder.getTableAlias()}.${sql.identifier(
-                              rightKeyAttribute.name
-                            )} and ${sql.identifier(
-                              junctionLeftKeyAttribute.name
-                            )} = ${queryBuilder.parentQueryBuilder.parentQueryBuilder.getTableAlias()}.${sql.identifier(
-                              leftKeyAttribute.name
-                            )})`,
-                            type,
-                            typeModifier
-                          ),
-                          fieldName
-                        );
+                      description: attr.description,
+                      type: nullableIf(
+                        !attr.isNotNull &&
+                          !attr.type.domainIsNotNull &&
+                          !attr.tags.notNull,
+                        ReturnType
+                      ),
+                      resolve: (data) => {
+                        return pg2gql(data[fieldName], attr.type);
                       },
                     };
-                  });
-                  return {
-                    description: attr.description,
-                    type: nullableIf(
-                      !attr.isNotNull &&
-                        !attr.type.domainIsNotNull &&
-                        !attr.tags.notNull,
-                      ReturnType
-                    ),
-                    resolve: (data) => {
-                      return pg2gql(data[fieldName], attr.type);
-                    },
-                  };
-                },
-                {
-                  isPgManyToManyRelationEdgeColumnField: true,
-                  pgFieldIntrospection: attr,
-                }
-              ),
-            },
-            `Adding field for ${describePgEntity(attr)}.`
-          );
-          return memo;
-        }, {}),
-        `Adding columns to '${describePgEntity(junctionTable)}'`
-      );
+                  },
+                  {
+                    isPgManyToManyRelationEdgeColumnField: true,
+                    pgFieldIntrospection: attr,
+                  }
+                ),
+              },
+              `Adding field for ${describePgEntity(attr)}.`
+            );
+            return memo;
+          }, {}),
+          `Adding columns to '${describePgEntity(junctionTable)}'`
+        );
+      },
     },
-    ["PgManyToManyRelationEdgeColumns"]
-  );
+  },
 };
+module.exports = PgManyToManyRelationEdgeColumnsPlugin;

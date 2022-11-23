@@ -2,11 +2,16 @@
 const fs = require("fs");
 const util = require("util");
 const path = require("path");
-const { graphql } = require("graphql");
+const { grafastGraphql: graphql, hookArgs } = require("grafast");
 const { withPgClient } = require("./helpers");
-const { createPostGraphileSchema } = require("postgraphile-core");
-const { printSchema } = require("graphql/utilities");
+const { printSchema } = require("graphql");
 const debug = require("debug")("graphile-build:schema");
+const { makeSchema } = require("postgraphile");
+const {
+  default: postgraphilePresetAmber,
+} = require("postgraphile/presets/amber");
+const { makeV4Preset } = require("postgraphile/presets/v4");
+const PgManyToManyPreset = require("../index");
 
 const readFile = util.promisify(fs.readFile);
 
@@ -39,20 +44,40 @@ const queryResult = async (sqlSchema, fixture) => {
       "utf8"
     );
     await pgClient.query(data);
-    const PgManyToManyPlugin = require("../index");
-    const gqlSchema = await createPostGraphileSchema(pgClient, [sqlSchema], {
-      appendPlugins: [PgManyToManyPlugin],
+
+    const { schema, resolvedPreset } = await makeSchema({
+      extends: [postgraphilePresetAmber, makeV4Preset({}), PgManyToManyPreset],
+      pgSources: /* makePgSources(DATABASE_URL, ["app_public"]) */ [
+        {
+          name: "main",
+          adaptor: "@dataplan/pg/adaptors/node-postgres",
+          withPgClientKey: "withPgClient",
+          pgSettingsKey: "pgSettings",
+          pgSettingsForIntrospection: {},
+          pgSettings: {},
+          schemas: [sqlSchema],
+          adaptorSettings: {
+            poolClient: pgClient,
+          },
+        },
+      ],
     });
-    debug(`${sqlSchema}: ${printSchema(gqlSchema)}`);
+
+    debug(`${sqlSchema}: ${printSchema(schema)}`);
     const query = await readFixtureForSqlSchema(sqlSchema, fixture);
-    return await graphql({
-      schema: gqlSchema,
+    const args = {
+      schema,
       source: query,
-      rootValue: null,
-      contextValue: {
-        pgClient: pgClient,
+    };
+    await hookArgs(
+      args,
+      {
+        /* optional details for your context callback(s) to use */
       },
-    });
+      resolvedPreset
+    );
+
+    return await graphql(args);
   });
 };
 
