@@ -1,8 +1,10 @@
+import { PgSelectSingleStep } from "@dataplan/pg";
 import { PgSource } from "@dataplan/pg";
-import { EdgeStep } from "grafast";
+import { EdgeStep, connection } from "grafast";
 import type {} from "graphile-config";
 import { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
+import { junctionSymbol } from "./PgManyToManyRelationPlugin";
 
 const version = require("../../package.json").version;
 
@@ -32,6 +34,7 @@ field to the edges where all of the join records can be traversed.`,
           getTypeByName,
           graphql: { GraphQLNonNull, GraphQLList },
           inflection,
+          sql,
         } = build;
         const {
           scope: { isPgManyToManyEdgeType, pgManyToManyRelationship },
@@ -54,6 +57,16 @@ field to the edges where all of the join records can be traversed.`,
         if (!allowsMultipleEdgesToNode) {
           return fields;
         }
+
+        const leftColumns =
+          leftTable.getRelation(leftRelationName).remoteColumns;
+        const leftColumnCodecs = leftColumns.map(
+          (colName) => junctionTable.codec.columns[colName].codec
+        );
+        const rightColumns =
+          junctionTable.getRelation(rightRelationName).localColumns;
+        const rightRemoteColumns =
+          junctionTable.getRelation(rightRelationName).remoteColumns;
 
         const JunctionTableType = build.getGraphQLTypeByPgCodec(
           junctionTable.codec,
@@ -120,7 +133,36 @@ field to the edges where all of the join records can be traversed.`,
                     >
                   ) {
                     const $right = $edge.node();
-                    return null as any;
+
+                    // Create a spec that all entries in the collection must
+                    // match
+                    const spec = Object.create(null);
+
+                    // Add left columns to spec
+                    for (let i = 0, l = leftColumns.length; i < l; i++) {
+                      const junctionColumnName = leftColumns[i];
+                      const junctionColumnCodec = leftColumnCodecs[i];
+                      spec[junctionColumnName] = $right.select(
+                        sql`${sql.identifier(junctionSymbol)}.${sql.identifier(
+                          junctionColumnName
+                        )}`,
+                        junctionColumnCodec
+                      );
+                    }
+
+                    // Add right columns to spec
+                    for (let i = 0, l = rightColumns.length; i < l; i++) {
+                      const junctionColumnName = rightColumns[i];
+                      const rightColumnName = rightRemoteColumns[i];
+                      spec[junctionColumnName] = $right.get(rightColumnName);
+                    }
+
+                    // These are the equivalent junction records for this entry
+                    const $junctions = junctionTable.find(spec);
+
+                    return isConnection
+                      ? (connection($junctions) as any)
+                      : $junctions;
                   },
                 })
               ),

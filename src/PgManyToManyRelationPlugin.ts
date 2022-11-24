@@ -8,6 +8,8 @@ import manyToManyRelationships from "./manyToManyRelationships";
 
 const version = require("../../package.json").version;
 
+export const junctionSymbol = Symbol("junction");
+
 export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
   name: "PgManyToManyRelationPlugin",
   version,
@@ -156,17 +158,17 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                             }
                           );
                           const $rights = rightTable.find();
-                          $rights.where(
-                            sql`(${sql.join(
-                              rightTableRelationColumnNames.map(
-                                (colName) =>
-                                  sql`${$rights.alias}.${sql.identifier(
-                                    colName
-                                    // TODO: is this safe? What if this column has `via` or `expression`?
-                                  )}`
-                              ),
-                              ", "
-                            )}) in (select ${sql.join(
+
+                          // Join the rights to our junction entries; we do
+                          // this because we need to be able to access the
+                          // junction identifier in
+                          // PgManyToManyRelationEdgeTablePlugin (otherwise we
+                          // could have just done a `where` subquery).
+                          const junctionAlias = sql.identifier(junctionSymbol);
+                          $rights.join({
+                            type: "inner",
+                            source: sql`(${sql.indent`\
+select distinct ${sql.join(
                               rightJunctionColumnNames.map(
                                 (colName) =>
                                   sql`el.el->>${sql.literal(
@@ -177,8 +179,25 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                             )} from json_array_elements(${$rights.placeholder(
                               $rightIdentifiers,
                               TYPES.json
-                            )}) as el(el))`
-                          );
+                            )}) as el(el)`})`,
+                            alias: junctionAlias,
+                            conditions: rightJunctionColumnNames.map(
+                              (junctionColName, i) => {
+                                const rightColName =
+                                  rightTableRelationColumnNames[i];
+                                const sqlRight = sql`${
+                                  $rights.alias
+                                }.${sql.identifier(
+                                  // TODO: is this safe? What if this column has `via` or `expression`?
+                                  rightColName
+                                )}`;
+                                return sql`${junctionAlias}.${sql.identifier(
+                                  junctionColName
+                                )} = ${sqlRight}`;
+                              }
+                            ),
+                          });
+
                           return isConnection
                             ? (connection($rights) as any)
                             : $rights;
