@@ -9,13 +9,18 @@ const version = require("../../package.json").version;
 declare global {
   namespace GraphileBuild {
     interface ScopeObjectFieldsField {
-      isPgManyToManyRelationEdgeColumnField?: boolean;
+      isPgManyToManyRelationEdgeTableField?: boolean;
     }
   }
 }
 
 export const PgManyToManyRelationEdgeColumnsPlugin: GraphileConfig.Plugin = {
   name: "PgManyToManyRelationEdgeColumnsPlugin",
+  description: `\
+When a many-to-many relationship is unique (i.e. there can be at most one
+record in the junction table for each record in the left and right tables),
+this plugin adds a field to the edges for each non-key attribute on the
+junction table.`,
   version,
 
   schema: {

@@ -206,10 +206,12 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
               rightTable.extensions,
             ]);
 
-            if (build.behavior.matches(behavior, "connection")) {
+            if (
+              build.behavior.matches(behavior, "connection", "connection -list")
+            ) {
               makeFields(true);
             }
-            if (build.behavior.matches(behavior, "list")) {
+            if (build.behavior.matches(behavior, "list", "connection -list")) {
               makeFields(false);
             }
             return memo;
