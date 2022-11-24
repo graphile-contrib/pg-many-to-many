@@ -120,6 +120,8 @@ export default function createManyToManyConnectionType(
     connectionTypeName,
     {
       isConnectionType: true,
+      isPgConnectionRelated: true,
+      pgCodec: rightTable.codec,
       // isPgRowConnectionType: true,
       // edgeType: EdgeType,
       // nodeType: TableType,
