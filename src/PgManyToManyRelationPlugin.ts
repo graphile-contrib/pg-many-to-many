@@ -100,6 +100,11 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
               );
             }
 
+            const leftJunctionColumnNames =
+              leftTable.getRelation(leftRelationName).remoteColumns;
+            const leftJunctionColumnCodecs = leftJunctionColumnNames.map(
+              (colName) => junctionTable.codec.columns[colName].codec
+            );
             const rightJunctionColumnNames =
               junctionTable.getRelation(rightRelationName).localColumns;
             const rightJunctionColumnCodecs = rightJunctionColumnNames.map(
@@ -145,19 +150,30 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                           const $rightIdentifiers = each(
                             $junctions,
                             ($junction) => {
-                              return object(
-                                rightJunctionColumnNames.reduce((memo, col) => {
-                                  memo[col] = (
-                                    $junction as PgSelectSingleStep<
-                                      any,
-                                      any,
-                                      any,
-                                      any
-                                    >
-                                  ).get(col);
-                                  return memo;
-                                }, Object.create(null))
-                              );
+                              const spec = Object.create(null);
+
+                              for (const colName in leftJunctionColumnNames) {
+                                spec[colName] = (
+                                  $junction as PgSelectSingleStep<
+                                    any,
+                                    any,
+                                    any,
+                                    any
+                                  >
+                                ).get(colName);
+                              }
+                              for (const colName in rightJunctionColumnNames) {
+                                spec[colName] = (
+                                  $junction as PgSelectSingleStep<
+                                    any,
+                                    any,
+                                    any,
+                                    any
+                                  >
+                                ).get(colName);
+                              }
+
+                              return object(spec);
                             }
                           );
                           const $rights = rightTable.find();
@@ -172,6 +188,14 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                             type: "inner",
                             source: sql`(${sql.indent`\
 select distinct ${sql.join(
+                              leftJunctionColumnNames.map(
+                                (colName, i) =>
+                                  sql`(el.el->>${sql.literal(colName)})::${
+                                    leftJunctionColumnCodecs[i].sqlType
+                                  } as ${sql.identifier(colName)}`
+                              ),
+                              ", "
+                            )}, ${sql.join(
                               rightJunctionColumnNames.map(
                                 (colName, i) =>
                                   sql`(el.el->>${sql.literal(colName)})::${
