@@ -102,6 +102,9 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
 
             const rightJunctionColumnNames =
               junctionTable.getRelation(rightRelationName).localColumns;
+            const rightJunctionColumnCodecs = rightJunctionColumnNames.map(
+              (colName) => junctionTable.codec.columns[colName].codec
+            );
             const rightTableRelationColumnNames =
               junctionTable.getRelation(rightRelationName).remoteColumns;
 
@@ -170,10 +173,10 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                             source: sql`(${sql.indent`\
 select distinct ${sql.join(
                               rightJunctionColumnNames.map(
-                                (colName) =>
-                                  sql`el.el->>${sql.literal(
-                                    colName
-                                  )} as ${sql.identifier(colName)}`
+                                (colName, i) =>
+                                  sql`(el.el->>${sql.literal(colName)})::${
+                                    rightJunctionColumnCodecs[i].sqlType
+                                  } as ${sql.identifier(colName)}`
                               ),
                               ", "
                             )} from json_array_elements(${$rights.placeholder(
