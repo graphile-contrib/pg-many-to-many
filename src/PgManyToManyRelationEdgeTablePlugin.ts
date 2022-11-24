@@ -1,4 +1,5 @@
 import { PgSource } from "@dataplan/pg";
+import { EdgeStep } from "grafast";
 import type {} from "graphile-config";
 import { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
@@ -110,6 +111,17 @@ field to the edges where all of the join records can be traversed.`,
                         new GraphQLList(new GraphQLNonNull(JunctionTableType!))
                       ),
                   args: {},
+                  plan(
+                    $edge: EdgeStep<
+                      any,
+                      any,
+                      any,
+                      PgSelectSingleStep<any, any, any, any>
+                    >
+                  ) {
+                    const $right = $edge.node();
+                    return null as any;
+                  },
                 })
               ),
             },

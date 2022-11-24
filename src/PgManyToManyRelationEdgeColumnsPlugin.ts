@@ -1,5 +1,5 @@
 import { PgSelectSingleStep, PgTypeColumns } from "@dataplan/pg";
-import { ExecutableStep } from "grafast";
+import { EdgeStep, ExecutableStep } from "grafast";
 import type {} from "graphile-config";
 import { isOutputType } from "graphql";
 import type {} from "postgraphile";
@@ -104,8 +104,16 @@ junction table.`,
                           !column.extensions?.tags?.notNull,
                         ReturnType
                       ),
-                      plan($edge: PgSelectSingleStep<any, any, any, any>) {
-                        return $edge.get(columnName);
+                      plan(
+                        $edge: EdgeStep<
+                          any,
+                          any,
+                          any,
+                          PgSelectSingleStep<any, any, any, any>
+                        >
+                      ) {
+                        const $junction = $edge.node();
+                        return $junction.get(columnName);
                       },
                     })
                   ),
