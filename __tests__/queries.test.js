@@ -88,7 +88,7 @@ describe.each(sqlSchemas)("schema=%s", (sqlSchema) => {
     test.each(fixtures)("query=%s", async (fixture) => {
       const result = await queryResult(sqlSchema, fixture);
       if (result.errors) {
-        console.log(result.errors.map((e) => e.originalError));
+        console.log(result.errors.map((e) => e.originalError ?? e));
       }
       expect(result).toMatchSnapshot();
     });
