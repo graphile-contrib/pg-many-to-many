@@ -4,6 +4,7 @@ import { EdgeStep, connection } from "grafast";
 import type {} from "graphile-config";
 import { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
+import { PgManyToManyRelationDetails } from "./PgManyToManyRelationInflectionPlugin";
 import { junctionSymbol } from "./PgManyToManyRelationPlugin";
 
 const version = require("../package.json").version;
@@ -13,6 +14,21 @@ declare global {
     interface ScopeObjectFieldsField {
       isPgManyToManyRelationEdgeTableField?: boolean;
       pgManyToManyJunctionTable?: PgSource<any, any, any, any>;
+    }
+
+    interface Inflection {
+      _manyToManyEdgeRelationFieldName(
+        this: Inflection,
+        details: PgManyToManyRelationDetails
+      ): string;
+      manyToManyEdgeRelationConnection(
+        this: Inflection,
+        details: PgManyToManyRelationDetails
+      ): string;
+      manyToManyEdgeRelationList(
+        this: Inflection,
+        details: PgManyToManyRelationDetails
+      ): string;
     }
   }
 }
@@ -25,6 +41,48 @@ the join is not unique, there can be multiple records in the junction table
 that join the same left table and right table records), this plugin adds a
 field to the edges where all of the join records can be traversed.`,
   version,
+
+  inflection: {
+    add: {
+      _manyToManyEdgeRelationFieldName(info, details) {
+        const {
+          leftTable,
+          leftRelationName,
+          junctionTable,
+          rightRelationName,
+          rightTable,
+        } = details;
+        const leftRelation = leftTable.getRelation(leftRelationName);
+        if (
+          typeof leftRelation.extensions?.tags.foreignFieldName === "string"
+        ) {
+          return this.connectionField(
+            this.camelCase(leftRelation.extensions.tags.foreignFieldName)
+          );
+        }
+        // E.g. users(id) references posts(author_id)
+        const remoteType = this.tableType(junctionTable.codec);
+        const rightRelation = junctionTable.getRelation(rightRelationName);
+        const rightColumns = rightRelation.localColumns as string[];
+        return this.connectionField(
+          this.camelCase(
+            `${this.pluralize(remoteType)}-by-${this._joinColumnNames(
+              junctionTable.codec,
+              rightColumns
+            )}`
+          )
+        );
+      },
+      manyToManyEdgeRelationConnection(info, details) {
+        return this.connectionField(
+          this._manyToManyEdgeRelationFieldName(details)
+        );
+      },
+      manyToManyEdgeRelationList(info, details) {
+        return this.listField(this._manyToManyEdgeRelationFieldName(details));
+      },
+    },
+  },
 
   schema: {
     hooks: {
@@ -81,18 +139,13 @@ field to the edges where all of the join records can be traversed.`,
           inflection.tableConnectionType(junctionTable.codec)
         ) as GraphQLObjectType | null;
 
-        const relationDetails: GraphileBuild.PgRelationsPluginRelationDetails =
-          {
-            source: leftTable,
-            codec: leftTable.codec,
-            identifier: leftRelationName,
-            relation: leftTable.getRelation(leftRelationName),
-          };
-        // TODO: these are almost certainly not the right names
         const connectionFieldName =
-          build.inflection.manyRelationConnection(relationDetails);
-        const listFieldName =
-          build.inflection.manyRelationList(relationDetails);
+          build.inflection.manyToManyEdgeRelationConnection(
+            pgManyToManyRelationship
+          );
+        const listFieldName = build.inflection.manyToManyEdgeRelationList(
+          pgManyToManyRelationship
+        );
 
         function makeFields(isConnection: boolean) {
           const fieldName = isConnection ? connectionFieldName : listFieldName;
