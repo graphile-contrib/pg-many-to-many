@@ -19,6 +19,7 @@ function arraysAreEqual<A extends readonly any[]>(
     array1.length === array2.length && array1.every((el, i) => array2[i] === el)
   );
 }
+const defaultBehavior = "manyToMany select";
 
 // Given a `leftTable`, trace through the foreign key relations
 // and identify a `junctionTable` and `rightTable`.
@@ -32,7 +33,9 @@ export default function manyToManyRelationships(
       const relationBehavior = build.pgGetBehavior(
         junctionLeftRelation.extensions
       );
-      if (!build.behavior.matches(relationBehavior, "manyToMany")) {
+      if (
+        !build.behavior.matches(relationBehavior, "manyToMany", defaultBehavior)
+      ) {
         return memoLeft;
       }
 
@@ -44,8 +47,12 @@ export default function manyToManyRelationships(
         junctionLeftRelation.extensions
       );
       if (
-        !build.behavior.matches(junctionBehavior, "manyToMany") ||
-        !build.behavior.matches(junctionBehavior, "select")
+        !build.behavior.matches(
+          junctionBehavior,
+          "manyToMany",
+          defaultBehavior
+        ) ||
+        !build.behavior.matches(junctionBehavior, "select", defaultBehavior)
       ) {
         return memoLeft;
       }
@@ -62,7 +69,13 @@ export default function manyToManyRelationships(
             return false;
           }
           const otherRelationBehavior = build.pgGetBehavior(rel.extensions);
-          if (!build.behavior.matches(otherRelationBehavior, "manyToMany")) {
+          if (
+            !build.behavior.matches(
+              otherRelationBehavior,
+              "manyToMany",
+              defaultBehavior
+            )
+          ) {
             return false;
           }
           return true;
@@ -72,8 +85,16 @@ export default function manyToManyRelationships(
 
           const rightTableBehavior = build.pgGetBehavior(rightTable.extensions);
           if (
-            !build.behavior.matches(rightTableBehavior, "manyToMany") ||
-            !build.behavior.matches(rightTableBehavior, "select")
+            !build.behavior.matches(
+              rightTableBehavior,
+              "manyToMany",
+              defaultBehavior
+            ) ||
+            !build.behavior.matches(
+              rightTableBehavior,
+              "select",
+              defaultBehavior
+            )
           ) {
             return memoRight;
           }
