@@ -1,31 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`schema=a query=edges.graphql 1`] = `
-Object {
-  "data": Object {
-    "allFoos": Object {
-      "nodes": Array [
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "edges": Array [
-              Object {
+{
+  "data": {
+    "allFoos": {
+      "nodes": [
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "edges": [
+              {
                 "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
-                "node": Object {
+                "node": {
                   "barId": 11,
                   "barName": "Bar 11",
                   "nodeId": "WyJiYXJzIiwxMV0=",
                 },
               },
-              Object {
+              {
                 "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
-                "node": Object {
+                "node": {
                   "barId": 12,
                   "barName": "Bar 12",
                   "nodeId": "WyJiYXJzIiwxMl0=",
                 },
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -33,19 +33,19 @@ Object {
           },
           "fooId": 1,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "edges": Array [
-              Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "edges": [
+              {
                 "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
-                "node": Object {
+                "node": {
                   "barId": 11,
                   "barName": "Bar 11",
                   "nodeId": "WyJiYXJzIiwxMV0=",
                 },
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -53,10 +53,10 @@ Object {
           },
           "fooId": 2,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "edges": Array [],
-            "pageInfo": Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "edges": [],
+            "pageInfo": {
               "endCursor": null,
               "startCursor": null,
             },
@@ -71,25 +71,25 @@ Object {
 `;
 
 exports[`schema=a query=nodes.graphql 1`] = `
-Object {
-  "data": Object {
-    "allFoos": Object {
-      "nodes": Array [
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "nodes": Array [
-              Object {
+{
+  "data": {
+    "allFoos": {
+      "nodes": [
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "nodes": [
+              {
                 "barId": 11,
                 "barName": "Bar 11",
                 "nodeId": "WyJiYXJzIiwxMV0=",
               },
-              Object {
+              {
                 "barId": 12,
                 "barName": "Bar 12",
                 "nodeId": "WyJiYXJzIiwxMl0=",
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -97,16 +97,16 @@ Object {
           },
           "fooId": 1,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "nodes": Array [
-              Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "nodes": [
+              {
                 "barId": 11,
                 "barName": "Bar 11",
                 "nodeId": "WyJiYXJzIiwxMV0=",
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -114,10 +114,10 @@ Object {
           },
           "fooId": 2,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "nodes": Array [],
-            "pageInfo": Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "nodes": [],
+            "pageInfo": {
               "endCursor": null,
               "startCursor": null,
             },
@@ -132,33 +132,33 @@ Object {
 `;
 
 exports[`schema=b query=edges.graphql 1`] = `
-Object {
-  "data": Object {
-    "allFoos": Object {
-      "nodes": Array [
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "edges": Array [
-              Object {
+{
+  "data": {
+    "allFoos": {
+      "nodes": [
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "edges": [
+              {
                 "createdAt": "2018-01-01T08:00:00-04:00",
                 "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
-                "node": Object {
+                "node": {
                   "barId": 11,
                   "barName": "Bar 11",
                   "nodeId": "WyJiYXJzIiwxMV0=",
                 },
               },
-              Object {
+              {
                 "createdAt": "2018-01-02T08:00:00-04:00",
                 "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
-                "node": Object {
+                "node": {
                   "barId": 12,
                   "barName": "Bar 12",
                   "nodeId": "WyJiYXJzIiwxMl0=",
                 },
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -166,20 +166,20 @@ Object {
           },
           "fooId": 1,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "edges": Array [
-              Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "edges": [
+              {
                 "createdAt": "2018-01-03T08:00:00-04:00",
                 "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
-                "node": Object {
+                "node": {
                   "barId": 11,
                   "barName": "Bar 11",
                   "nodeId": "WyJiYXJzIiwxMV0=",
                 },
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -187,10 +187,10 @@ Object {
           },
           "fooId": 2,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "edges": Array [],
-            "pageInfo": Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "edges": [],
+            "pageInfo": {
               "endCursor": null,
               "startCursor": null,
             },
@@ -205,25 +205,25 @@ Object {
 `;
 
 exports[`schema=b query=nodes.graphql 1`] = `
-Object {
-  "data": Object {
-    "allFoos": Object {
-      "nodes": Array [
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "nodes": Array [
-              Object {
+{
+  "data": {
+    "allFoos": {
+      "nodes": [
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "nodes": [
+              {
                 "barId": 11,
                 "barName": "Bar 11",
                 "nodeId": "WyJiYXJzIiwxMV0=",
               },
-              Object {
+              {
                 "barId": 12,
                 "barName": "Bar 12",
                 "nodeId": "WyJiYXJzIiwxMl0=",
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -231,16 +231,16 @@ Object {
           },
           "fooId": 1,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "nodes": Array [
-              Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "nodes": [
+              {
                 "barId": 11,
                 "barName": "Bar 11",
                 "nodeId": "WyJiYXJzIiwxMV0=",
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -248,10 +248,10 @@ Object {
           },
           "fooId": 2,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "nodes": Array [],
-            "pageInfo": Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "nodes": [],
+            "pageInfo": {
               "endCursor": null,
               "startCursor": null,
             },
@@ -266,73 +266,73 @@ Object {
 `;
 
 exports[`schema=c query=edges.graphql 1`] = `
-Object {
-  "data": Object {
-    "allFoos": Object {
-      "nodes": Array [
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "edges": Array [
-              Object {
+{
+  "data": {
+    "allFoos": {
+      "nodes": [
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "edges": [
+              {
                 "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
-                "junctionsByJBarId": Object {
-                  "edges": Array [
-                    Object {
+                "junctionsByJBarId": {
+                  "edges": [
+                    {
                       "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
-                      "node": Object {
+                      "node": {
                         "jBarId": 11,
                         "jFooId": 1,
                         "nodeId": "WyJqdW5jdGlvbnMiLDFd",
                       },
                     },
                   ],
-                  "pageInfo": Object {
+                  "pageInfo": {
                     "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
                     "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
                   },
                   "totalCount": 1,
                 },
-                "node": Object {
+                "node": {
                   "barId": 11,
                   "barName": "Bar 11",
                   "nodeId": "WyJiYXJzIiwxMV0=",
                 },
               },
-              Object {
+              {
                 "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
-                "junctionsByJBarId": Object {
-                  "edges": Array [
-                    Object {
+                "junctionsByJBarId": {
+                  "edges": [
+                    {
                       "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsyXV0=",
-                      "node": Object {
+                      "node": {
                         "jBarId": 12,
                         "jFooId": 1,
                         "nodeId": "WyJqdW5jdGlvbnMiLDJd",
                       },
                     },
-                    Object {
+                    {
                       "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFszXV0=",
-                      "node": Object {
+                      "node": {
                         "jBarId": 12,
                         "jFooId": 1,
                         "nodeId": "WyJqdW5jdGlvbnMiLDNd",
                       },
                     },
                   ],
-                  "pageInfo": Object {
+                  "pageInfo": {
                     "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFszXV0=",
                     "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsyXV0=",
                   },
                   "totalCount": 2,
                 },
-                "node": Object {
+                "node": {
                   "barId": 12,
                   "barName": "Bar 12",
                   "nodeId": "WyJiYXJzIiwxMl0=",
                 },
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -340,36 +340,36 @@ Object {
           },
           "fooId": 1,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "edges": Array [
-              Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "edges": [
+              {
                 "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
-                "junctionsByJBarId": Object {
-                  "edges": Array [
-                    Object {
+                "junctionsByJBarId": {
+                  "edges": [
+                    {
                       "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
-                      "node": Object {
+                      "node": {
                         "jBarId": 11,
                         "jFooId": 2,
                         "nodeId": "WyJqdW5jdGlvbnMiLDRd",
                       },
                     },
                   ],
-                  "pageInfo": Object {
+                  "pageInfo": {
                     "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
                     "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
                   },
                   "totalCount": 1,
                 },
-                "node": Object {
+                "node": {
                   "barId": 11,
                   "barName": "Bar 11",
                   "nodeId": "WyJiYXJzIiwxMV0=",
                 },
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -377,10 +377,10 @@ Object {
           },
           "fooId": 2,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "edges": Array [],
-            "pageInfo": Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "edges": [],
+            "pageInfo": {
               "endCursor": null,
               "startCursor": null,
             },
@@ -395,25 +395,25 @@ Object {
 `;
 
 exports[`schema=c query=nodes.graphql 1`] = `
-Object {
-  "data": Object {
-    "allFoos": Object {
-      "nodes": Array [
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "nodes": Array [
-              Object {
+{
+  "data": {
+    "allFoos": {
+      "nodes": [
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "nodes": [
+              {
                 "barId": 11,
                 "barName": "Bar 11",
                 "nodeId": "WyJiYXJzIiwxMV0=",
               },
-              Object {
+              {
                 "barId": 12,
                 "barName": "Bar 12",
                 "nodeId": "WyJiYXJzIiwxMl0=",
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -421,16 +421,16 @@ Object {
           },
           "fooId": 1,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "nodes": Array [
-              Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "nodes": [
+              {
                 "barId": 11,
                 "barName": "Bar 11",
                 "nodeId": "WyJiYXJzIiwxMV0=",
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -438,10 +438,10 @@ Object {
           },
           "fooId": 2,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "nodes": Array [],
-            "pageInfo": Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "nodes": [],
+            "pageInfo": {
               "endCursor": null,
               "startCursor": null,
             },
@@ -456,20 +456,20 @@ Object {
 `;
 
 exports[`schema=d query=edges.graphql 1`] = `
-Object {
-  "data": Object {
-    "allFoos": Object {
-      "nodes": Array [
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "edges": Array [
-              Object {
+{
+  "data": {
+    "allFoos": {
+      "nodes": [
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "edges": [
+              {
                 "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
-                "junctionsByJBarId": Object {
-                  "edges": Array [
-                    Object {
+                "junctionsByJBarId": {
+                  "edges": [
+                    {
                       "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
-                      "node": Object {
+                      "node": {
                         "createdAt": "2018-01-01T08:00:00-04:00",
                         "jBarId": 11,
                         "jFooId": 1,
@@ -477,34 +477,34 @@ Object {
                       },
                     },
                   ],
-                  "pageInfo": Object {
+                  "pageInfo": {
                     "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
                     "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
                   },
                   "totalCount": 1,
                 },
-                "node": Object {
+                "node": {
                   "barId": 11,
                   "barName": "Bar 11",
                   "nodeId": "WyJiYXJzIiwxMV0=",
                 },
               },
-              Object {
+              {
                 "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
-                "junctionsByJBarId": Object {
-                  "edges": Array [
-                    Object {
+                "junctionsByJBarId": {
+                  "edges": [
+                    {
                       "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsyXV0=",
-                      "node": Object {
+                      "node": {
                         "createdAt": "2018-01-02T08:00:00-04:00",
                         "jBarId": 12,
                         "jFooId": 1,
                         "nodeId": "WyJqdW5jdGlvbnMiLDJd",
                       },
                     },
-                    Object {
+                    {
                       "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFszXV0=",
-                      "node": Object {
+                      "node": {
                         "createdAt": "2018-01-04T08:00:00-04:00",
                         "jBarId": 12,
                         "jFooId": 1,
@@ -512,20 +512,20 @@ Object {
                       },
                     },
                   ],
-                  "pageInfo": Object {
+                  "pageInfo": {
                     "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFszXV0=",
                     "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsyXV0=",
                   },
                   "totalCount": 2,
                 },
-                "node": Object {
+                "node": {
                   "barId": 12,
                   "barName": "Bar 12",
                   "nodeId": "WyJiYXJzIiwxMl0=",
                 },
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -533,16 +533,16 @@ Object {
           },
           "fooId": 1,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "edges": Array [
-              Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "edges": [
+              {
                 "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
-                "junctionsByJBarId": Object {
-                  "edges": Array [
-                    Object {
+                "junctionsByJBarId": {
+                  "edges": [
+                    {
                       "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
-                      "node": Object {
+                      "node": {
                         "createdAt": "2018-01-03T08:00:00-04:00",
                         "jBarId": 11,
                         "jFooId": 2,
@@ -550,20 +550,20 @@ Object {
                       },
                     },
                   ],
-                  "pageInfo": Object {
+                  "pageInfo": {
                     "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
                     "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
                   },
                   "totalCount": 1,
                 },
-                "node": Object {
+                "node": {
                   "barId": 11,
                   "barName": "Bar 11",
                   "nodeId": "WyJiYXJzIiwxMV0=",
                 },
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -571,10 +571,10 @@ Object {
           },
           "fooId": 2,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "edges": Array [],
-            "pageInfo": Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "edges": [],
+            "pageInfo": {
               "endCursor": null,
               "startCursor": null,
             },
@@ -589,25 +589,25 @@ Object {
 `;
 
 exports[`schema=d query=nodes.graphql 1`] = `
-Object {
-  "data": Object {
-    "allFoos": Object {
-      "nodes": Array [
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "nodes": Array [
-              Object {
+{
+  "data": {
+    "allFoos": {
+      "nodes": [
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "nodes": [
+              {
                 "barId": 11,
                 "barName": "Bar 11",
                 "nodeId": "WyJiYXJzIiwxMV0=",
               },
-              Object {
+              {
                 "barId": 12,
                 "barName": "Bar 12",
                 "nodeId": "WyJiYXJzIiwxMl0=",
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -615,16 +615,16 @@ Object {
           },
           "fooId": 1,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "nodes": Array [
-              Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "nodes": [
+              {
                 "barId": 11,
                 "barName": "Bar 11",
                 "nodeId": "WyJiYXJzIiwxMV0=",
               },
             ],
-            "pageInfo": Object {
+            "pageInfo": {
               "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
               "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
             },
@@ -632,10 +632,10 @@ Object {
           },
           "fooId": 2,
         },
-        Object {
-          "barsByJunctionJFooIdAndJBarId": Object {
-            "nodes": Array [],
-            "pageInfo": Object {
+        {
+          "barsByJunctionJFooIdAndJBarId": {
+            "nodes": [],
+            "pageInfo": {
               "endCursor": null,
               "startCursor": null,
             },
@@ -650,25 +650,25 @@ Object {
 `;
 
 exports[`schema=e query=multiple-tags-fields.graphql 1`] = `
-Object {
-  "data": Object {
-    "allPeople": Object {
-      "nodes": Array [
-        Object {
+{
+  "data": {
+    "allPeople": {
+      "nodes": [
+        {
           "personName": "Alice",
-          "tags": Object {
-            "nodes": Array [
-              Object {
+          "tags": {
+            "nodes": [
+              {
                 "tagName": "awesome",
               },
             ],
           },
-          "teams": Object {
-            "nodes": Array [
-              Object {
-                "tags": Object {
-                  "nodes": Array [
-                    Object {
+          "teams": {
+            "nodes": [
+              {
+                "tags": {
+                  "nodes": [
+                    {
                       "tagName": "strange",
                     },
                   ],
@@ -678,21 +678,21 @@ Object {
             ],
           },
         },
-        Object {
+        {
           "personName": "Bob",
-          "tags": Object {
-            "nodes": Array [
-              Object {
+          "tags": {
+            "nodes": [
+              {
                 "tagName": "strange",
               },
             ],
           },
-          "teams": Object {
-            "nodes": Array [
-              Object {
-                "tags": Object {
-                  "nodes": Array [
-                    Object {
+          "teams": {
+            "nodes": [
+              {
+                "tags": {
+                  "nodes": [
+                    {
                       "tagName": "high-performing",
                     },
                   ],
@@ -702,21 +702,21 @@ Object {
             ],
           },
         },
-        Object {
+        {
           "personName": "Carol",
-          "tags": Object {
-            "nodes": Array [
-              Object {
+          "tags": {
+            "nodes": [
+              {
                 "tagName": "high-performing",
               },
             ],
           },
-          "teams": Object {
-            "nodes": Array [
-              Object {
-                "tags": Object {
-                  "nodes": Array [
-                    Object {
+          "teams": {
+            "nodes": [
+              {
+                "tags": {
+                  "nodes": [
+                    {
                       "tagName": "awesome",
                     },
                   ],
@@ -733,53 +733,53 @@ Object {
 `;
 
 exports[`schema=f query=f.graphql 1`] = `
-Object {
-  "data": Object {
-    "allPeople": Object {
-      "nodes": Array [
-        Object {
-          "followers": Object {
-            "nodes": Array [
-              Object {
+{
+  "data": {
+    "allPeople": {
+      "nodes": [
+        {
+          "followers": {
+            "nodes": [
+              {
                 "name": "Bob",
               },
-              Object {
+              {
                 "name": "Eve",
               },
             ],
           },
-          "following": Object {
-            "nodes": Array [],
+          "following": {
+            "nodes": [],
           },
           "name": "Alice",
         },
-        Object {
-          "followers": Object {
-            "nodes": Array [
-              Object {
+        {
+          "followers": {
+            "nodes": [
+              {
                 "name": "Eve",
               },
             ],
           },
-          "following": Object {
-            "nodes": Array [
-              Object {
+          "following": {
+            "nodes": [
+              {
                 "name": "Alice",
               },
             ],
           },
           "name": "Bob",
         },
-        Object {
-          "followers": Object {
-            "nodes": Array [],
+        {
+          "followers": {
+            "nodes": [],
           },
-          "following": Object {
-            "nodes": Array [
-              Object {
+          "following": {
+            "nodes": [
+              {
                 "name": "Alice",
               },
-              Object {
+              {
                 "name": "Bob",
               },
             ],
@@ -793,22 +793,22 @@ Object {
 `;
 
 exports[`schema=p query=edge-fields.graphql 1`] = `
-Object {
-  "data": Object {
-    "allTeams": Object {
-      "nodes": Array [
-        Object {
-          "members": Object {
-            "edges": Array [
-              Object {
+{
+  "data": {
+    "allTeams": {
+      "nodes": [
+        {
+          "members": {
+            "edges": [
+              {
                 "createdAt": "2018-01-01T08:00:00-04:00",
-                "node": Object {
+                "node": {
                   "personName": "Person1",
                 },
               },
-              Object {
+              {
                 "createdAt": "2018-01-03T08:00:00-04:00",
-                "node": Object {
+                "node": {
                   "personName": "Person2",
                 },
               },
@@ -816,12 +816,12 @@ Object {
           },
           "teamName": "Team1",
         },
-        Object {
-          "members": Object {
-            "edges": Array [
-              Object {
+        {
+          "members": {
+            "edges": [
+              {
                 "createdAt": "2018-01-02T08:00:00-04:00",
-                "node": Object {
+                "node": {
                   "personName": "Person1",
                 },
               },
@@ -829,9 +829,9 @@ Object {
           },
           "teamName": "Team2",
         },
-        Object {
-          "members": Object {
-            "edges": Array [],
+        {
+          "members": {
+            "edges": [],
           },
           "teamName": "Team3",
         },
@@ -842,69 +842,69 @@ Object {
 `;
 
 exports[`schema=p query=many-to-many.graphql 1`] = `
-Object {
-  "data": Object {
-    "a": Object {
-      "nodes": Array [
-        Object {
+{
+  "data": {
+    "a": {
+      "nodes": [
+        {
           "personName": "Person1",
-          "teamsByMembershipPersonIdAndTeamId": Object {
-            "nodes": Array [
-              Object {
+          "teamsByMembershipPersonIdAndTeamId": {
+            "nodes": [
+              {
                 "teamName": "Team1",
               },
-              Object {
+              {
                 "teamName": "Team2",
               },
             ],
           },
         },
-        Object {
+        {
           "personName": "Person2",
-          "teamsByMembershipPersonIdAndTeamId": Object {
-            "nodes": Array [
-              Object {
+          "teamsByMembershipPersonIdAndTeamId": {
+            "nodes": [
+              {
                 "teamName": "Team1",
               },
             ],
           },
         },
-        Object {
+        {
           "personName": "Person3",
-          "teamsByMembershipPersonIdAndTeamId": Object {
-            "nodes": Array [],
+          "teamsByMembershipPersonIdAndTeamId": {
+            "nodes": [],
           },
         },
       ],
     },
-    "b": Object {
-      "nodes": Array [
-        Object {
-          "members": Object {
-            "nodes": Array [
-              Object {
+    "b": {
+      "nodes": [
+        {
+          "members": {
+            "nodes": [
+              {
                 "personName": "Person1",
               },
-              Object {
+              {
                 "personName": "Person2",
               },
             ],
           },
           "teamName": "Team1",
         },
-        Object {
-          "members": Object {
-            "nodes": Array [
-              Object {
+        {
+          "members": {
+            "nodes": [
+              {
                 "personName": "Person1",
               },
             ],
           },
           "teamName": "Team2",
         },
-        Object {
-          "members": Object {
-            "nodes": Array [],
+        {
+          "members": {
+            "nodes": [],
           },
           "teamName": "Team3",
         },
@@ -915,36 +915,36 @@ Object {
 `;
 
 exports[`schema=t query=edge-fields.graphql 1`] = `
-Object {
-  "data": Object {
-    "allTeams": Object {
-      "nodes": Array [
-        Object {
-          "members": Object {
-            "edges": Array [
-              Object {
-                "membershipsByPersonId": Object {
-                  "nodes": Array [
-                    Object {
+{
+  "data": {
+    "allTeams": {
+      "nodes": [
+        {
+          "members": {
+            "edges": [
+              {
+                "membershipsByPersonId": {
+                  "nodes": [
+                    {
                       "endAt": null,
                       "startAt": "2018-01-01T08:00:00-04:00",
                     },
                   ],
                 },
-                "node": Object {
+                "node": {
                   "personName": "Person1",
                 },
               },
-              Object {
-                "membershipsByPersonId": Object {
-                  "nodes": Array [
-                    Object {
+              {
+                "membershipsByPersonId": {
+                  "nodes": [
+                    {
                       "endAt": null,
                       "startAt": "2018-01-03T08:00:00-04:00",
                     },
                   ],
                 },
-                "node": Object {
+                "node": {
                   "personName": "Person2",
                 },
               },
@@ -952,23 +952,23 @@ Object {
           },
           "teamName": "Team1",
         },
-        Object {
-          "members": Object {
-            "edges": Array [
-              Object {
-                "membershipsByPersonId": Object {
-                  "nodes": Array [
-                    Object {
+        {
+          "members": {
+            "edges": [
+              {
+                "membershipsByPersonId": {
+                  "nodes": [
+                    {
                       "endAt": "2018-01-03T08:00:00-04:00",
                       "startAt": "2018-01-02T08:00:00-04:00",
                     },
-                    Object {
+                    {
                       "endAt": "2018-01-05T08:00:00-04:00",
                       "startAt": "2018-01-04T08:00:00-04:00",
                     },
                   ],
                 },
-                "node": Object {
+                "node": {
                   "personName": "Person1",
                 },
               },
@@ -976,9 +976,9 @@ Object {
           },
           "teamName": "Team2",
         },
-        Object {
-          "members": Object {
-            "edges": Array [],
+        {
+          "members": {
+            "edges": [],
           },
           "teamName": "Team3",
         },
@@ -989,69 +989,69 @@ Object {
 `;
 
 exports[`schema=t query=many-to-many.graphql 1`] = `
-Object {
-  "data": Object {
-    "a": Object {
-      "nodes": Array [
-        Object {
+{
+  "data": {
+    "a": {
+      "nodes": [
+        {
           "personName": "Person1",
-          "teamsByMembershipPersonIdAndTeamId": Object {
-            "nodes": Array [
-              Object {
+          "teamsByMembershipPersonIdAndTeamId": {
+            "nodes": [
+              {
                 "teamName": "Team1",
               },
-              Object {
+              {
                 "teamName": "Team2",
               },
             ],
           },
         },
-        Object {
+        {
           "personName": "Person2",
-          "teamsByMembershipPersonIdAndTeamId": Object {
-            "nodes": Array [
-              Object {
+          "teamsByMembershipPersonIdAndTeamId": {
+            "nodes": [
+              {
                 "teamName": "Team1",
               },
             ],
           },
         },
-        Object {
+        {
           "personName": "Person3",
-          "teamsByMembershipPersonIdAndTeamId": Object {
-            "nodes": Array [],
+          "teamsByMembershipPersonIdAndTeamId": {
+            "nodes": [],
           },
         },
       ],
     },
-    "b": Object {
-      "nodes": Array [
-        Object {
-          "members": Object {
-            "nodes": Array [
-              Object {
+    "b": {
+      "nodes": [
+        {
+          "members": {
+            "nodes": [
+              {
                 "personName": "Person1",
               },
-              Object {
+              {
                 "personName": "Person2",
               },
             ],
           },
           "teamName": "Team1",
         },
-        Object {
-          "members": Object {
-            "nodes": Array [
-              Object {
+        {
+          "members": {
+            "nodes": [
+              {
                 "personName": "Person1",
               },
             ],
           },
           "teamName": "Team2",
         },
-        Object {
-          "members": Object {
-            "nodes": Array [],
+        {
+          "members": {
+            "nodes": [],
           },
           "teamName": "Team3",
         },

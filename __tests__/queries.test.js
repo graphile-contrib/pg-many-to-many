@@ -45,8 +45,13 @@ const queryResult = async (sqlSchema, fixture) => {
     });
     debug(`${sqlSchema}: ${printSchema(gqlSchema)}`);
     const query = await readFixtureForSqlSchema(sqlSchema, fixture);
-    return await graphql(gqlSchema, query, null, {
-      pgClient: pgClient,
+    return await graphql({
+      schema: gqlSchema,
+      source: query,
+      rootValue: null,
+      contextValue: {
+        pgClient: pgClient,
+      },
     });
   });
 };
