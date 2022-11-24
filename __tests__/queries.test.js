@@ -15,14 +15,17 @@ const { PgManyToManyPreset } = require("../");
 
 const readFile = util.promisify(fs.readFile);
 
-const getSqlSchemas = () => fs.readdirSync(path.resolve(__dirname, "schemas"));
+const getSqlSchemas = () =>
+  fs.readdirSync(path.resolve(__dirname, "schemas")).sort();
 const getFixturesForSqlSchema = (sqlSchema) =>
   fs.existsSync(
     path.resolve(__dirname, "schemas", sqlSchema, "fixtures", "queries")
   )
-    ? fs.readdirSync(
-        path.resolve(__dirname, "schemas", sqlSchema, "fixtures", "queries")
-      )
+    ? fs
+        .readdirSync(
+          path.resolve(__dirname, "schemas", sqlSchema, "fixtures", "queries")
+        )
+        .sort()
     : [];
 const readFixtureForSqlSchema = (sqlSchema, fixture) =>
   readFile(
