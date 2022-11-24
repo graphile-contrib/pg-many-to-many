@@ -1,5 +1,5 @@
-import { PgSelectSingleStep } from "@dataplan/pg";
-import { connection } from "grafast";
+import { PgSelectSingleStep, TYPES } from "@dataplan/pg";
+import { connection, each, list, object } from "grafast";
 import type {} from "graphile-config";
 import { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
@@ -73,6 +73,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
               junctionTable,
               rightRelationName,
               rightTable,
+              allowsMultipleEdgesToNode,
             } = relationship;
             const RightTableType = build.getGraphQLTypeByPgCodec(
               rightTable.codec,
@@ -96,6 +97,14 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                 `Could not find connection type for table ${rightTable.name}`
               );
             }
+
+            const rightJunctionColumnNames =
+              junctionTable.getRelation(rightRelationName).localColumns;
+            const rightTableRelationColumnNames =
+              junctionTable.getRelation(rightRelationName).remoteColumns;
+
+            // TODO: throw an error if localColumns or remoteColumns involve
+            // `via` or `expression` - we only want pure column relations.
 
             function makeFields(isConnection: boolean) {
               const manyRelationFieldName = isConnection
@@ -123,25 +132,63 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                             new GraphQLList(new GraphQLNonNull(RightTableType!))
                           ),
                       args: {},
-                      ...(isConnection
-                        ? {
-                            plan(
-                              $left: PgSelectSingleStep<any, any, any, any>
-                            ) {
-                              const $junctions =
-                                $left.manyRelation(leftRelationName);
-                              return connection($junctions) as any;
-                            },
-                          }
-                        : {
-                            plan(
-                              $left: PgSelectSingleStep<any, any, any, any>
-                            ) {
-                              const $junctions =
-                                $left.manyRelation(leftRelationName);
-                              return $junctions;
-                            },
-                          }),
+                      plan($left: PgSelectSingleStep<any, any, any, any>) {
+                        const $junctions = $left.manyRelation(leftRelationName);
+                        if (allowsMultipleEdgesToNode) {
+                          // Fetch the identifiers and the return the relevant
+                          // rightTable entries for them.
+                          const $rightIdentifiers = each(
+                            $junctions,
+                            ($junction) => {
+                              return object(
+                                rightJunctionColumnNames.reduce((memo, col) => {
+                                  memo[col] = (
+                                    $junction as PgSelectSingleStep<
+                                      any,
+                                      any,
+                                      any,
+                                      any
+                                    >
+                                  ).get(col);
+                                  return memo;
+                                }, Object.create(null))
+                              );
+                            }
+                          );
+                          const $rights = rightTable.find();
+                          $rights.where(
+                            sql`(${sql.join(
+                              rightTableRelationColumnNames.map(
+                                (colName) =>
+                                  sql`${$rights.alias}.${sql.identifier(
+                                    colName
+                                    // TODO: is this safe? What if this column has `via` or `expression`?
+                                  )}`
+                              ),
+                              ", "
+                            )}) in (select ${sql.join(
+                              rightJunctionColumnNames.map(
+                                (colName) =>
+                                  sql`el.el->>${sql.literal(
+                                    colName
+                                  )} as ${sql.identifier(colName)}`
+                              ),
+                              ", "
+                            )} from json_array_elements(${$rights.placeholder(
+                              $rightIdentifiers,
+                              TYPES.json
+                            )}) as el(el))`
+                          );
+                          return isConnection
+                            ? (connection($rights) as any)
+                            : $rights;
+                        } else {
+                          // Just paginate over the junctions
+                          return isConnection
+                            ? (connection($junctions) as any)
+                            : $junctions;
+                        }
+                      },
                     })
                   ),
                 },

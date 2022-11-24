@@ -5,6 +5,10 @@ const version = require("../../package.json").version;
 
 export const PgManyToManyRelationEdgeTablePlugin: GraphileConfig.Plugin = {
   name: "PgManyToManyRelationEdgeTablePlugin",
+  description: `\
+When a many-to-many relationship can be satisfied over multiple records (i.e.
+the join is not unique), this plugin adds a field to the edges where all of the
+join records can be traversed.`,
   version,
 
   schema: {
@@ -25,16 +29,8 @@ export const PgManyToManyRelationEdgeTablePlugin: GraphileConfig.Plugin = {
           return fields;
         }
 
-        const {
-          leftKeyAttributes,
-          junctionLeftKeyAttributes,
-          rightTable,
-          rightKeyAttributes,
-          junctionRightKeyAttributes,
-          junctionTable,
-          junctionRightRelation,
-          allowsMultipleEdgesToNode,
-        } = pgManyToManyRelationship;
+        const { rightTable, junctionTable, allowsMultipleEdgesToNode } =
+          pgManyToManyRelationship;
 
         if (!allowsMultipleEdgesToNode) {
           return fields;
