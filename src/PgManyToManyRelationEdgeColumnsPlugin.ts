@@ -4,7 +4,7 @@ import type {} from "graphile-config";
 import { isOutputType } from "graphql";
 import type {} from "postgraphile";
 
-const version = require("../../package.json").version;
+const version = require("../package.json").version;
 
 declare global {
   namespace GraphileBuild {

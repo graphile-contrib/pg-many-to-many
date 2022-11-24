@@ -6,7 +6,7 @@ import type {} from "postgraphile";
 import createManyToManyConnectionType from "./createManyToManyConnectionType";
 import manyToManyRelationships from "./manyToManyRelationships";
 
-const version = require("../../package.json").version;
+const version = require("../package.json").version;
 
 export const junctionSymbol = Symbol("junction");
 

@@ -6,7 +6,7 @@ import { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
 import { junctionSymbol } from "./PgManyToManyRelationPlugin";
 
-const version = require("../../package.json").version;
+const version = require("../package.json").version;
 
 declare global {
   namespace GraphileBuild {

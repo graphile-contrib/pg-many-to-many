@@ -8,7 +8,7 @@ import type {} from "graphile-config";
 import type {} from "postgraphile";
 import { PgTableSource } from "./interfaces";
 
-const version = require("../../package.json").version;
+const version = require("../package.json").version;
 
 type InflectionColumn = {
   columnName: string;
