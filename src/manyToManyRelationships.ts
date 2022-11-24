@@ -115,14 +115,12 @@ export default function manyToManyRelationships(
             return memoRight;
           }
 
+          const relationColumns = [
+            ...junctionLeftRelation.remoteColumns,
+            ...junctionRightRelation.localColumns,
+          ].sort();
           const allowsMultipleEdgesToNode = !junctionTable.uniques.find((c) =>
-            arraysAreEqual(
-              c.columns.concat().sort(),
-              [
-                ...junctionLeftRelation.remoteColumns,
-                ...junctionRightRelation.localColumns,
-              ].sort()
-            )
+            arraysAreEqual(c.columns.concat().sort(), relationColumns)
           );
 
           memoRight.push({
