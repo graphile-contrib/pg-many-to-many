@@ -24,8 +24,13 @@ export default function createManyToManyConnectionType(
   build: GraphileBuild.Build,
   leftTable: PgTableSource
 ) {
-  const { leftRelationName, junctionTable, rightRelationName, rightTable } =
-    relationship;
+  const {
+    leftRelationName,
+    junctionTable,
+    rightRelationName,
+    rightTable,
+    allowsMultipleEdgesToNode,
+  } = relationship;
   const {
     inflection,
     graphql: { GraphQLObjectType, GraphQLNonNull, GraphQLList },
@@ -92,9 +97,14 @@ export default function createManyToManyConnectionType(
                   PgSelectSingleStep<any, any, any>
                 >
               ) {
-                const $junction = $edge.node();
-                const $right = $junction.singleRelation(rightRelationName);
-                return $right;
+                if (allowsMultipleEdgesToNode) {
+                  const $right = $edge.node();
+                  return $right;
+                } else {
+                  const $junction = $edge.node();
+                  const $right = $junction.singleRelation(rightRelationName);
+                  return $right;
+                }
               },
             })
           ),
@@ -138,11 +148,16 @@ export default function createManyToManyConnectionType(
                 )
               ),
               plan($connection: ConnectionStep<any, any, any, any>) {
-                const $junctions = $connection.nodes();
-                return each($junctions, ($junction) => {
-                  const $right = $junction.singleRelation(rightRelationName);
-                  return $right;
-                }) as any;
+                if (allowsMultipleEdgesToNode) {
+                  const $rights = $connection.nodes();
+                  return $rights;
+                } else {
+                  const $junctions = $connection.nodes();
+                  return each($junctions, ($junction) => {
+                    const $right = $junction.singleRelation(rightRelationName);
+                    return $right;
+                  }) as any;
+                }
               },
             })
           ),
