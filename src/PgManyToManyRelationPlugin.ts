@@ -152,7 +152,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                             ($junction) => {
                               const spec = Object.create(null);
 
-                              for (const colName in leftJunctionColumnNames) {
+                              for (const colName of leftJunctionColumnNames) {
                                 spec[colName] = (
                                   $junction as PgSelectSingleStep<
                                     any,
@@ -162,7 +162,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                                   >
                                 ).get(colName);
                               }
-                              for (const colName in rightJunctionColumnNames) {
+                              for (const colName of rightJunctionColumnNames) {
                                 spec[colName] = (
                                   $junction as PgSelectSingleStep<
                                     any,
