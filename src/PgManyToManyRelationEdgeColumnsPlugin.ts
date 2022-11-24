@@ -9,7 +9,7 @@ const version = require("../../package.json").version;
 declare global {
   namespace GraphileBuild {
     interface ScopeObjectFieldsField {
-      isPgManyToManyRelationEdgeTableField?: boolean;
+      isPgManyToManyRelationEdgeColumnField?: boolean;
     }
   }
 }
