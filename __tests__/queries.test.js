@@ -11,7 +11,7 @@ const {
   default: postgraphilePresetAmber,
 } = require("postgraphile/presets/amber");
 const { makeV4Preset } = require("postgraphile/presets/v4");
-const PgManyToManyPreset = require("../");
+const { PgManyToManyPreset } = require("../");
 
 const readFile = util.promisify(fs.readFile);
 

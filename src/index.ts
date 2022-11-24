@@ -3,7 +3,7 @@ import { PgManyToManyRelationPlugin } from "./PgManyToManyRelationPlugin.js";
 import { PgManyToManyRelationEdgeColumnsPlugin } from "./PgManyToManyRelationEdgeColumnsPlugin.js";
 import { PgManyToManyRelationEdgeTablePlugin } from "./PgManyToManyRelationEdgeTablePlugin.js";
 
-const preset: GraphileConfig.Preset = {
+export const PgManyToManyPreset: GraphileConfig.Preset = {
   plugins: [
     PgManyToManyRelationInflectionPlugin,
     PgManyToManyRelationPlugin,
@@ -11,5 +11,3 @@ const preset: GraphileConfig.Preset = {
     PgManyToManyRelationEdgeTablePlugin,
   ],
 };
-
-export default preset;
