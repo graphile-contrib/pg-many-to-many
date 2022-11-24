@@ -57,22 +57,51 @@ declare global {
   }
 }
 
+const processDetails = (details: PgManyToManyRelationDetails) => {
+  const {
+    leftTable,
+    leftRelationName,
+    junctionTable,
+    rightRelationName,
+    rightTable,
+  } = details;
+  const junctionRightRelation = junctionTable.getRelation(rightRelationName);
+  const columnInflectionDataFromJunction = (columnName: string) => {
+    const column = junctionTable.codec.columns[columnName];
+    return {
+      columnName,
+      column,
+      codec: column.codec,
+    };
+  };
+  const junctionLeftKeyAttributes = leftTable
+    .getRelation(leftRelationName)
+    .remoteColumns.map(columnInflectionDataFromJunction);
+  const junctionRightKeyAttributes = junctionTable
+    .getRelation(rightRelationName)
+    .localColumns.map(columnInflectionDataFromJunction);
+  return {
+    ...details,
+    junctionRightRelation,
+    junctionLeftKeyAttributes,
+    junctionRightKeyAttributes,
+  };
+};
+
 export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
   name: "PgManyToManyRelationInflectionPlugin",
   version,
 
   inflection: {
     add: {
-      manyToManyRelationByKeys(
-        preset,
-        {
-          junctionLeftKeyAttributes,
+      manyToManyRelationByKeys(preset, details) {
+        const {
           junctionRightKeyAttributes,
-          junctionTable,
-          rightTable,
+          junctionLeftKeyAttributes,
           junctionRightRelation,
-        }
-      ) {
+          rightTable,
+          junctionTable,
+        } = processDetails(details);
         if (
           typeof junctionRightRelation.extensions?.tags.manyToManyFieldName ===
           "string"
@@ -90,16 +119,14 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
             .join("-and-")}`
         );
       },
-      manyToManyRelationByKeysSimple(
-        preset,
-        {
-          junctionLeftKeyAttributes,
+      manyToManyRelationByKeysSimple(preset, details) {
+        const {
           junctionRightKeyAttributes,
-          junctionTable,
-          rightTable,
+          junctionLeftKeyAttributes,
           junctionRightRelation,
-        }
-      ) {
+          rightTable,
+          junctionTable,
+        } = processDetails(details);
         if (
           typeof junctionRightRelation.extensions?.tags
             .manyToManySimpleFieldName === "string"
