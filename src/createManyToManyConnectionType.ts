@@ -10,6 +10,10 @@ declare global {
       isPgManyToManyEdgeType?: boolean;
       pgManyToManyRelationship?: PgManyToManyRelationDetails;
     }
+    interface ScopeObjectFieldsField {
+      isPgManyToManyRelationField?: boolean;
+      pgManyToManyRightTable?: PgSource<any, any, any, any>;
+    }
   }
 }
 
@@ -31,20 +35,8 @@ export default function createManyToManyConnectionType(
   } = build;
 
   const leftTableTypeName = inflection.tableType(leftTable.codec);
-  if (!leftTableTypeName) {
-    throw new Error(
-      `Could not determine type name for table '${leftTable.name}'`
-    );
-  }
-
-  const TableTypeName = inflection.tableType(rightTable.codec);
-  if (!TableTypeName) {
-    throw new Error(
-      `Could not determine type name for table '${rightTable.name}'`
-    );
-  }
-
   const junctionTypeName = inflection.tableType(junctionTable.codec);
+  const rightTableTypeName = inflection.tableType(rightTable.codec);
 
   const inflectorInfo = {
     ...relationship,
@@ -64,7 +56,7 @@ export default function createManyToManyConnectionType(
     },
     ExecutableStep as any,
     () => ({
-      description: `A \`${TableTypeName}\` edge in the connection, with data from \`${junctionTypeName}\`.`,
+      description: `A \`${rightTableTypeName}\` edge in the connection, with data from \`${junctionTypeName}\`.`,
       fields: ({ fieldWithHooks }) => {
         return {
           cursor: fieldWithHooks(
@@ -87,10 +79,10 @@ export default function createManyToManyConnectionType(
               fieldName: "node",
             },
             () => ({
-              description: `The \`${TableTypeName}\` at the end of the edge.`,
+              description: `The \`${rightTableTypeName}\` at the end of the edge.`,
               type: nullableIf(
                 !pgForbidSetofFunctionsToReturnNull,
-                getTypeByName(TableTypeName) as GraphQLObjectType
+                getTypeByName(rightTableTypeName) as GraphQLObjectType
               ),
               plan(
                 $edge: EdgeStep<
@@ -125,7 +117,7 @@ export default function createManyToManyConnectionType(
     },
     ExecutableStep as any,
     () => ({
-      description: `A connection to a list of \`${TableTypeName}\` values, with data from \`${junctionTypeName}\`.`,
+      description: `A connection to a list of \`${rightTableTypeName}\` values, with data from \`${junctionTypeName}\`.`,
       fields: ({ fieldWithHooks }) => {
         const PageInfo = getTypeByName(inflection.builtin("PageInfo")) as
           | GraphQLObjectType
@@ -136,12 +128,12 @@ export default function createManyToManyConnectionType(
               fieldName: "nodes",
             },
             () => ({
-              description: `A list of \`${TableTypeName}\` objects.`,
+              description: `A list of \`${rightTableTypeName}\` objects.`,
               type: new GraphQLNonNull(
                 new GraphQLList(
                   nullableIf(
                     !pgForbidSetofFunctionsToReturnNull,
-                    getTypeByName(TableTypeName) as GraphQLObjectType
+                    getTypeByName(rightTableTypeName) as GraphQLObjectType
                   )
                 )
               ),
@@ -159,7 +151,7 @@ export default function createManyToManyConnectionType(
               fieldName: "edges",
             },
             () => ({
-              description: `A list of edges which contains the \`${TableTypeName}\`, info from the \`${junctionTypeName}\`, and the cursor to aid in pagination.`,
+              description: `A list of edges which contains the \`${rightTableTypeName}\`, info from the \`${junctionTypeName}\`, and the cursor to aid in pagination.`,
               type: new GraphQLNonNull(
                 new GraphQLList(
                   new GraphQLNonNull(

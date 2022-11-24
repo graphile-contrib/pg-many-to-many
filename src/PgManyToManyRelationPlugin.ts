@@ -1,4 +1,7 @@
+import { PgSelectSingleStep } from "@dataplan/pg";
+import { connection } from "grafast";
 import type {} from "graphile-config";
+import { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
 import createManyToManyConnectionType from "./createManyToManyConnectionType";
 import manyToManyRelationships from "./manyToManyRelationships";
@@ -74,216 +77,92 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
             const RightTableType = build.getGraphQLTypeByPgCodec(
               rightTable.codec,
               "output"
-            );
+            ) as GraphQLObjectType | null;
             if (!RightTableType) {
               throw new Error(
                 `Could not determine output type for table ${rightTable.name}`
               );
             }
-            const RightTableConnectionType = createManyToManyConnectionType(
-              relationship,
-              build,
-              leftTable
-            );
+            const leftTableTypeName = inflection.tableType(leftTable.codec);
+            const connectionTypeName = inflection.manyToManyRelationConnection({
+              ...relationship,
+              leftTableTypeName,
+            });
+            const RightTableConnectionType = build.getTypeByName(
+              connectionTypeName
+            ) as GraphQLObjectType | null;
+            if (!RightTableConnectionType) {
+              throw new Error(
+                `Could not find connection type for table ${rightTable.name}`
+              );
+            }
 
-            // Since we're ignoring multi-column keys, we can simplify here
-            const leftKeyAttribute = leftKeyAttributes[0];
-            const junctionLeftKeyAttribute = junctionLeftKeyAttributes[0];
-            const junctionRightKeyAttribute = junctionRightKeyAttributes[0];
-            const rightKeyAttribute = rightKeyAttributes[0];
-
-            function makeFields(isConnection) {
+            function makeFields(isConnection: boolean) {
               const manyRelationFieldName = isConnection
-                ? inflection.manyToManyRelationByKeys(
-                    leftKeyAttributes,
-                    junctionLeftKeyAttributes,
-                    junctionRightKeyAttributes,
-                    rightKeyAttributes,
-                    junctionTable,
-                    rightTable,
-                    junctionLeftConstraint,
-                    junctionRightConstraint
-                  )
-                : inflection.manyToManyRelationByKeysSimple(
-                    leftKeyAttributes,
-                    junctionLeftKeyAttributes,
-                    junctionRightKeyAttributes,
-                    rightKeyAttributes,
-                    junctionTable,
-                    rightTable,
-                    junctionLeftConstraint,
-                    junctionRightConstraint
-                  );
+                ? inflection.manyToManyRelationByKeys(relationship)
+                : inflection.manyToManyRelationByKeysSimple(relationship);
 
               memo = extend(
                 memo,
                 {
                   [manyRelationFieldName]: fieldWithHooks(
-                    manyRelationFieldName,
-                    ({
-                      getDataFromParsedResolveInfoFragment,
-                      addDataGenerator,
-                    }) => {
-                      const sqlFrom = sql.identifier(
-                        rightTable.namespace.name,
-                        rightTable.name
-                      );
-                      const queryOptions = {
-                        useAsterisk: rightTable.canUseAsterisk,
-                        withPagination: isConnection,
-                        withPaginationAsFields: false,
-                        asJsonAggregate: !isConnection,
-                      };
-                      addDataGenerator((parsedResolveInfoFragment) => {
-                        return {
-                          pgQuery: (queryBuilder) => {
-                            queryBuilder.select(() => {
-                              const resolveData =
-                                getDataFromParsedResolveInfoFragment(
-                                  parsedResolveInfoFragment,
-                                  isConnection
-                                    ? RightTableConnectionType
-                                    : RightTableType
-                                );
-                              const rightTableAlias = sql.identifier(Symbol());
-                              const leftTableAlias =
-                                queryBuilder.getTableAlias();
-                              const query = queryFromResolveData(
-                                sqlFrom,
-                                rightTableAlias,
-                                resolveData,
-                                queryOptions,
-                                (innerQueryBuilder) => {
-                                  innerQueryBuilder.parentQueryBuilder =
-                                    queryBuilder;
-                                  const rightPrimaryKeyConstraint =
-                                    rightTable.primaryKeyConstraint;
-                                  const rightPrimaryKeyAttributes =
-                                    rightPrimaryKeyConstraint &&
-                                    rightPrimaryKeyConstraint.keyAttributes;
-                                  if (rightPrimaryKeyAttributes) {
-                                    innerQueryBuilder.beforeLock(
-                                      "orderBy",
-                                      () => {
-                                        // append order by primary key to the list of orders
-                                        if (
-                                          !innerQueryBuilder.isOrderUnique(
-                                            false
-                                          )
-                                        ) {
-                                          innerQueryBuilder.data.cursorPrefix =
-                                            ["primary_key_asc"];
-                                          rightPrimaryKeyAttributes.forEach(
-                                            (attr) => {
-                                              innerQueryBuilder.orderBy(
-                                                sql.fragment`${innerQueryBuilder.getTableAlias()}.${sql.identifier(
-                                                  attr.name
-                                                )}`,
-                                                true
-                                              );
-                                            }
-                                          );
-                                          innerQueryBuilder.setOrderIsUnique();
-                                        }
-                                      }
-                                    );
-                                  }
-
-                                  const subqueryName =
-                                    inflection.manyToManyRelationSubqueryName(
-                                      leftKeyAttributes,
-                                      junctionLeftKeyAttributes,
-                                      junctionRightKeyAttributes,
-                                      rightKeyAttributes,
-                                      junctionTable,
-                                      rightTable,
-                                      junctionLeftConstraint,
-                                      junctionRightConstraint
-                                    );
-                                  const subqueryBuilder =
-                                    innerQueryBuilder.buildNamedChildSelecting(
-                                      subqueryName,
-                                      sql.identifier(
-                                        junctionTable.namespace.name,
-                                        junctionTable.name
-                                      ),
-                                      sql.identifier(
-                                        junctionRightKeyAttribute.name
-                                      )
-                                    );
-                                  subqueryBuilder.where(
-                                    sql.fragment`${sql.identifier(
-                                      junctionLeftKeyAttribute.name
-                                    )} = ${leftTableAlias}.${sql.identifier(
-                                      leftKeyAttribute.name
-                                    )}`
-                                  );
-
-                                  innerQueryBuilder.where(
-                                    () =>
-                                      sql.fragment`${rightTableAlias}.${sql.identifier(
-                                        rightKeyAttribute.name
-                                      )} in (${subqueryBuilder.build()})`
-                                  );
-                                },
-                                queryBuilder.context,
-                                queryBuilder.rootValue
-                              );
-                              return sql.fragment`(${query})`;
-                            }, getSafeAliasFromAlias(parsedResolveInfoFragment.alias));
-                          },
-                        };
-                      });
-
-                      return {
-                        description: `Reads and enables pagination through a set of \`${RightTableType.name}\`.`,
-                        type: isConnection
-                          ? new GraphQLNonNull(RightTableConnectionType)
-                          : new GraphQLNonNull(
-                              new GraphQLList(
-                                new GraphQLNonNull(RightTableType)
-                              )
-                            ),
-                        args: {},
-                        resolve: (data, _args, _context, resolveInfo) => {
-                          const safeAlias =
-                            getSafeAliasFromResolveInfo(resolveInfo);
-                          if (isConnection) {
-                            return addStartEndCursor(data[safeAlias]);
-                          } else {
-                            return data[safeAlias];
-                          }
-                        },
-                      };
-                    },
                     {
+                      fieldName: manyRelationFieldName,
                       isPgFieldConnection: isConnection,
                       isPgFieldSimpleCollection: !isConnection,
                       isPgManyToManyRelationField: true,
-                      pgFieldIntrospection: rightTable,
-                    }
+                      pgManyToManyRightTable: rightTable,
+                    },
+                    () => ({
+                      description: `Reads and enables pagination through a set of \`${
+                        RightTableType!.name
+                      }\`.`,
+                      type: isConnection
+                        ? new GraphQLNonNull(RightTableConnectionType!)
+                        : new GraphQLNonNull(
+                            new GraphQLList(new GraphQLNonNull(RightTableType!))
+                          ),
+                      args: {},
+                      ...(isConnection
+                        ? {
+                            plan(
+                              $left: PgSelectSingleStep<any, any, any, any>
+                            ) {
+                              const $junctions =
+                                $left.manyRelation(leftRelationName);
+                              return connection($junctions) as any;
+                            },
+                          }
+                        : {
+                            plan(
+                              $left: PgSelectSingleStep<any, any, any, any>
+                            ) {
+                              const $junctions =
+                                $left.manyRelation(leftRelationName);
+                              return $junctions;
+                            },
+                          }),
+                    })
                   ),
                 },
 
                 `Many-to-many relation field (${
                   isConnection ? "connection" : "simple collection"
-                }) on ${Self.name} type for ${describePgEntity(
-                  junctionLeftConstraint
-                )} and ${describePgEntity(junctionRightConstraint)}.`
+                }) on ${
+                  Self.name
+                } type for ${leftRelationName} and ${rightRelationName}.`
               );
             }
 
-            const simpleCollections =
-              junctionRightConstraint.tags.simpleCollections ||
-              rightTable.tags.simpleCollections ||
-              pgSimpleCollections;
-            const hasConnections = simpleCollections !== "only";
-            const hasSimpleCollections =
-              simpleCollections === "only" || simpleCollections === "both";
-            if (hasConnections) {
+            const behavior = build.pgGetBehavior([
+              junctionTable.getRelation(rightRelationName).extensions,
+              rightTable.extensions,
+            ]);
+
+            if (build.behavior.matches(behavior, "connection")) {
               makeFields(true);
             }
-            if (hasSimpleCollections) {
+            if (build.behavior.matches(behavior, "list")) {
               makeFields(false);
             }
             return memo;
