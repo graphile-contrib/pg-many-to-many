@@ -274,11 +274,11 @@ exports[`schema=c query=edges.graphql 1`] = `
           "barsByJunctionJFooIdAndJBarId": {
             "edges": [
               {
-                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+                "cursor": "WyI2NzYxNTFlMGRlIiwxMV0=",
                 "junctionsByJBarId": {
                   "edges": [
                     {
-                      "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
+                      "cursor": "WyJlMjFiODQwMGY1IiwxXQ==",
                       "node": {
                         "jBarId": 11,
                         "jFooId": 1,
@@ -287,8 +287,8 @@ exports[`schema=c query=edges.graphql 1`] = `
                     },
                   ],
                   "pageInfo": {
-                    "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
-                    "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxXV0=",
+                    "endCursor": "WyJlMjFiODQwMGY1IiwxXQ==",
+                    "startCursor": "WyJlMjFiODQwMGY1IiwxXQ==",
                   },
                   "totalCount": 1,
                 },
@@ -299,11 +299,11 @@ exports[`schema=c query=edges.graphql 1`] = `
                 },
               },
               {
-                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
+                "cursor": "WyI2NzYxNTFlMGRlIiwxMl0=",
                 "junctionsByJBarId": {
                   "edges": [
                     {
-                      "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsyXV0=",
+                      "cursor": "WyJlMjFiODQwMGY1IiwyXQ==",
                       "node": {
                         "jBarId": 12,
                         "jFooId": 1,
@@ -311,7 +311,7 @@ exports[`schema=c query=edges.graphql 1`] = `
                       },
                     },
                     {
-                      "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFszXV0=",
+                      "cursor": "WyJlMjFiODQwMGY1IiwzXQ==",
                       "node": {
                         "jBarId": 12,
                         "jFooId": 1,
@@ -320,8 +320,8 @@ exports[`schema=c query=edges.graphql 1`] = `
                     },
                   ],
                   "pageInfo": {
-                    "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFszXV0=",
-                    "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsyXV0=",
+                    "endCursor": "WyJlMjFiODQwMGY1IiwzXQ==",
+                    "startCursor": "WyJlMjFiODQwMGY1IiwyXQ==",
                   },
                   "totalCount": 2,
                 },
@@ -333,8 +333,8 @@ exports[`schema=c query=edges.graphql 1`] = `
               },
             ],
             "pageInfo": {
-              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
-              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+              "endCursor": "WyI2NzYxNTFlMGRlIiwxMl0=",
+              "startCursor": "WyI2NzYxNTFlMGRlIiwxMV0=",
             },
             "totalCount": 2,
           },
@@ -344,11 +344,11 @@ exports[`schema=c query=edges.graphql 1`] = `
           "barsByJunctionJFooIdAndJBarId": {
             "edges": [
               {
-                "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+                "cursor": "WyI2NzYxNTFlMGRlIiwxMV0=",
                 "junctionsByJBarId": {
                   "edges": [
                     {
-                      "cursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
+                      "cursor": "WyJlMjFiODQwMGY1Iiw0XQ==",
                       "node": {
                         "jBarId": 11,
                         "jFooId": 2,
@@ -357,8 +357,8 @@ exports[`schema=c query=edges.graphql 1`] = `
                     },
                   ],
                   "pageInfo": {
-                    "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
-                    "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFs0XV0=",
+                    "endCursor": "WyJlMjFiODQwMGY1Iiw0XQ==",
+                    "startCursor": "WyJlMjFiODQwMGY1Iiw0XQ==",
                   },
                   "totalCount": 1,
                 },
@@ -370,8 +370,8 @@ exports[`schema=c query=edges.graphql 1`] = `
               },
             ],
             "pageInfo": {
-              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
-              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+              "endCursor": "WyI2NzYxNTFlMGRlIiwxMV0=",
+              "startCursor": "WyI2NzYxNTFlMGRlIiwxMV0=",
             },
             "totalCount": 1,
           },
@@ -414,8 +414,8 @@ exports[`schema=c query=nodes.graphql 1`] = `
               },
             ],
             "pageInfo": {
-              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMl1d",
-              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+              "endCursor": "WyI2NzYxNTFlMGRlIiwxMl0=",
+              "startCursor": "WyI2NzYxNTFlMGRlIiwxMV0=",
             },
             "totalCount": 2,
           },
@@ -431,8 +431,8 @@ exports[`schema=c query=nodes.graphql 1`] = `
               },
             ],
             "pageInfo": {
-              "endCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
-              "startCursor": "WyJwcmltYXJ5X2tleV9hc2MiLFsxMV1d",
+              "endCursor": "WyI2NzYxNTFlMGRlIiwxMV0=",
+              "startCursor": "WyI2NzYxNTFlMGRlIiwxMV0=",
             },
             "totalCount": 1,
           },
