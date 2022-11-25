@@ -24,7 +24,7 @@ type BarsConnection {
   """
   A list of edges which contains the \`Bar\` and cursor to aid in pagination.
   """
-  edges: [BarsEdge!]!
+  edges: [BarsEdge]!
 
   """A list of \`Bar\` objects."""
   nodes: [Bar]!
@@ -80,7 +80,7 @@ type BazsConnection {
   """
   A list of edges which contains the \`Baz\` and cursor to aid in pagination.
   """
-  edges: [BazsEdge!]!
+  edges: [BazsEdge]!
 
   """A list of \`Baz\` objects."""
   nodes: [Baz]!
@@ -136,7 +136,7 @@ type CorgesConnection {
   """
   A list of edges which contains the \`Corge\` and cursor to aid in pagination.
   """
-  edges: [CorgesEdge!]!
+  edges: [CorgesEdge]!
 
   """A list of \`Corge\` objects."""
   nodes: [Corge]!
@@ -170,7 +170,8 @@ enum CorgesOrderBy {
 scalar Cursor
 
 """
-A point in time as described by the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
+A point in time as described by the [ISO
+8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
 """
 scalar Datetime
 
@@ -195,7 +196,8 @@ type Foo implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -223,7 +225,8 @@ type Foo implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -258,7 +261,8 @@ type Foo implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -280,7 +284,7 @@ type FoosConnection {
   """
   A list of edges which contains the \`Foo\` and cursor to aid in pagination.
   """
-  edges: [FoosEdge!]!
+  edges: [FoosEdge]!
 
   """A list of \`Foo\` objects."""
   nodes: [Foo]!
@@ -325,7 +329,8 @@ type Membership implements Node {
 }
 
 """
-A condition to be used against \`Membership\` object types. All fields are tested for equality and combined with a logical ‘and.’
+A condition to be used against \`Membership\` object types. All fields are tested
+for equality and combined with a logical ‘and.’
 """
 input MembershipCondition {
   """Checks for equality with the object’s \`personId\` field."""
@@ -337,7 +342,7 @@ type MembershipsConnection {
   """
   A list of edges which contains the \`Membership\` and cursor to aid in pagination.
   """
-  edges: [MembershipsEdge!]!
+  edges: [MembershipsEdge]!
 
   """A list of \`Membership\` objects."""
   nodes: [Membership]!
@@ -395,7 +400,7 @@ type PeopleConnection {
   """
   A list of edges which contains the \`Person\` and cursor to aid in pagination.
   """
-  edges: [PeopleEdge!]!
+  edges: [PeopleEdge]!
 
   """A list of \`Person\` objects."""
   nodes: [Person]!
@@ -448,7 +453,8 @@ type Person implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -493,7 +499,8 @@ type Query implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -521,7 +528,8 @@ type Query implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -549,7 +557,8 @@ type Query implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -577,7 +586,8 @@ type Query implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -605,7 +615,8 @@ type Query implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -633,7 +644,8 @@ type Query implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -646,6 +658,8 @@ type Query implements Node {
     """The globally unique \`ID\` to be used in selecting a single \`Bar\`."""
     nodeId: ID!
   ): Bar
+
+  """Get a single \`Bar\`."""
   barById(id: Int!): Bar
 
   """Reads a single \`Baz\` using its globally unique \`ID\`."""
@@ -653,6 +667,8 @@ type Query implements Node {
     """The globally unique \`ID\` to be used in selecting a single \`Baz\`."""
     nodeId: ID!
   ): Baz
+
+  """Get a single \`Baz\`."""
   bazByFooIdAndBarId(barId: Int!, fooId: Int!): Baz
 
   """Reads a single \`Corge\` using its globally unique \`ID\`."""
@@ -660,6 +676,8 @@ type Query implements Node {
     """The globally unique \`ID\` to be used in selecting a single \`Corge\`."""
     nodeId: ID!
   ): Corge
+
+  """Get a single \`Corge\`."""
   corgeByFooIdAndBarId(barId: Int!, fooId: Int!): Corge
 
   """Reads a single \`Foo\` using its globally unique \`ID\`."""
@@ -667,6 +685,8 @@ type Query implements Node {
     """The globally unique \`ID\` to be used in selecting a single \`Foo\`."""
     nodeId: ID!
   ): Foo
+
+  """Get a single \`Foo\`."""
   fooById(id: Int!): Foo
 
   """Reads a single \`Membership\` using its globally unique \`ID\`."""
@@ -676,6 +696,8 @@ type Query implements Node {
     """
     nodeId: ID!
   ): Membership
+
+  """Get a single \`Membership\`."""
   membershipByPersonIdAndTeamId(personId: Int!, teamId: Int!): Membership
 
   """Fetches an object given its globally unique \`ID\`."""
@@ -694,10 +716,13 @@ type Query implements Node {
     """The globally unique \`ID\` to be used in selecting a single \`Person\`."""
     nodeId: ID!
   ): Person
+
+  """Get a single \`Person\`."""
   personById(id: Int!): Person
 
   """
-  Exposes the root query type nested one level down. This is helpful for Relay 1 which can only query top level fields if they are in a particular form.
+  Exposes the root query type nested one level down. This is helpful for Relay 1
+  which can only query top level fields if they are in a particular form.
   """
   query: Query!
 
@@ -706,6 +731,8 @@ type Query implements Node {
     """The globally unique \`ID\` to be used in selecting a single \`Qux\`."""
     nodeId: ID!
   ): Qux
+
+  """Get a single \`Qux\`."""
   quxByFooIdAndBarId(barId: Int!, fooId: Int!): Qux
 
   """Reads a single \`Team\` using its globally unique \`ID\`."""
@@ -713,6 +740,8 @@ type Query implements Node {
     """The globally unique \`ID\` to be used in selecting a single \`Team\`."""
     nodeId: ID!
   ): Team
+
+  """Get a single \`Team\`."""
   teamById(id: Int!): Team
 }
 
@@ -742,7 +771,7 @@ type QuxesConnection {
   """
   A list of edges which contains the \`Qux\` and cursor to aid in pagination.
   """
-  edges: [QuxesEdge!]!
+  edges: [QuxesEdge]!
 
   """A list of \`Qux\` objects."""
   nodes: [Qux]!
@@ -795,7 +824,7 @@ type TeamsConnection {
   """
   A list of edges which contains the \`Team\` and cursor to aid in pagination.
   """
-  edges: [TeamsEdge!]!
+  edges: [TeamsEdge]!
 
   """A list of \`Team\` objects."""
   nodes: [Team]!

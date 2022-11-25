@@ -20,7 +20,8 @@ type Bar implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -43,7 +44,8 @@ type Bar implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -94,7 +96,8 @@ type BarFoosByJunctionJBarIdAndJFooIdManyToManyEdge {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -111,7 +114,7 @@ type BarsConnection {
   """
   A list of edges which contains the \`Bar\` and cursor to aid in pagination.
   """
-  edges: [BarsEdge!]!
+  edges: [BarsEdge]!
 
   """A list of \`Bar\` objects."""
   nodes: [Bar]!
@@ -147,7 +150,8 @@ enum BarsOrderBy {
 scalar Cursor
 
 """
-A point in time as described by the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
+A point in time as described by the [ISO
+8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
 """
 scalar Datetime
 
@@ -167,7 +171,8 @@ type Foo implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -192,7 +197,8 @@ type Foo implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -243,7 +249,8 @@ type FooBarsByJunctionJFooIdAndJBarIdManyToManyEdge {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -260,7 +267,7 @@ type FoosConnection {
   """
   A list of edges which contains the \`Foo\` and cursor to aid in pagination.
   """
-  edges: [FoosEdge!]!
+  edges: [FoosEdge]!
 
   """A list of \`Foo\` objects."""
   nodes: [Foo]!
@@ -314,7 +321,7 @@ type JunctionsConnection {
   """
   A list of edges which contains the \`Junction\` and cursor to aid in pagination.
   """
-  edges: [JunctionsEdge!]!
+  edges: [JunctionsEdge]!
 
   """A list of \`Junction\` objects."""
   nodes: [Junction]!
@@ -390,7 +397,8 @@ type Query implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -413,7 +421,8 @@ type Query implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -436,7 +445,8 @@ type Query implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -449,6 +459,8 @@ type Query implements Node {
     """The globally unique \`ID\` to be used in selecting a single \`Bar\`."""
     nodeId: ID!
   ): Bar
+
+  """Get a single \`Bar\`."""
   barByBarId(barId: Int!): Bar
 
   """Reads a single \`Foo\` using its globally unique \`ID\`."""
@@ -456,6 +468,8 @@ type Query implements Node {
     """The globally unique \`ID\` to be used in selecting a single \`Foo\`."""
     nodeId: ID!
   ): Foo
+
+  """Get a single \`Foo\`."""
   fooByFooId(fooId: Int!): Foo
 
   """Reads a single \`Junction\` using its globally unique \`ID\`."""
@@ -463,6 +477,8 @@ type Query implements Node {
     """The globally unique \`ID\` to be used in selecting a single \`Junction\`."""
     nodeId: ID!
   ): Junction
+
+  """Get a single \`Junction\`."""
   junctionById(id: Int!): Junction
 
   """Fetches an object given its globally unique \`ID\`."""
@@ -477,7 +493,8 @@ type Query implements Node {
   nodeId: ID!
 
   """
-  Exposes the root query type nested one level down. This is helpful for Relay 1 which can only query top level fields if they are in a particular form.
+  Exposes the root query type nested one level down. This is helpful for Relay 1
+  which can only query top level fields if they are in a particular form.
   """
   query: Query!
 }

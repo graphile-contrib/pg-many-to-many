@@ -5,7 +5,8 @@ exports[`prints a schema with the many-to-many plugin 1`] = `
 scalar Cursor
 
 """
-A point in time as described by the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
+A point in time as described by the [ISO
+8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
 """
 scalar Datetime
 
@@ -53,7 +54,8 @@ type Post implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -90,7 +92,8 @@ type PostAuthor implements Node {
 }
 
 """
-A condition to be used against \`PostAuthor\` object types. All fields are tested for equality and combined with a logical ‘and.’
+A condition to be used against \`PostAuthor\` object types. All fields are tested
+for equality and combined with a logical ‘and.’
 """
 input PostAuthorCondition {
   """Checks for equality with the object’s \`createdAt\` field."""
@@ -111,7 +114,7 @@ type PostAuthorsConnection {
   """
   A list of edges which contains the \`PostAuthor\` and cursor to aid in pagination.
   """
-  edges: [PostAuthorsEdge!]!
+  edges: [PostAuthorsEdge]!
 
   """A list of \`PostAuthor\` objects."""
   nodes: [PostAuthor]!
@@ -177,7 +180,8 @@ type PostAuthorsManyToManyEdge {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -223,7 +227,7 @@ type PostsConnection {
   """
   A list of edges which contains the \`Post\` and cursor to aid in pagination.
   """
-  edges: [PostsEdge!]!
+  edges: [PostsEdge]!
 
   """A list of \`Post\` objects."""
   nodes: [Post]!
@@ -281,7 +285,8 @@ type Query implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -309,7 +314,8 @@ type Query implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -337,7 +343,8 @@ type Query implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -369,11 +376,16 @@ type Query implements Node {
     """
     nodeId: ID!
   ): PostAuthor
+
+  """Get a single \`PostAuthor\`."""
   postAuthorById(id: UUID!): PostAuthor
+
+  """Get a single \`Post\`."""
   postById(id: UUID!): Post
 
   """
-  Exposes the root query type nested one level down. This is helpful for Relay 1 which can only query top level fields if they are in a particular form.
+  Exposes the root query type nested one level down. This is helpful for Relay 1
+  which can only query top level fields if they are in a particular form.
   """
   query: Query!
 
@@ -382,6 +394,8 @@ type Query implements Node {
     """The globally unique \`ID\` to be used in selecting a single \`User\`."""
     nodeId: ID!
   ): User
+
+  """Get a single \`User\`."""
   userById(id: UUID!): User
 }
 
@@ -418,7 +432,8 @@ type User implements Node {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -480,7 +495,8 @@ type UserPostsByPostAuthorUserIdAndPostIdManyToManyEdge {
     last: Int
 
     """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor based pagination. May not be used with \`last\`.
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
     """
     offset: Int
 
@@ -494,7 +510,7 @@ type UsersConnection {
   """
   A list of edges which contains the \`User\` and cursor to aid in pagination.
   """
-  edges: [UsersEdge!]!
+  edges: [UsersEdge]!
 
   """A list of \`User\` objects."""
   nodes: [User]!
