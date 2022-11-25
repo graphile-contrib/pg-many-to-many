@@ -801,13 +801,13 @@ exports[`schema=p query=edge-fields.graphql 1`] = `
           "members": {
             "edges": [
               {
-                "createdAt": "2018-01-01T08:00:00-04:00",
+                "createdAt": "2018-01-01T08:00:00.000000-0400",
                 "node": {
                   "personName": "Person1",
                 },
               },
               {
-                "createdAt": "2018-01-03T08:00:00-04:00",
+                "createdAt": "2018-01-03T08:00:00.000000-0400",
                 "node": {
                   "personName": "Person2",
                 },
@@ -820,7 +820,7 @@ exports[`schema=p query=edge-fields.graphql 1`] = `
           "members": {
             "edges": [
               {
-                "createdAt": "2018-01-02T08:00:00-04:00",
+                "createdAt": "2018-01-02T08:00:00.000000-0400",
                 "node": {
                   "personName": "Person1",
                 },
@@ -927,7 +927,7 @@ exports[`schema=t query=edge-fields.graphql 1`] = `
                   "nodes": [
                     {
                       "endAt": null,
-                      "startAt": "2018-01-01T08:00:00-04:00",
+                      "startAt": "2018-01-01T08:00:00.000000-0400",
                     },
                   ],
                 },
@@ -940,7 +940,7 @@ exports[`schema=t query=edge-fields.graphql 1`] = `
                   "nodes": [
                     {
                       "endAt": null,
-                      "startAt": "2018-01-03T08:00:00-04:00",
+                      "startAt": "2018-01-03T08:00:00.000000-0400",
                     },
                   ],
                 },
@@ -959,12 +959,12 @@ exports[`schema=t query=edge-fields.graphql 1`] = `
                 "membershipsByPersonId": {
                   "nodes": [
                     {
-                      "endAt": "2018-01-03T08:00:00-04:00",
-                      "startAt": "2018-01-02T08:00:00-04:00",
+                      "endAt": "2018-01-03T08:00:00.000000-0400",
+                      "startAt": "2018-01-02T08:00:00.000000-0400",
                     },
                     {
-                      "endAt": "2018-01-05T08:00:00-04:00",
-                      "startAt": "2018-01-04T08:00:00-04:00",
+                      "endAt": "2018-01-05T08:00:00.000000-0400",
+                      "startAt": "2018-01-04T08:00:00.000000-0400",
                     },
                   ],
                 },
