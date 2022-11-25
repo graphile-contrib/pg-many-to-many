@@ -127,6 +127,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                   [manyRelationFieldName]: fieldWithHooks(
                     {
                       fieldName: manyRelationFieldName,
+                      pgSource: rightTable,
                       isPgFieldConnection: isConnection,
                       isPgFieldSimpleCollection: !isConnection,
                       isPgManyToManyRelationField: true,
@@ -144,46 +145,46 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                       args: {},
                       plan($left: PgSelectSingleStep<any, any, any, any>) {
                         const $junctions = $left.manyRelation(leftRelationName);
-                        if (allowsMultipleEdgesToNode) {
-                          // Fetch the identifiers and the return the relevant
-                          // rightTable entries for them.
-                          const $rightIdentifiers = each(
-                            $junctions,
-                            ($junction) => {
-                              const spec = Object.create(null);
+                        // Fetch the identifiers and the return the relevant
+                        // rightTable entries for them.
+                        const $rightIdentifiers = each(
+                          $junctions,
+                          ($junction) => {
+                            const spec = Object.create(null);
 
-                              for (const colName of leftJunctionColumnNames) {
-                                spec[colName] = (
-                                  $junction as PgSelectSingleStep<
-                                    any,
-                                    any,
-                                    any,
-                                    any
-                                  >
-                                ).get(colName);
-                              }
-                              for (const colName of rightJunctionColumnNames) {
-                                spec[colName] = (
-                                  $junction as PgSelectSingleStep<
-                                    any,
-                                    any,
-                                    any,
-                                    any
-                                  >
-                                ).get(colName);
-                              }
-
-                              return object(spec);
+                            for (const colName of leftJunctionColumnNames) {
+                              spec[colName] = (
+                                $junction as PgSelectSingleStep<
+                                  any,
+                                  any,
+                                  any,
+                                  any
+                                >
+                              ).get(colName);
                             }
-                          );
-                          const $rights = rightTable.find();
+                            for (const colName of rightJunctionColumnNames) {
+                              spec[colName] = (
+                                $junction as PgSelectSingleStep<
+                                  any,
+                                  any,
+                                  any,
+                                  any
+                                >
+                              ).get(colName);
+                            }
 
-                          // Join the rights to our junction entries; we do
-                          // this because we need to be able to access the
-                          // junction identifier in
-                          // PgManyToManyRelationEdgeTablePlugin (otherwise we
-                          // could have just done a `where` subquery).
-                          const junctionAlias = sql.identifier(junctionSymbol);
+                            return object(spec);
+                          }
+                        );
+                        const $rights = rightTable.find();
+
+                        // Join the rights to our junction entries; we do
+                        // this because we need to be able to access the
+                        // junction identifier in
+                        // PgManyToManyRelationEdgeTablePlugin (otherwise we
+                        // could have just done a `where` subquery).
+                        const junctionAlias = sql.identifier(junctionSymbol);
+                        if (allowsMultipleEdgesToNode) {
                           $rights.join({
                             type: "inner",
                             source: sql`(${sql.indent`\
@@ -208,32 +209,80 @@ select distinct ${sql.join(
                               TYPES.json
                             )}) as el(el)`})`,
                             alias: junctionAlias,
-                            conditions: rightJunctionColumnNames.map(
-                              (junctionColName, i) => {
-                                const rightColName =
-                                  rightTableRelationColumnNames[i];
-                                const sqlRight = sql`${
-                                  $rights.alias
-                                }.${sql.identifier(
-                                  // TODO: is this safe? What if this column has `via` or `expression`?
-                                  rightColName
-                                )}`;
-                                return sql`${junctionAlias}.${sql.identifier(
-                                  junctionColName
-                                )} = ${sqlRight}`;
-                              }
-                            ),
+                            conditions: [
+                              ...rightJunctionColumnNames.map(
+                                (junctionColName, i) => {
+                                  const rightColName =
+                                    rightTableRelationColumnNames[i];
+                                  const sqlRight = sql`${
+                                    $rights.alias
+                                  }.${sql.identifier(
+                                    // TODO: is this safe? What if this column has `via` or `expression`?
+                                    rightColName
+                                  )}`;
+                                  return sql`${junctionAlias}.${sql.identifier(
+                                    junctionColName
+                                  )} = ${sqlRight}`;
+                                }
+                              ),
+                            ],
                           });
-
-                          return isConnection
-                            ? (connection($rights) as any)
-                            : $rights;
                         } else {
-                          // Just paginate over the junctions
-                          return isConnection
-                            ? (connection($junctions) as any)
-                            : $junctions;
+                          const junctionTableSource = junctionTable.source;
+                          if (typeof junctionTableSource === "function") {
+                            throw new Error(`Function source forbidden`);
+                          }
+                          $rights.join({
+                            type: "inner",
+                            source: junctionTableSource,
+                            alias: junctionAlias,
+                            conditions: [
+                              sql`(${sql.join(
+                                leftJunctionColumnNames.map(
+                                  (junctionColName, i) => {
+                                    return sql`${junctionAlias}.${sql.identifier(
+                                      // TODO: is this safe? What if this column has `via` or `expression`?
+                                      junctionColName
+                                    )}`;
+                                  }
+                                ),
+                                ", "
+                              )}) in (
+                              select distinct ${sql.join(
+                                leftJunctionColumnNames.map(
+                                  (colName, i) =>
+                                    sql`(el.el->>${sql.literal(colName)})::${
+                                      leftJunctionColumnCodecs[i].sqlType
+                                    } as ${sql.identifier(colName)}`
+                                ),
+                                ", "
+                              )} from json_array_elements(${$rights.placeholder(
+                                $rightIdentifiers,
+                                TYPES.json
+                              )}) as el(el))`,
+
+                              ...rightJunctionColumnNames.map(
+                                (junctionColName, i) => {
+                                  const rightColName =
+                                    rightTableRelationColumnNames[i];
+                                  const sqlRight = sql`${
+                                    $rights.alias
+                                  }.${sql.identifier(
+                                    // TODO: is this safe? What if this column has `via` or `expression`?
+                                    rightColName
+                                  )}`;
+                                  return sql`${junctionAlias}.${sql.identifier(
+                                    junctionColName
+                                  )} = ${sqlRight}`;
+                                }
+                              ),
+                            ],
+                          });
                         }
+
+                        return isConnection
+                          ? (connection($rights) as any)
+                          : $rights;
                       },
                     })
                   ),

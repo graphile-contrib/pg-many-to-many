@@ -3,6 +3,7 @@ import { EdgeStep, ExecutableStep } from "grafast";
 import type {} from "graphile-config";
 import { isOutputType } from "graphql";
 import type {} from "postgraphile";
+import { junctionSymbol } from "./PgManyToManyRelationPlugin";
 
 const version = require("../package.json").version;
 
@@ -74,10 +75,11 @@ junction table.`,
               if (junctionRightKeyAttributeNames.includes(columnName))
                 return memo;
 
+              const codec = column.codec;
               const fieldName = inflection.column({
                 column,
                 columnName,
-                codec: column.codec,
+                codec,
               });
               const ReturnType = build.getGraphQLTypeByPgCodec(
                 column.codec,
@@ -112,8 +114,13 @@ junction table.`,
                           PgSelectSingleStep<any, any, any, any>
                         >
                       ) {
-                        const $junction = $edge.node();
-                        return $junction.get(columnName);
+                        const $right = $edge.node();
+                        return $right.select(
+                          sql`${sql.identifier(
+                            junctionSymbol
+                          )}.${sql.identifier(columnName)}`,
+                          codec
+                        );
                       },
                     })
                   ),

@@ -97,14 +97,8 @@ export default function createManyToManyConnectionType(
                   PgSelectSingleStep<any, any, any>
                 >
               ) {
-                if (allowsMultipleEdgesToNode) {
-                  const $right = $edge.node();
-                  return $right;
-                } else {
-                  const $junction = $edge.node();
-                  const $right = $junction.singleRelation(rightRelationName);
-                  return $right;
-                }
+                const $right = $edge.node();
+                return $right;
               },
             })
           ),
@@ -150,16 +144,7 @@ export default function createManyToManyConnectionType(
                 )
               ),
               plan($connection: ConnectionStep<any, any, any, any>) {
-                if (allowsMultipleEdgesToNode) {
-                  const $rights = $connection.nodes();
-                  return $rights;
-                } else {
-                  const $junctions = $connection.nodes();
-                  return each($junctions, ($junction) => {
-                    const $right = $junction.singleRelation(rightRelationName);
-                    return $right;
-                  }) as any;
-                }
+                return $connection.nodes();
               },
             })
           ),

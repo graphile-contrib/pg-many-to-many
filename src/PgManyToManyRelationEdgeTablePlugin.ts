@@ -162,6 +162,7 @@ field to the edges where all of the join records can be traversed.`,
               [fieldName]: fieldWithHooks(
                 {
                   fieldName,
+                  pgSource: junctionTable,
                   isPgFieldConnection: isConnection,
                   isPgFieldSimpleCollection: !isConnection,
                   isPgManyToManyRelationEdgeTableField: true,
