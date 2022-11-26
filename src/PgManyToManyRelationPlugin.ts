@@ -297,17 +297,26 @@ select distinct ${sql.join(
             }
 
             const behavior = build.pgGetBehavior([
+              junctionTable.extensions,
               junctionTable.getRelation(rightRelationName).extensions,
               rightTable.extensions,
             ]);
 
-            if (
-              build.behavior.matches(behavior, "connection", "connection -list")
-            ) {
-              makeFields(true);
-            }
-            if (build.behavior.matches(behavior, "list", "connection -list")) {
-              makeFields(false);
+            if (build.behavior.matches(behavior, "manyToMany", "manyToMany")) {
+              if (
+                build.behavior.matches(
+                  behavior,
+                  "connection",
+                  "connection -list"
+                )
+              ) {
+                makeFields(true);
+              }
+              if (
+                build.behavior.matches(behavior, "list", "connection -list")
+              ) {
+                makeFields(false);
+              }
             }
             return memo;
           }, {}),
