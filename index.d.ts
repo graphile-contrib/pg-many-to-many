@@ -1,2 +1,3 @@
-declare const PgManyToManyPlugin: import("graphile-build").Plugin;
+import type { Plugin } from "graphile-build";
+declare const PgManyToManyPlugin: Plugin;
 export default PgManyToManyPlugin;
