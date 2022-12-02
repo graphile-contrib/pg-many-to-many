@@ -1,6 +1,7 @@
 const { withPgClient } = require("../../helpers");
 const { createPostGraphileSchema } = require("postgraphile-core");
-const { printSchema } = require("graphql");
+const { parse, buildASTSchema } = require("graphql");
+const { lexicographicSortSchema, printSchema } = require("graphql/utilities");
 
 exports.test = (schemas, options, setup) => () =>
   withPgClient(async (client) => {
@@ -12,5 +13,12 @@ exports.test = (schemas, options, setup) => () =>
       }
     }
     const schema = await createPostGraphileSchema(client, schemas, options);
-    expect(printSchema(schema)).toMatchSnapshot();
+    expect(printSchemaOrdered(schema)).toMatchSnapshot();
   });
+
+function printSchemaOrdered(originalSchema) {
+  // Clone schema so we don't damage anything
+  const schema = buildASTSchema(parse(printSchema(originalSchema)));
+
+  return printSchema(lexicographicSortSchema(schema));
+}
