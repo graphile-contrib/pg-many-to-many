@@ -11,7 +11,8 @@ module.exports = function PgManyToManyRelationEdgeColumnsPlugin(builder) {
         pgColumnFilter,
         inflection,
         pgOmit: omit,
-        pgGetSelectValueForFieldAndTypeAndModifier: getSelectValueForFieldAndTypeAndModifier,
+        pgGetSelectValueForFieldAndTypeAndModifier:
+          getSelectValueForFieldAndTypeAndModifier,
         describePgEntity,
       } = build;
       const {

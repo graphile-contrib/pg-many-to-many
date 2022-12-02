@@ -107,12 +107,13 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                     return {
                       pgQuery: (queryBuilder) => {
                         queryBuilder.select(() => {
-                          const resolveData = getDataFromParsedResolveInfoFragment(
-                            parsedResolveInfoFragment,
-                            isConnection
-                              ? RightTableConnectionType
-                              : RightTableType
-                          );
+                          const resolveData =
+                            getDataFromParsedResolveInfoFragment(
+                              parsedResolveInfoFragment,
+                              isConnection
+                                ? RightTableConnectionType
+                                : RightTableType
+                            );
                           const rightTableAlias = sql.identifier(Symbol());
                           const leftTableAlias = queryBuilder.getTableAlias();
                           const query = queryFromResolveData(
@@ -121,7 +122,8 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                             resolveData,
                             queryOptions,
                             (innerQueryBuilder) => {
-                              innerQueryBuilder.parentQueryBuilder = queryBuilder;
+                              innerQueryBuilder.parentQueryBuilder =
+                                queryBuilder;
                               const rightPrimaryKeyConstraint =
                                 rightTable.primaryKeyConstraint;
                               const rightPrimaryKeyAttributes =
@@ -149,24 +151,26 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                                 });
                               }
 
-                              const subqueryName = inflection.manyToManyRelationSubqueryName(
-                                leftKeyAttributes,
-                                junctionLeftKeyAttributes,
-                                junctionRightKeyAttributes,
-                                rightKeyAttributes,
-                                junctionTable,
-                                rightTable,
-                                junctionLeftConstraint,
-                                junctionRightConstraint
-                              );
-                              const subqueryBuilder = innerQueryBuilder.buildNamedChildSelecting(
-                                subqueryName,
-                                sql.identifier(
-                                  junctionTable.namespace.name,
-                                  junctionTable.name
-                                ),
-                                sql.identifier(junctionRightKeyAttribute.name)
-                              );
+                              const subqueryName =
+                                inflection.manyToManyRelationSubqueryName(
+                                  leftKeyAttributes,
+                                  junctionLeftKeyAttributes,
+                                  junctionRightKeyAttributes,
+                                  rightKeyAttributes,
+                                  junctionTable,
+                                  rightTable,
+                                  junctionLeftConstraint,
+                                  junctionRightConstraint
+                                );
+                              const subqueryBuilder =
+                                innerQueryBuilder.buildNamedChildSelecting(
+                                  subqueryName,
+                                  sql.identifier(
+                                    junctionTable.namespace.name,
+                                    junctionTable.name
+                                  ),
+                                  sql.identifier(junctionRightKeyAttribute.name)
+                                );
                               subqueryBuilder.where(
                                 sql.fragment`${sql.identifier(
                                   junctionLeftKeyAttribute.name
@@ -200,9 +204,8 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
                         ),
                     args: {},
                     resolve: (data, _args, _context, resolveInfo) => {
-                      const safeAlias = getSafeAliasFromResolveInfo(
-                        resolveInfo
-                      );
+                      const safeAlias =
+                        getSafeAliasFromResolveInfo(resolveInfo);
                       if (isConnection) {
                         return addStartEndCursor(data[safeAlias]);
                       } else {

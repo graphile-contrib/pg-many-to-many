@@ -81,22 +81,24 @@ module.exports = function manyToManyRelationships(leftTable, build) {
           }
 
           // Ensure junction constraint keys are not unique (which would result in a one-to-one relation)
-          const junctionLeftConstraintIsUnique = !!junctionTable.constraints.find(
-            (c) =>
-              ["p", "u"].includes(c.type) &&
-              arraysAreEqual(
-                c.keyAttributeNums,
-                junctionLeftKeyAttributes.map((attr) => attr.num)
-              )
-          );
-          const junctionRightConstraintIsUnique = !!junctionTable.constraints.find(
-            (c) =>
-              ["p", "u"].includes(c.type) &&
-              arraysAreEqual(
-                c.keyAttributeNums,
-                junctionRightKeyAttributes.map((attr) => attr.num)
-              )
-          );
+          const junctionLeftConstraintIsUnique =
+            !!junctionTable.constraints.find(
+              (c) =>
+                ["p", "u"].includes(c.type) &&
+                arraysAreEqual(
+                  c.keyAttributeNums,
+                  junctionLeftKeyAttributes.map((attr) => attr.num)
+                )
+            );
+          const junctionRightConstraintIsUnique =
+            !!junctionTable.constraints.find(
+              (c) =>
+                ["p", "u"].includes(c.type) &&
+                arraysAreEqual(
+                  c.keyAttributeNums,
+                  junctionRightKeyAttributes.map((attr) => attr.num)
+                )
+            );
           if (
             junctionLeftConstraintIsUnique ||
             junctionRightConstraintIsUnique
