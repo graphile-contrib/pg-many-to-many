@@ -48,7 +48,9 @@ jobs:
           - 14
           - 15
         node-version:
-          - 12
+          - 14
+          - 16
+          - 18
 
     name: test (node:${{ matrix.node-version }}, postgres:${{ matrix.postgres-version }})
 
