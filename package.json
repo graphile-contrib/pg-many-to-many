@@ -5,7 +5,11 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "lint": "eslint .",
+    "format": "prettier --ignore-path ./.eslintignore",
+    "format:all": "yarn format '**/*.{json,md,html,js,jsx,ts,tsx}'",
+    "format:fix": "yarn format:all --write",
+    "format:check": "yarn format:all --list-different",
+    "lint": "eslint . --ext .js,.jsx",
     "test": "scripts/test"
   },
   "repository": {
