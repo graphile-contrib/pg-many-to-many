@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`prints a schema using the 'b' database schema 1`] = `
-type Bar implements Node {
+"type Bar implements Node {
   """
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
   """
@@ -442,5 +442,5 @@ type Query implements Node {
     nodeId: ID!
   ): Junction
 }
-
+"
 `;

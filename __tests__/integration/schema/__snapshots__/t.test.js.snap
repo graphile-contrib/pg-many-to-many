@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`prints a schema with the many-to-many plugin 1`] = `
-"""A location in a connection that can be used for resuming pagination."""
+""""A location in a connection that can be used for resuming pagination."""
 scalar Cursor
 
 """
@@ -586,5 +586,5 @@ enum TeamsOrderBy {
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
-
+"
 `;

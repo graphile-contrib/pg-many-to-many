@@ -1,5 +1,6 @@
 const { withPgClient } = require("../../helpers");
 const { createPostGraphileSchema } = require("postgraphile-core");
+const { printSchema } = require("graphql");
 
 exports.test = (schemas, options, setup) => () =>
   withPgClient(async (client) => {
@@ -11,5 +12,5 @@ exports.test = (schemas, options, setup) => () =>
       }
     }
     const schema = await createPostGraphileSchema(client, schemas, options);
-    expect(schema).toMatchSnapshot();
+    expect(printSchema(schema)).toMatchSnapshot();
   });
