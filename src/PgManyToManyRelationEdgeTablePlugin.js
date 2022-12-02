@@ -100,7 +100,8 @@ module.exports = function PgManyToManyEdgeTablePlugin(
                       );
                       const junctionTableAlias = sql.identifier(Symbol());
                       const rightTableAlias = queryBuilder.getTableAlias();
-                      const leftTableAlias = queryBuilder.parentQueryBuilder.parentQueryBuilder.getTableAlias();
+                      const leftTableAlias =
+                        queryBuilder.parentQueryBuilder.parentQueryBuilder.getTableAlias();
                       const query = queryFromResolveData(
                         sqlFrom,
                         junctionTableAlias,

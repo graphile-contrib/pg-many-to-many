@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`prints a schema using the 'e' database schema 1`] = `
-"""A location in a connection that can be used for resuming pagination."""
+""""A location in a connection that can be used for resuming pagination."""
 scalar Cursor
 
 type Membership implements Node {
@@ -1149,5 +1149,5 @@ type TeamTagsManyToManyEdge {
   """The \`Tag\` at the end of the edge."""
   node: Tag!
 }
-
+"
 `;

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`prints a schema with the many-to-many plugin 1`] = `
-type Bar implements Node {
+"type Bar implements Node {
   """
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
   """
@@ -1085,5 +1085,5 @@ enum TeamsOrderBy {
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
-
+"
 `;
