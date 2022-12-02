@@ -4,7 +4,7 @@ const PgManyToManyRelationPlugin = require("./src/PgManyToManyRelationPlugin.js"
 const PgManyToManyRelationEdgeColumnsPlugin = require("./src/PgManyToManyRelationEdgeColumnsPlugin.js");
 const PgManyToManyRelationEdgeTablePlugin = require("./src/PgManyToManyRelationEdgeTablePlugin.js");
 
-module.exports = function PgManyToManyPlugin(builder, options) {
+function PgManyToManyPlugin(builder, options) {
   builder.hook("build", (build) => {
     // Check dependencies
     if (!build.versions) {
@@ -35,4 +35,9 @@ module.exports = function PgManyToManyPlugin(builder, options) {
   PgManyToManyRelationPlugin(builder, options);
   PgManyToManyRelationEdgeColumnsPlugin(builder, options);
   PgManyToManyRelationEdgeTablePlugin(builder, options);
-};
+}
+
+module.exports = PgManyToManyPlugin;
+// Hacks for TypeScript/Babel import
+module.exports.default = PgManyToManyPlugin;
+Object.defineProperty(module.exports, "__esModule", { value: true });
