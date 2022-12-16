@@ -77,9 +77,8 @@ junction table.`,
 
               const codec = column.codec;
               const fieldName = inflection.column({
-                column,
+                codec: junctionTable.codec,
                 columnName,
-                codec,
               });
               const ReturnType = build.getGraphQLTypeByPgCodec(
                 column.codec,
