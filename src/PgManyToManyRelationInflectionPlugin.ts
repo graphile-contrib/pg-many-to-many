@@ -67,11 +67,9 @@ const processDetails = (details: PgManyToManyRelationDetails) => {
   } = details;
   const junctionRightRelation = junctionTable.getRelation(rightRelationName);
   const columnInflectionDataFromJunction = (columnName: string) => {
-    const column = junctionTable.codec.columns[columnName];
     return {
       columnName,
-      column,
-      codec: column.codec,
+      codec: junctionTable.codec,
     };
   };
   const junctionLeftKeyAttributes = leftTable
