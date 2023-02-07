@@ -30,21 +30,17 @@ field to the edges where all of the join records can be traversed.`,
         if (
           typeof leftRelation.extensions?.tags.foreignFieldName === "string"
         ) {
-          return this.connectionField(
-            this.camelCase(leftRelation.extensions.tags.foreignFieldName)
-          );
+          return this.camelCase(leftRelation.extensions.tags.foreignFieldName);
         }
         // E.g. users(id) references posts(author_id)
         const remoteType = this.tableType(junctionTable.codec);
         const rightRelation = junctionTable.getRelation(rightRelationName);
         const rightColumns = rightRelation.localColumns as string[];
-        return this.connectionField(
-          this.camelCase(
-            `${this.pluralize(remoteType)}-by-${this._joinColumnNames(
-              junctionTable.codec,
-              rightColumns
-            )}`
-          )
+        return this.camelCase(
+          `${this.pluralize(remoteType)}-by-${this._joinColumnNames(
+            junctionTable.codec,
+            rightColumns
+          )}`
         );
       },
       manyToManyEdgeRelationConnection(_info, details) {
