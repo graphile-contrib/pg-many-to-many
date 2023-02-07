@@ -1060,3 +1060,245 @@ exports[`schema=t query=many-to-many.graphql 1`] = `
   },
 }
 `;
+
+exports[`schema=u query=edge-fields.graphql 1`] = `
+{
+  "data": {
+    "allEntities": {
+      "nodes": [
+        {
+          "memberOf": {
+            "edges": [
+              {
+                "memberships": {
+                  "nodes": [
+                    {
+                      "endAt": null,
+                      "startAt": "2018-01-01T08:00:00.000000-0400",
+                    },
+                  ],
+                },
+                "node": {
+                  "name": "Team1",
+                },
+              },
+              {
+                "memberships": {
+                  "nodes": [
+                    {
+                      "endAt": "2018-01-03T08:00:00.000000-0400",
+                      "startAt": "2018-01-02T08:00:00.000000-0400",
+                    },
+                    {
+                      "endAt": "2018-01-05T08:00:00.000000-0400",
+                      "startAt": "2018-01-04T08:00:00.000000-0400",
+                    },
+                  ],
+                },
+                "node": {
+                  "name": "Team2",
+                },
+              },
+            ],
+          },
+          "members": {
+            "edges": [],
+          },
+          "name": "Person1",
+        },
+        {
+          "memberOf": {
+            "edges": [
+              {
+                "memberships": {
+                  "nodes": [
+                    {
+                      "endAt": null,
+                      "startAt": "2018-01-03T08:00:00.000000-0400",
+                    },
+                  ],
+                },
+                "node": {
+                  "name": "Team1",
+                },
+              },
+            ],
+          },
+          "members": {
+            "edges": [],
+          },
+          "name": "Person2",
+        },
+        {
+          "memberOf": {
+            "edges": [],
+          },
+          "members": {
+            "edges": [],
+          },
+          "name": "Person3",
+        },
+        {
+          "memberOf": {
+            "edges": [],
+          },
+          "members": {
+            "edges": [
+              {
+                "memberships": {
+                  "nodes": [
+                    {
+                      "endAt": null,
+                      "startAt": "2018-01-01T08:00:00.000000-0400",
+                    },
+                  ],
+                },
+                "node": {
+                  "name": "Person1",
+                },
+              },
+              {
+                "memberships": {
+                  "nodes": [
+                    {
+                      "endAt": null,
+                      "startAt": "2018-01-03T08:00:00.000000-0400",
+                    },
+                  ],
+                },
+                "node": {
+                  "name": "Person2",
+                },
+              },
+            ],
+          },
+          "name": "Team1",
+        },
+        {
+          "memberOf": {
+            "edges": [],
+          },
+          "members": {
+            "edges": [
+              {
+                "memberships": {
+                  "nodes": [
+                    {
+                      "endAt": "2018-01-03T08:00:00.000000-0400",
+                      "startAt": "2018-01-02T08:00:00.000000-0400",
+                    },
+                    {
+                      "endAt": "2018-01-05T08:00:00.000000-0400",
+                      "startAt": "2018-01-04T08:00:00.000000-0400",
+                    },
+                  ],
+                },
+                "node": {
+                  "name": "Person1",
+                },
+              },
+            ],
+          },
+          "name": "Team2",
+        },
+        {
+          "memberOf": {
+            "edges": [],
+          },
+          "members": {
+            "edges": [],
+          },
+          "name": "Team3",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`schema=u query=many-to-many.graphql 1`] = `
+{
+  "data": {
+    "allEntities": {
+      "nodes": [
+        {
+          "memberOf": {
+            "nodes": [
+              {
+                "name": "Team1",
+              },
+              {
+                "name": "Team2",
+              },
+            ],
+          },
+          "members": {
+            "nodes": [],
+          },
+          "name": "Person1",
+        },
+        {
+          "memberOf": {
+            "nodes": [
+              {
+                "name": "Team1",
+              },
+            ],
+          },
+          "members": {
+            "nodes": [],
+          },
+          "name": "Person2",
+        },
+        {
+          "memberOf": {
+            "nodes": [],
+          },
+          "members": {
+            "nodes": [],
+          },
+          "name": "Person3",
+        },
+        {
+          "memberOf": {
+            "nodes": [],
+          },
+          "members": {
+            "nodes": [
+              {
+                "name": "Person1",
+              },
+              {
+                "name": "Person2",
+              },
+            ],
+          },
+          "name": "Team1",
+        },
+        {
+          "memberOf": {
+            "nodes": [],
+          },
+          "members": {
+            "nodes": [
+              {
+                "name": "Person1",
+              },
+            ],
+          },
+          "name": "Team2",
+        },
+        {
+          "memberOf": {
+            "nodes": [],
+          },
+          "members": {
+            "nodes": [],
+          },
+          "name": "Team3",
+        },
+      ],
+    },
+  },
+}
+`;
