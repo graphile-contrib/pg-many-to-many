@@ -23,6 +23,7 @@ junction table.`,
         const {
           scope: { isPgManyToManyEdgeType, pgManyToManyRelationship },
           fieldWithHooks,
+          Self,
         } = context;
 
         if (!isPgManyToManyEdgeType || !pgManyToManyRelationship) {
@@ -49,72 +50,75 @@ junction table.`,
         return extend(
           fields,
           Object.entries(junctionTable.codec.columns).reduce(
-            (memo, [columnName, column]) => {
-              const behavior = build.pgGetBehavior(column.extensions);
-              if (!build.behavior.matches(behavior, "select", "select")) {
-                return memo;
-              }
+            (memo, [columnName, column]) =>
+              build.recoverable(memo, () => {
+                const behavior = build.pgGetBehavior(column.extensions);
+                if (!build.behavior.matches(behavior, "select", "select")) {
+                  return memo;
+                }
 
-              // Skip left and right key attributes
-              if (junctionLeftKeyAttributeNames.includes(columnName))
-                return memo;
-              if (junctionRightKeyAttributeNames.includes(columnName))
-                return memo;
+                // Skip left and right key attributes
+                if (junctionLeftKeyAttributeNames.includes(columnName)) {
+                  return memo;
+                }
+                if (junctionRightKeyAttributeNames.includes(columnName)) {
+                  return memo;
+                }
 
-              const codec = column.codec;
-              const fieldName = inflection.column({
-                codec: junctionTable.codec,
-                columnName,
-              });
-              const ReturnType = build.getGraphQLTypeByPgCodec(
-                column.codec,
-                "output"
-              );
-              if (!ReturnType || !isOutputType(ReturnType)) {
-                return memo;
-              }
+                const codec = column.codec;
+                const fieldName = inflection.column({
+                  codec: junctionTable.codec,
+                  columnName,
+                });
+                const ReturnType = build.getGraphQLTypeByPgCodec(
+                  column.codec,
+                  "output"
+                );
+                if (!ReturnType || !isOutputType(ReturnType)) {
+                  return memo;
+                }
 
-              memo = extend(
-                memo,
-                {
-                  [fieldName]: fieldWithHooks(
-                    {
-                      fieldName,
-                      isPgManyToManyRelationEdgeColumnField: true,
-                      pgFieldCodec: column.codec,
-                    },
-                    () => ({
-                      description: column.description,
-                      type: nullableIf(
-                        !column.notNull &&
-                          !column.codec.notNull &&
-                          !column.extensions?.tags?.notNull,
-                        ReturnType
-                      ),
-                      plan(
-                        $edge: EdgeStep<
-                          any,
-                          any,
-                          any,
-                          PgSelectSingleStep<any, any, any, any>
-                        >
-                      ) {
-                        const $right = $edge.node();
-                        return $right.select(
-                          sql`${sql.identifier(
-                            junctionSymbol
-                          )}.${sql.identifier(columnName)}`,
-                          codec
-                        );
+                memo = extend(
+                  memo,
+                  {
+                    [fieldName]: fieldWithHooks(
+                      {
+                        fieldName,
+                        isPgManyToManyRelationEdgeColumnField: true,
+                        pgFieldCodec: column.codec,
                       },
-                    })
-                  ),
-                },
-                `PgManyToMany adding edge field for '${columnName}'.`
-              );
-              return memo;
-            },
-            {}
+                      () => ({
+                        description: column.description,
+                        type: nullableIf(
+                          !column.notNull &&
+                            !column.codec.notNull &&
+                            !column.extensions?.tags?.notNull,
+                          ReturnType
+                        ),
+                        plan(
+                          $edge: EdgeStep<
+                            any,
+                            any,
+                            any,
+                            PgSelectSingleStep<any, any, any, any>
+                          >
+                        ) {
+                          const $right = $edge.node();
+                          return $right.select(
+                            sql`${sql.identifier(
+                              junctionSymbol
+                            )}.${sql.identifier(columnName)}`,
+                            codec
+                          );
+                        },
+                      })
+                    ),
+                  },
+                  `PgManyToMany adding edge field for '${junctionTable.name}.${columnName}' to ${Self.name}.`
+                );
+                return memo;
+              }),
+            Object.create(null)
           ),
           `Adding columns to '${junctionTable.name}'`
         );

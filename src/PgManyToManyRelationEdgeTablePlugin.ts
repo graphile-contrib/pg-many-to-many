@@ -130,75 +130,79 @@ field to the edges where all of the join records can be traversed.`,
             return;
           }
 
-          fields = extend(
-            fields,
-            {
-              [fieldName]: fieldWithHooks(
-                {
-                  fieldName,
-                  pgSource: junctionTable,
-                  isPgFieldConnection: isConnection,
-                  isPgFieldSimpleCollection: !isConnection,
-                  isPgManyToManyRelationEdgeTableField: true,
-                  pgManyToManyJunctionTable: junctionTable,
-                },
-                () => ({
-                  description: `Reads and enables pagination through a set of \`${
-                    JunctionTableType!.name
-                  }\`.`,
-                  type: isConnection
-                    ? new GraphQLNonNull(JunctionTableConnectionType!)
-                    : new GraphQLNonNull(
-                        new GraphQLList(new GraphQLNonNull(JunctionTableType!))
-                      ),
-                  args: {},
-                  plan(
-                    $edge: EdgeStep<
-                      any,
-                      any,
-                      any,
-                      PgSelectSingleStep<any, any, any, any>
-                    >
-                  ) {
-                    const $right = $edge.node();
-
-                    // Create a spec that all entries in the collection must
-                    // match
-                    const spec = Object.create(null);
-
-                    // Add left columns to spec
-                    for (let i = 0, l = leftColumns.length; i < l; i++) {
-                      const junctionColumnName = leftColumns[i];
-                      const junctionColumnCodec = leftColumnCodecs[i];
-                      spec[junctionColumnName] = $right.select(
-                        sql`${sql.identifier(junctionSymbol)}.${sql.identifier(
-                          junctionColumnName
-                        )}`,
-                        junctionColumnCodec
-                      );
-                    }
-
-                    // Add right columns to spec
-                    for (let i = 0, l = rightColumns.length; i < l; i++) {
-                      const junctionColumnName = rightColumns[i];
-                      const rightColumnName = rightRemoteColumns[i];
-                      spec[junctionColumnName] = $right.get(rightColumnName);
-                    }
-
-                    // These are the equivalent junction records for this entry
-                    const $junctions = junctionTable.find(spec);
-
-                    return isConnection
-                      ? (connection($junctions) as any)
-                      : $junctions;
+          fields = build.recoverable(fields, () =>
+            extend(
+              fields,
+              {
+                [fieldName]: fieldWithHooks(
+                  {
+                    fieldName,
+                    pgSource: junctionTable,
+                    isPgFieldConnection: isConnection,
+                    isPgFieldSimpleCollection: !isConnection,
+                    isPgManyToManyRelationEdgeTableField: true,
+                    pgManyToManyJunctionTable: junctionTable,
                   },
-                })
-              ),
-            },
+                  () => ({
+                    description: `Reads and enables pagination through a set of \`${
+                      JunctionTableType!.name
+                    }\`.`,
+                    type: isConnection
+                      ? new GraphQLNonNull(JunctionTableConnectionType!)
+                      : new GraphQLNonNull(
+                          new GraphQLList(
+                            new GraphQLNonNull(JunctionTableType!)
+                          )
+                        ),
+                    args: {},
+                    plan(
+                      $edge: EdgeStep<
+                        any,
+                        any,
+                        any,
+                        PgSelectSingleStep<any, any, any, any>
+                      >
+                    ) {
+                      const $right = $edge.node();
 
-            `Many-to-many relation edge table (${
-              isConnection ? "connection" : "simple collection"
-            }) on ${Self.name} type for ${rightRelationName}.`
+                      // Create a spec that all entries in the collection must
+                      // match
+                      const spec = Object.create(null);
+
+                      // Add left columns to spec
+                      for (let i = 0, l = leftColumns.length; i < l; i++) {
+                        const junctionColumnName = leftColumns[i];
+                        const junctionColumnCodec = leftColumnCodecs[i];
+                        spec[junctionColumnName] = $right.select(
+                          sql`${sql.identifier(
+                            junctionSymbol
+                          )}.${sql.identifier(junctionColumnName)}`,
+                          junctionColumnCodec
+                        );
+                      }
+
+                      // Add right columns to spec
+                      for (let i = 0, l = rightColumns.length; i < l; i++) {
+                        const junctionColumnName = rightColumns[i];
+                        const rightColumnName = rightRemoteColumns[i];
+                        spec[junctionColumnName] = $right.get(rightColumnName);
+                      }
+
+                      // These are the equivalent junction records for this entry
+                      const $junctions = junctionTable.find(spec);
+
+                      return isConnection
+                        ? (connection($junctions) as any)
+                        : $junctions;
+                    },
+                  })
+                ),
+              },
+
+              `Many-to-many relation edge table (${
+                isConnection ? "connection" : "simple collection"
+              }) on ${Self.name} type for ${rightRelationName}.`
+            )
           );
         }
         const behavior = build.pgGetBehavior([
