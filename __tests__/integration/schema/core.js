@@ -22,7 +22,7 @@ exports.test = (schemas, options, setup) => () =>
         makeV4Preset(options),
         PgManyToManyPreset,
       ],
-      pgSources: /* makePgSources(DATABASE_URL, ["app_public"]) */ [
+      pgConfigs: /* makePgConfigs(DATABASE_URL, ["app_public"]) */ [
         {
           name: "main",
           adaptor: "@dataplan/pg/adaptors/node-postgres",

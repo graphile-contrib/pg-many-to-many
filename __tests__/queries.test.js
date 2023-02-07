@@ -50,7 +50,7 @@ const queryResult = async (sqlSchema, fixture) => {
 
     const { schema, resolvedPreset } = await makeSchema({
       extends: [postgraphilePresetAmber, makeV4Preset({}), PgManyToManyPreset],
-      pgSources: /* makePgSources(DATABASE_URL, ["app_public"]) */ [
+      pgConfigs: /* makePgConfigs(DATABASE_URL, ["app_public"]) */ [
         {
           name: "main",
           adaptor: "@dataplan/pg/adaptors/node-postgres",
