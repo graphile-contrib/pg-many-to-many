@@ -51,7 +51,7 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
           typeof junctionRightRelation.extensions?.tags.manyToManyFieldName ===
           "string"
         ) {
-          return junctionRightRelation.extensions?.tags.manyToManyFieldName;
+          return junctionRightRelation.extensions.tags.manyToManyFieldName;
         }
         return this.camelCase(
           `${this.pluralize(

@@ -1,0 +1,17 @@
+query {
+  allEntities {
+    nodes {
+      name
+      memberOf: entitiesByMembershipMemberIdAndEntityId {
+        nodes {
+          name
+        }
+      }
+      members: entitiesByMembershipEntityIdAndMemberId {
+        nodes {
+          name
+        }
+      }
+    }
+  }
+}

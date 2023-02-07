@@ -1,7 +1,11 @@
 import { PgSelectSingleStep } from "@dataplan/pg";
 import { ConnectionStep, EdgeStep, ExecutableStep } from "grafast";
 import { GraphQLObjectType, GraphQLOutputType } from "graphql";
-import { PgTableSource, PgManyToManyRelationDetails } from "./interfaces.js";
+import {
+  PgTableSource,
+  PgManyToManyRelationDetails,
+  PgManyToManyRelationDetailsWithExtras,
+} from "./interfaces.js";
 
 export default function createManyToManyConnectionType(
   relationship: PgManyToManyRelationDetails,
@@ -27,7 +31,7 @@ export default function createManyToManyConnectionType(
   const junctionTypeName = inflection.tableType(junctionTable.codec);
   const rightTableTypeName = inflection.tableType(rightTable.codec);
 
-  const inflectorInfo = {
+  const inflectorInfo: PgManyToManyRelationDetailsWithExtras = {
     ...relationship,
     leftTableTypeName,
   };

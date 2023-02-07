@@ -1,0 +1,33 @@
+{
+  allEntities {
+    nodes {
+      name
+      memberOf: entitiesByMembershipMemberIdAndEntityId {
+        edges {
+          node {
+            name
+          }
+          memberships: membershipsByEntityId {
+            nodes {
+              startAt
+              endAt
+            }
+          }
+        }
+      }
+      members: entitiesByMembershipEntityIdAndMemberId {
+        edges {
+          node {
+            name
+          }
+          memberships: membershipsByMemberId {
+            nodes {
+              startAt
+              endAt
+            }
+          }
+        }
+      }
+    }
+  }
+}
