@@ -1,5 +1,5 @@
 import { PgSelectSingleStep, TYPES } from "@dataplan/pg";
-import { connection, each, list, object } from "grafast";
+import { connection, each, object } from "grafast";
 import type {} from "graphile-config";
 import { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
@@ -16,7 +16,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
 
   schema: {
     hooks: {
-      init(_, build, context) {
+      init(_, build, _context) {
         for (const leftTable of build.input.pgSources) {
           if (!leftTable.codec.columns || leftTable.parameters) {
             continue;
@@ -25,12 +25,6 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
           const relationships = manyToManyRelationships(leftTable, build);
 
           for (const relationship of relationships) {
-            const {
-              leftRelationName,
-              junctionTable,
-              rightRelationName,
-              rightTable,
-            } = relationship;
             createManyToManyConnectionType(relationship, build, leftTable);
           }
         }

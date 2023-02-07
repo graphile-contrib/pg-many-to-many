@@ -30,6 +30,8 @@ type Bar implements Node {
     """The method to use when ordering \`Corge\`."""
     orderBy: [CorgesOrderBy!] = [PRIMARY_KEY_ASC]
   ): CorgesConnection!
+
+  """Reads and enables pagination through a set of \`Corge\`."""
   corgesByBarIdList(
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -81,6 +83,8 @@ type Bar implements Node {
     """The method to use when ordering \`Qux\`."""
     orderBy: [QuxesOrderBy!] = [PRIMARY_KEY_ASC]
   ): QuxesConnection!
+
+  """Reads and enables pagination through a set of \`Qux\`."""
   quxesByBarIdList(
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -308,6 +312,8 @@ type Foo implements Node {
     """The method to use when ordering \`Baz\`."""
     orderBy: [BazsOrderBy!] = [PRIMARY_KEY_ASC]
   ): BazsConnection!
+
+  """Reads and enables pagination through a set of \`Baz\`."""
   bazsByFooIdList(
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -352,6 +358,8 @@ type Foo implements Node {
     """The method to use when ordering \`Corge\`."""
     orderBy: [CorgesOrderBy!] = [PRIMARY_KEY_ASC]
   ): CorgesConnection!
+
+  """Reads and enables pagination through a set of \`Corge\`."""
   corgesByFooIdList(
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -403,6 +411,8 @@ type Foo implements Node {
     """The method to use when ordering \`Qux\`."""
     orderBy: [QuxesOrderBy!] = [PRIMARY_KEY_ASC]
   ): QuxesConnection!
+
+  """Reads and enables pagination through a set of \`Qux\`."""
   quxesByFooIdList(
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -630,6 +640,8 @@ type Person implements Node {
     """The method to use when ordering \`Membership\`."""
     orderBy: [MembershipsOrderBy!] = [PRIMARY_KEY_ASC]
   ): MembershipsConnection!
+
+  """Reads and enables pagination through a set of \`Membership\`."""
   membershipsByPersonIdList(
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -751,6 +763,8 @@ type Query implements Node {
     """The method to use when ordering \`Bar\`."""
     orderBy: [BarsOrderBy!] = [PRIMARY_KEY_ASC]
   ): BarsConnection
+
+  """Reads a set of \`Bar\`."""
   allBarsList(
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -795,6 +809,8 @@ type Query implements Node {
     """The method to use when ordering \`Baz\`."""
     orderBy: [BazsOrderBy!] = [PRIMARY_KEY_ASC]
   ): BazsConnection
+
+  """Reads a set of \`Baz\`."""
   allBazsList(
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -839,6 +855,8 @@ type Query implements Node {
     """The method to use when ordering \`Foo\`."""
     orderBy: [FoosOrderBy!] = [PRIMARY_KEY_ASC]
   ): FoosConnection
+
+  """Reads a set of \`Foo\`."""
   allFoosList(
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -883,6 +901,8 @@ type Query implements Node {
     """The method to use when ordering \`Membership\`."""
     orderBy: [MembershipsOrderBy!] = [PRIMARY_KEY_ASC]
   ): MembershipsConnection
+
+  """Reads a set of \`Membership\`."""
   allMembershipsList(
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -927,6 +947,8 @@ type Query implements Node {
     """The method to use when ordering \`Person\`."""
     orderBy: [PeopleOrderBy!] = [PRIMARY_KEY_ASC]
   ): PeopleConnection
+
+  """Reads a set of \`Person\`."""
   allPeopleList(
     """
     A condition to be used in determining which values should be returned by the collection.
@@ -971,6 +993,8 @@ type Query implements Node {
     """The method to use when ordering \`Team\`."""
     orderBy: [TeamsOrderBy!] = [PRIMARY_KEY_ASC]
   ): TeamsConnection
+
+  """Reads a set of \`Team\`."""
   allTeamsList(
     """
     A condition to be used in determining which values should be returned by the collection.

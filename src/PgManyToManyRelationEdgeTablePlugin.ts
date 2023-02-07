@@ -1,37 +1,11 @@
 import { PgSelectSingleStep } from "@dataplan/pg";
-import { PgSource } from "@dataplan/pg";
 import { EdgeStep, connection } from "grafast";
 import type {} from "graphile-config";
 import { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
-import { PgManyToManyRelationDetails } from "./PgManyToManyRelationInflectionPlugin";
 import { junctionSymbol } from "./PgManyToManyRelationPlugin";
 
 const version = require("../package.json").version;
-
-declare global {
-  namespace GraphileBuild {
-    interface ScopeObjectFieldsField {
-      isPgManyToManyRelationEdgeTableField?: boolean;
-      pgManyToManyJunctionTable?: PgSource<any, any, any, any>;
-    }
-
-    interface Inflection {
-      _manyToManyEdgeRelationFieldName(
-        this: Inflection,
-        details: PgManyToManyRelationDetails
-      ): string;
-      manyToManyEdgeRelationConnection(
-        this: Inflection,
-        details: PgManyToManyRelationDetails
-      ): string;
-      manyToManyEdgeRelationList(
-        this: Inflection,
-        details: PgManyToManyRelationDetails
-      ): string;
-    }
-  }
-}
 
 export const PgManyToManyRelationEdgeTablePlugin: GraphileConfig.Plugin = {
   name: "PgManyToManyRelationEdgeTablePlugin",
@@ -44,13 +18,13 @@ field to the edges where all of the join records can be traversed.`,
 
   inflection: {
     add: {
-      _manyToManyEdgeRelationFieldName(info, details) {
+      _manyToManyEdgeRelationFieldName(_info, details) {
         const {
           leftTable,
           leftRelationName,
           junctionTable,
           rightRelationName,
-          rightTable,
+          // rightTable,
         } = details;
         const leftRelation = leftTable.getRelation(leftRelationName);
         if (
@@ -73,12 +47,12 @@ field to the edges where all of the join records can be traversed.`,
           )
         );
       },
-      manyToManyEdgeRelationConnection(info, details) {
+      manyToManyEdgeRelationConnection(_info, details) {
         return this.connectionField(
           this._manyToManyEdgeRelationFieldName(details)
         );
       },
-      manyToManyEdgeRelationList(info, details) {
+      manyToManyEdgeRelationList(_info, details) {
         return this.listField(this._manyToManyEdgeRelationFieldName(details));
       },
     },
@@ -106,7 +80,7 @@ field to the edges where all of the join records can be traversed.`,
         const {
           leftTable,
           leftRelationName,
-          rightTable,
+          // rightTable,
           rightRelationName,
           junctionTable,
           allowsMultipleEdgesToNode,

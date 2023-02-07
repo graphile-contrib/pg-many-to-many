@@ -2,9 +2,9 @@
 
 [![Package on npm](https://img.shields.io/npm/v/@graphile-contrib/pg-many-to-many.svg)](https://www.npmjs.com/package/@graphile-contrib/pg-many-to-many) [![CircleCI](https://circleci.com/gh/graphile-contrib/pg-many-to-many.svg?style=svg)](https://circleci.com/gh/graphile-contrib/pg-many-to-many)
 
-This Graphile Engine plugin adds connection fields for many-to-many relations.
+This PostGraphile preset adds connection fields for many-to-many relations to your GraphQL schema.
 
-> Requires `postgraphile@^4.5.0` or `graphile-build-pg@^4.5.0`
+> Requires `postgraphile@^5.0.0` or `graphile-build-pg@^5.0.0`
 
 Example:
 
@@ -26,38 +26,33 @@ Example:
 
 ## Usage
 
-Append this plugin and the additional fields will be added to your schema.
-
-### CLI
+Install the plugin into your PostGraphile/Graphile-Build project:
 
 ```bash
-yarn add postgraphile
 yarn add @graphile-contrib/pg-many-to-many
-npx postgraphile --append-plugins @graphile-contrib/pg-many-to-many
 ```
 
-### Library
+Then add this preset to the `extends` list of your Graphile Config:
 
 ```js
-const express = require("express");
-const { postgraphile } = require("postgraphile");
-const PgManyToManyPlugin = require("@graphile-contrib/pg-many-to-many");
+// graphile.config.mjs (or similar)
 
-const app = express();
+import { PgManyToManyPreset } from "@graphile-contrib/pg-many-to-many";
 
-app.use(
-  postgraphile(process.env.DATABASE_URL, "app_public", {
-    appendPlugins: [PgManyToManyPlugin],
-    graphiql: true,
-  })
-);
+const preset = {
+  extends: [
+    // ...
+    PgManyToManyPreset,
+  ],
+  // ...
+};
 
-app.listen(5000);
+export default preset;
 ```
 
 ## Excluding Fields
 
-To exclude certain many-to-many fields from appearing in your GraphQL schema, you can use `@omit manyToMany` [smart comments](https://www.graphile.org/postgraphile/smart-comments/) on constraints and tables.
+To exclude certain many-to-many fields from appearing in your GraphQL schema, you can use `@behavior -manyToMany` [smart tags](https://postgraphile.org/postgraphile/next/smart-tags) on constraints and tables.
 
 Here is an example of using a smart comment on a constraint:
 
@@ -81,7 +76,7 @@ create table p.qux (
 -- `Foo` and `Bar` would normally have `barsBy...` and `foosBy...` fields,
 -- but this smart comment causes the constraint between `qux` and `bar`
 -- to be ignored, preventing the fields from being generated.
-comment on constraint qux_bar_id_fkey on p.qux is E'@omit manyToMany';
+comment on constraint qux_bar_id_fkey on p.qux is E'@behavior -manyToMany';
 ```
 
 Here is an example of using a smart comment on a table:
@@ -106,12 +101,12 @@ create table p.corge (
 -- `Foo` and `Bar` would normally have `barsBy...` and `foosBy...` fields,
 -- but this smart comment causes `corge` to be excluded from consideration
 -- as a junction table, preventing the fields from being generated.
-comment on table p.corge is E'@omit manyToMany';
+comment on table p.corge is E'@behavior -manyToMany';
 ```
 
 ## Inflection
 
-To avoid naming conflicts, this plugin uses a verbose naming convention (e.g. `teamsByTeamMemberTeamId`), similar to how related fields are named by default in PostGraphile v4. You can override this by writing a custom inflector plugin or by using smart comments in your SQL schema.
+To avoid naming conflicts, this plugin uses a verbose naming convention (e.g. `teamsByTeamMemberTeamId`). You can override this by writing a custom inflector plugin or by using smart comments in your SQL schema.
 
 ### Inflector Plugin
 
@@ -119,51 +114,9 @@ Writing a custom inflector plugin gives you full control over the GraphQL field 
 
 > :warning: Warning: Simplifying the field names as shown below will lead to field name conflicts if your junction table has multiple foreign keys referencing the same table. You will need to customize the inflector function to resolve the conflicts.
 
-```js
-const { makeAddInflectorsPlugin } = require("graphile-utils");
+**TODO**: include example of overriding the inflectors in V5 format.
 
-module.exports = makeAddInflectorsPlugin(
-  {
-    manyToManyRelationByKeys(
-      _leftKeyAttributes,
-      _junctionLeftKeyAttributes,
-      _junctionRightKeyAttributes,
-      _rightKeyAttributes,
-      _junctionTable,
-      rightTable,
-      _junctionLeftConstraint,
-      junctionRightConstraint
-    ) {
-      if (junctionRightConstraint.tags.manyToManyFieldName) {
-        return junctionRightConstraint.tags.manyToManyFieldName;
-      }
-      return this.camelCase(
-        `${this.pluralize(this._singularizedTableName(rightTable))}`
-      );
-    },
-    manyToManyRelationByKeysSimple(
-      _leftKeyAttributes,
-      _junctionLeftKeyAttributes,
-      _junctionRightKeyAttributes,
-      _rightKeyAttributes,
-      _junctionTable,
-      rightTable,
-      _junctionLeftConstraint,
-      junctionRightConstraint
-    ) {
-      if (junctionRightConstraint.tags.manyToManySimpleFieldName) {
-        return junctionRightConstraint.tags.manyToManySimpleFieldName;
-      }
-      return this.camelCase(
-        `${this.pluralize(this._singularizedTableName(rightTable))}-list`
-      );
-    },
-  },
-  true // Passing true here allows the plugin to overwrite existing inflectors.
-);
-```
-
-For more information on custom inflector plugins, see the [makeAddInflectorsPlugin documentation](https://www.graphile.org/postgraphile/make-add-inflectors-plugin/).
+For more information on custom inflector plugins, see the [inflection documentation](https://postgraphile.org/postgraphile/next/inflection).
 
 ### Smart Comments
 
