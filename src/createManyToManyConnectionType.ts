@@ -1,23 +1,7 @@
-import { PgTableSource } from "./interfaces";
-import { PgSelectSingleStep, PgSource } from "@dataplan/pg";
-import { PgManyToManyRelationDetails } from "./PgManyToManyRelationInflectionPlugin";
-import { ConnectionStep, each, EdgeStep, ExecutableStep } from "grafast";
+import { PgSelectSingleStep } from "@dataplan/pg";
+import { ConnectionStep, EdgeStep, ExecutableStep } from "grafast";
 import { GraphQLObjectType, GraphQLOutputType } from "graphql";
-
-declare global {
-  namespace GraphileBuild {
-    interface ScopeObject {
-      isPgManyToManyEdgeType?: boolean;
-      pgManyToManyRelationship?: PgManyToManyRelationDetails;
-    }
-    interface ScopeObjectFieldsField {
-      isPgManyToManyRelationField?: boolean;
-      pgManyToManyRightTable?: PgSource<any, any, any, any>;
-    }
-  }
-}
-
-const base64 = (str: string) => Buffer.from(String(str)).toString("base64");
+import { PgTableSource, PgManyToManyRelationDetails } from "./interfaces.js";
 
 export default function createManyToManyConnectionType(
   relationship: PgManyToManyRelationDetails,
@@ -25,15 +9,15 @@ export default function createManyToManyConnectionType(
   leftTable: PgTableSource
 ) {
   const {
-    leftRelationName,
+    // leftRelationName,
     junctionTable,
-    rightRelationName,
+    // rightRelationName,
     rightTable,
-    allowsMultipleEdgesToNode,
+    // allowsMultipleEdgesToNode,
   } = relationship;
   const {
     inflection,
-    graphql: { GraphQLObjectType, GraphQLNonNull, GraphQLList },
+    graphql: { GraphQLNonNull, GraphQLList },
     getTypeByName,
     options: { pgForbidSetofFunctionsToReturnNull = false },
     nullableIf,

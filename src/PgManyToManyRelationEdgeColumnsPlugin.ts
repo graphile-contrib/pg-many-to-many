@@ -1,19 +1,11 @@
-import { PgSelectSingleStep, PgTypeColumns } from "@dataplan/pg";
-import { EdgeStep, ExecutableStep } from "grafast";
+import { PgSelectSingleStep } from "@dataplan/pg";
+import { EdgeStep } from "grafast";
 import type {} from "graphile-config";
 import { isOutputType } from "graphql";
 import type {} from "postgraphile";
 import { junctionSymbol } from "./PgManyToManyRelationPlugin";
 
 const version = require("../package.json").version;
-
-declare global {
-  namespace GraphileBuild {
-    interface ScopeObjectFieldsField {
-      isPgManyToManyRelationEdgeColumnField?: boolean;
-    }
-  }
-}
 
 export const PgManyToManyRelationEdgeColumnsPlugin: GraphileConfig.Plugin = {
   name: "PgManyToManyRelationEdgeColumnsPlugin",
@@ -27,13 +19,7 @@ junction table.`,
   schema: {
     hooks: {
       GraphQLObjectType_fields(fields, build, context) {
-        const {
-          extend,
-          sql,
-          graphql: { GraphQLString, GraphQLNonNull },
-          inflection,
-          nullableIf,
-        } = build;
+        const { extend, sql, inflection, nullableIf } = build;
         const {
           scope: { isPgManyToManyEdgeType, pgManyToManyRelationship },
           fieldWithHooks,

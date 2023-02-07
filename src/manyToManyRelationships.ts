@@ -1,15 +1,8 @@
-import {
-  PgSource,
-  PgSourceBuilder,
-  PgSourceRelation,
-  PgSourceUnique,
-  PgTypeCodec,
-  PgTypeColumns,
-  resolveSource,
-} from "@dataplan/pg";
-import { PgTableSource } from "./interfaces";
-import { PgManyToManyRelationPlugin } from "./PgManyToManyRelationPlugin";
-import { PgManyToManyRelationDetails } from "./PgManyToManyRelationInflectionPlugin";
+import { resolveSource } from "@dataplan/pg";
+import type {
+  PgTableSource,
+  PgManyToManyRelationDetails,
+} from "./interfaces.js";
 
 function arraysAreEqual<A extends readonly any[]>(
   array1: A,
@@ -58,7 +51,7 @@ export default function manyToManyRelationships(
       }
 
       const memoRight = Object.entries(junctionTable.getRelations())
-        .filter(([relName, rel]) => {
+        .filter(([_relName, rel]) => {
           if (rel.isReferencee) {
             return false;
           }

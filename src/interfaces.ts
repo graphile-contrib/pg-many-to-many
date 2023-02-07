@@ -1,8 +1,6 @@
 import type {
   PgSource,
   PgSourceRelation,
-  PgTypeCodec,
-  PgTypeColumn,
   PgTypeColumns,
   PgSourceUnique,
 } from "@dataplan/pg";
@@ -18,3 +16,17 @@ export type PgTableSource = PgSource<
     >;
   }
 >;
+
+export interface PgManyToManyRelationDetails {
+  leftTable: PgTableSource;
+  leftRelationName: string;
+  junctionTable: PgTableSource;
+  rightRelationName: string;
+  rightTable: PgTableSource;
+  allowsMultipleEdgesToNode: boolean;
+}
+
+export interface PgManyToManyRelationDetailsWithExtras
+  extends PgManyToManyRelationDetails {
+  leftTableTypeName: string;
+}
