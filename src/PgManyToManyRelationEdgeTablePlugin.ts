@@ -154,7 +154,7 @@ field to the edges where all of the join records can be traversed.`,
                             new GraphQLNonNull(JunctionTableType!)
                           )
                         ),
-                    args: {},
+                    args: Object.create(null),
                     plan(
                       $edge: EdgeStep<
                         any,

@@ -142,7 +142,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                                     new GraphQLNonNull(RightTableType!)
                                   )
                                 ),
-                            args: {},
+                            args: Object.create(null),
                             plan(
                               $left: PgSelectSingleStep<any, any, any, any>
                             ) {
