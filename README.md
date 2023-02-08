@@ -128,8 +128,16 @@ For example, to rename the Connection field from `teamsByTeamMemberTeamId` to `t
 comment on constraint membership_team_id_fkey on p.membership is E'@manyToManyFieldName teams';
 ```
 
-To rename both the Connection and simple collection fields (assuming simple collections are enabled):
+The `@manyToManyFieldName` smart comment will override both the connection and simple collection field names (assuming simple collections are enabled). Any modifiers applied by the `connectionField` and `listField` inflections will be applied to the overridden names. For example, to rename both the connection and simple collection fields (assuming simple collections are enabled and that the `connectionField` inflection adds a `List` postfix) to `teams` and `teamsList`:
 
 ```sql
-comment on constraint membership_team_id_fkey on p.membership is E'@manyToManyFieldName teams\n@manyToManySimpleFieldName teamsList';
+comment on constraint membership_team_id_fkey on p.membership is E'@manyToManyFieldName teams';
 ```
+
+The `@manyToManyConnectionFieldName` and `@manyToManySimpleFieldName` smart comments can be used to fully override the connection and simple collection field names respectively without applying the `connectionField` and `listField` inflections. For example, to rename the connection and simple collection fields to `teamsConnection` and `teamsSimple`:
+
+```sql
+comment on constraint membership_team_id_fkey on p.membership is E'@manyToManyConnectionFieldName teamsConnection\n@manyToManySimpleFieldName teamsSimple';
+```
+
+The `@manyToManyConnectionFieldName` and `@manyToManySimpleFieldName` smart comments takes precedence over the `@manyToManyFieldName` smart comment.

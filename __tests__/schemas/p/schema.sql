@@ -19,7 +19,7 @@ create table p.membership (
   primary key (person_id, team_id)
 );
 
-comment on constraint membership_person_id_fkey on p.membership is E'@manyToManyFieldName members\n@manyToManySimpleFieldName membersList';
+comment on constraint membership_person_id_fkey on p.membership is E'@manyToManyFieldName members';
 
 comment on constraint membership_team_id_fkey on p.membership is E'@simpleCollections omit';
 

@@ -47,11 +47,15 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
           rightTable,
           junctionTable,
         } = processDetails(details);
-        if (
-          typeof junctionRightRelation.extensions?.tags.manyToManyFieldName ===
-          "string"
-        ) {
-          return junctionRightRelation.extensions.tags.manyToManyFieldName;
+        const override =
+          junctionRightRelation.extensions?.tags.manyToManyConnectionFieldName;
+        if (typeof override === "string") {
+          return this.camelCase(override);
+        }
+        const baseOverride =
+          junctionRightRelation.extensions?.tags.manyToManyFieldName;
+        if (typeof baseOverride === "string") {
+          return this.connectionField(this.camelCase(baseOverride));
         }
         return this.camelCase(
           `${this.pluralize(
@@ -72,12 +76,15 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
           rightTable,
           junctionTable,
         } = processDetails(details);
-        if (
-          typeof junctionRightRelation.extensions?.tags
-            .manyToManySimpleFieldName === "string"
-        ) {
-          return junctionRightRelation.extensions?.tags
-            .manyToManySimpleFieldName;
+        const override =
+          junctionRightRelation.extensions?.tags.manyToManySimpleFieldName;
+        if (typeof override === "string") {
+          return this.camelCase(override);
+        }
+        const baseOverride =
+          junctionRightRelation.extensions?.tags.manyToManyFieldName;
+        if (typeof baseOverride === "string") {
+          return this.listField(this.camelCase(baseOverride));
         }
         return this.camelCase(
           `${this.pluralize(

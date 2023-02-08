@@ -29,6 +29,6 @@ create table t.membership (
 create index on t.membership(person_id);
 create index on t.membership(team_id);
 
-comment on constraint membership_person_id_fkey on t.membership is E'@manyToManyFieldName members\n@manyToManySimpleFieldName membersList';
+comment on constraint membership_person_id_fkey on t.membership is E'@manyToManyFieldName members';
 
 comment on constraint membership_team_id_fkey on t.membership is E'@simpleCollections omit';
