@@ -18,7 +18,7 @@ field to the edges where all of the join records can be traversed.`,
 
   inflection: {
     add: {
-      _manyToManyEdgeRelationFieldName(_info, details) {
+      _manyToManyEdgeRelation(_info, details) {
         const {
           leftTable,
           leftRelationName,
@@ -27,10 +27,9 @@ field to the edges where all of the join records can be traversed.`,
           // rightTable,
         } = details;
         const leftRelation = leftTable.getRelation(leftRelationName);
-        if (
-          typeof leftRelation.extensions?.tags.foreignFieldName === "string"
-        ) {
-          return this.camelCase(leftRelation.extensions.tags.foreignFieldName);
+        const baseOverride = leftRelation.extensions?.tags.foreignFieldName;
+        if (typeof baseOverride === "string") {
+          return baseOverride;
         }
         // E.g. users(id) references posts(author_id)
         const remoteType = this.tableType(junctionTable.codec);
@@ -43,13 +42,24 @@ field to the edges where all of the join records can be traversed.`,
           )}`
         );
       },
-      manyToManyEdgeRelationConnection(_info, details) {
-        return this.connectionField(
-          this._manyToManyEdgeRelationFieldName(details)
-        );
+      manyToManyEdgeRelationConnectionField(_info, details) {
+        const { leftTable, leftRelationName } = details;
+        const leftRelation = leftTable.getRelation(leftRelationName);
+        const override =
+          leftRelation.extensions?.tags.foreignConnectionFieldName;
+        if (typeof override === "string") {
+          return override;
+        }
+        return this.connectionField(this._manyToManyEdgeRelation(details));
       },
-      manyToManyEdgeRelationList(_info, details) {
-        return this.listField(this._manyToManyEdgeRelationFieldName(details));
+      manyToManyEdgeRelationListField(_info, details) {
+        const { leftTable, leftRelationName } = details;
+        const leftRelation = leftTable.getRelation(leftRelationName);
+        const override = leftRelation.extensions?.tags.foreignSimpleFieldName;
+        if (typeof override === "string") {
+          return override;
+        }
+        return this.listField(this._manyToManyEdgeRelation(details));
       },
     },
   },
@@ -110,10 +120,10 @@ field to the edges where all of the join records can be traversed.`,
         ) as GraphQLObjectType | null;
 
         const connectionFieldName =
-          build.inflection.manyToManyEdgeRelationConnection(
+          build.inflection.manyToManyEdgeRelationConnectionField(
             pgManyToManyRelationship
           );
-        const listFieldName = build.inflection.manyToManyEdgeRelationList(
+        const listFieldName = build.inflection.manyToManyEdgeRelationListField(
           pgManyToManyRelationship
         );
 

@@ -49,36 +49,36 @@ declare global {
     }
 
     interface Inflection {
-      _manyToManyEdgeRelationFieldName(
+      _manyToManyEdgeRelation(
         this: Inflection,
         details: PgManyToManyRelationDetails
       ): string;
-      manyToManyEdgeRelationConnection(
+      manyToManyEdgeRelationConnectionField(
         this: Inflection,
         details: PgManyToManyRelationDetails
       ): string;
-      manyToManyEdgeRelationList(
+      manyToManyEdgeRelationListField(
         this: Inflection,
         details: PgManyToManyRelationDetails
       ): string;
 
-      manyToManyRelationByKeys(
+      _manyToManyRelation(
         this: Inflection,
         details: PgManyToManyRelationDetails
       ): string;
-      manyToManyRelationByKeysSimple(
+      manyToManyRelationConnectionField(
         this: Inflection,
         details: PgManyToManyRelationDetails
       ): string;
-      manyToManyRelationEdge(
+      manyToManyRelationListField(
+        this: Inflection,
+        details: PgManyToManyRelationDetails
+      ): string;
+      manyToManyRelationEdgeType(
         this: Inflection,
         details: PgManyToManyRelationDetailsWithExtras
       ): string;
-      manyToManyRelationConnection(
-        this: Inflection,
-        details: PgManyToManyRelationDetailsWithExtras
-      ): string;
-      manyToManyRelationSubqueryName(
+      manyToManyRelationConnectionType(
         this: Inflection,
         details: PgManyToManyRelationDetailsWithExtras
       ): string;

@@ -84,7 +84,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                 }
                 const leftTableTypeName = inflection.tableType(leftTable.codec);
                 const connectionTypeName =
-                  inflection.manyToManyRelationConnection({
+                  inflection.manyToManyRelationConnectionType({
                     ...relationship,
                     leftTableTypeName,
                   });
@@ -115,8 +115,8 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
 
                 function makeFields(isConnection: boolean) {
                   const manyRelationFieldName = isConnection
-                    ? inflection.manyToManyRelationByKeys(relationship)
-                    : inflection.manyToManyRelationByKeysSimple(relationship);
+                    ? inflection.manyToManyRelationConnectionField(relationship)
+                    : inflection.manyToManyRelationListField(relationship);
 
                   memo = build.recoverable(memo, () =>
                     extend(
