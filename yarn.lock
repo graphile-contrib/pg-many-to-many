@@ -1647,7 +1647,7 @@ graphile-build-pg@5.0.0-0.15, graphile-build-pg@^5.0.0-0.15:
     tamedevil "^0.0.0-0.3"
     tslib "^2.4.0"
 
-graphile-build@5.0.0-0.12, graphile-build@^5.0.0-0.12:
+graphile-build@5.0.0-0.12:
   version "5.0.0-0.12"
   resolved "https://registry.yarnpkg.com/graphile-build/-/graphile-build-5.0.0-0.12.tgz#3cdcd949f9bbdff7a5f34a8d3532478ae372bd85"
   integrity sha512-uCpyfJvxi3tnViaIUwWnBijz2HaedD10j+0WQwxgbMemd/bRUlPX6vHraTRa7hts+A6yCnNHcszWKvlYllmfgg==
