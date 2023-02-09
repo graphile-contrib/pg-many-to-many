@@ -50,12 +50,12 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
         const override =
           junctionRightRelation.extensions?.tags.manyToManyConnectionFieldName;
         if (typeof override === "string") {
-          return this.camelCase(override);
+          return this.coerceToGraphQLName(override);
         }
         const baseOverride =
           junctionRightRelation.extensions?.tags.manyToManyFieldName;
         if (typeof baseOverride === "string") {
-          return this.connectionField(this.camelCase(baseOverride));
+          return this.coerceToGraphQLName(this.connectionField(baseOverride));
         }
         return this.camelCase(
           `${this.pluralize(
@@ -79,12 +79,12 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
         const override =
           junctionRightRelation.extensions?.tags.manyToManySimpleFieldName;
         if (typeof override === "string") {
-          return this.camelCase(override);
+          return this.coerceToGraphQLName(override);
         }
         const baseOverride =
           junctionRightRelation.extensions?.tags.manyToManyFieldName;
         if (typeof baseOverride === "string") {
-          return this.listField(this.camelCase(baseOverride));
+          return this.coerceToGraphQLName(this.listField(baseOverride));
         }
         return this.camelCase(
           `${this.pluralize(
