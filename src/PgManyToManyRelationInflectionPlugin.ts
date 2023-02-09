@@ -39,7 +39,7 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
 
   inflection: {
     add: {
-      manyToManyRelationByKeys(_preset, details) {
+      _manyToManyRelation(_preset, details) {
         const {
           junctionRightKeyAttributes,
           junctionLeftKeyAttributes,
@@ -47,15 +47,10 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
           rightTable,
           junctionTable,
         } = processDetails(details);
-        const override =
-          junctionRightRelation.extensions?.tags.manyToManyConnectionFieldName;
-        if (typeof override === "string") {
-          return this.coerceToGraphQLName(override);
-        }
         const baseOverride =
           junctionRightRelation.extensions?.tags.manyToManyFieldName;
         if (typeof baseOverride === "string") {
-          return this.coerceToGraphQLName(this.connectionField(baseOverride));
+          return baseOverride;
         }
         return this.camelCase(
           `${this.pluralize(
@@ -68,53 +63,35 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
             .join("-and-")}`
         );
       },
-      manyToManyRelationByKeysSimple(_preset, details) {
-        const {
-          junctionRightKeyAttributes,
-          junctionLeftKeyAttributes,
-          junctionRightRelation,
-          rightTable,
-          junctionTable,
-        } = processDetails(details);
+      manyToManyRelationConnectionField(_preset, details) {
+        const { junctionRightRelation } = processDetails(details);
+        const override =
+          junctionRightRelation.extensions?.tags.manyToManyConnectionFieldName;
+        if (typeof override === "string") {
+          return override;
+        }
+        return this.connectionField(this._manyToManyRelation(details));
+      },
+      manyToManyRelationListField(_preset, details) {
+        const { junctionRightRelation } = processDetails(details);
         const override =
           junctionRightRelation.extensions?.tags.manyToManySimpleFieldName;
         if (typeof override === "string") {
-          return this.coerceToGraphQLName(override);
+          return override;
         }
-        const baseOverride =
-          junctionRightRelation.extensions?.tags.manyToManyFieldName;
-        if (typeof baseOverride === "string") {
-          return this.coerceToGraphQLName(this.listField(baseOverride));
-        }
-        return this.camelCase(
-          `${this.pluralize(
-            this._singularizedCodecName(rightTable.codec)
-          )}-by-${this._singularizedCodecName(junctionTable.codec)}-${[
-            ...junctionLeftKeyAttributes,
-            ...junctionRightKeyAttributes,
-          ]
-            .map((attr) => this.column(attr))
-            .join("-and-")}-list`
-        );
+        return this.listField(this._manyToManyRelation(details));
       },
-      manyToManyRelationEdge(_preset, details) {
-        const relationName = this.manyToManyRelationByKeys(details);
+      manyToManyRelationEdgeType(_preset, details) {
+        const relationName = this._manyToManyRelation(details);
         return this.upperCamelCase(
           `${details.leftTableTypeName}-${relationName}-many-to-many-edge`
         );
       },
-      manyToManyRelationConnection(_preset, details) {
-        const relationName = this.manyToManyRelationByKeys(details);
+      manyToManyRelationConnectionType(_preset, details) {
+        const relationName = this._manyToManyRelation(details);
         return this.upperCamelCase(
           `${details.leftTableTypeName}-${relationName}-many-to-many-connection`
         );
-      },
-      /* eslint-disable no-unused-vars */
-      manyToManyRelationSubqueryName(_preset, details) {
-        /* eslint-enable no-unused-vars */
-        return `many-to-many-subquery-by-${this._singularizedCodecName(
-          details.junctionTable.codec
-        )}`;
       },
     },
   },
