@@ -1,4 +1,4 @@
-import { PgSelectSingleStep, TYPES } from "@dataplan/pg";
+import { PgResource, PgSelectSingleStep, TYPES } from "@dataplan/pg";
 import { connection, each, object } from "grafast";
 import type {} from "graphile-config";
 import { GraphQLObjectType } from "graphql";
@@ -6,6 +6,7 @@ import type {} from "postgraphile";
 import createManyToManyConnectionType from "./createManyToManyConnectionType";
 import manyToManyRelationships from "./manyToManyRelationships";
 import { PgTableResource } from ".";
+import { SQL } from "pg-sql2";
 
 const version = require("../package.json").version;
 
@@ -101,18 +102,26 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                   );
                 }
 
-                const leftJunctionColumnNames =
-                  leftTable.getRelation(leftRelationName).remoteColumns;
+                const leftRelation = leftTable.getRelation(leftRelationName);
+                if (typeof leftRelation.remoteResource.source === "function") {
+                  throw new Error(
+                    `Function resource not supported for relation`
+                  );
+                }
+                const leftRelationSource = leftRelation.remoteResource.source;
+                const leftTableRelationColumnNames = leftRelation.localColumns;
+                const leftJunctionColumnNames = leftRelation.remoteColumns;
                 const leftJunctionColumnCodecs = leftJunctionColumnNames.map(
                   (colName) => junctionTable.codec.columns[colName].codec
                 );
-                const rightJunctionColumnNames =
-                  junctionTable.getRelation(rightRelationName).localColumns;
+                const rightRelation =
+                  junctionTable.getRelation(rightRelationName);
+                const rightJunctionColumnNames = rightRelation.localColumns;
                 const rightJunctionColumnCodecs = rightJunctionColumnNames.map(
                   (colName) => junctionTable.codec.columns[colName].codec
                 );
                 const rightTableRelationColumnNames =
-                  junctionTable.getRelation(rightRelationName).remoteColumns;
+                  rightRelation.remoteColumns;
 
                 // TODO: throw an error if localColumns or remoteColumns involve
                 // `via` or `expression` - we only want pure column relations.
@@ -147,6 +156,43 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                                   )
                                 ),
                             args: Object.create(null),
+                            plan($left: PgSelectSingleStep) {
+                              const $rights =
+                                rightRelation.remoteResource.find();
+                              const junctionAlias =
+                                sql.identifier(junctionSymbol);
+                              // TODO: DISTINCT
+                              $rights.join({
+                                type: "inner",
+                                source: leftRelationSource,
+                                alias: junctionAlias,
+                                conditions: rightJunctionColumnNames.map(
+                                  (jName, i) =>
+                                    sql`${junctionAlias}.${sql.identifier(
+                                      jName
+                                    )} = ${$rights.alias}.${sql.identifier(
+                                      rightTableRelationColumnNames[i]
+                                    )}`
+                                ),
+                              });
+                              for (
+                                let i = 0;
+                                i < leftJunctionColumnNames.length;
+                                i++
+                              ) {
+                                $rights.where(
+                                  sql`${junctionAlias}.${sql.identifier(
+                                    leftJunctionColumnNames[i]
+                                  )} = ${$rights.placeholder(
+                                    $left.get(leftTableRelationColumnNames[i])
+                                  )}`
+                                );
+                              }
+                              return isConnection
+                                ? (connection($rights) as any)
+                                : $rights;
+                            },
+                            /*
                             plan($left: PgSelectSingleStep) {
                               const $junctions =
                                 $left.manyRelation(leftRelationName);
@@ -284,7 +330,7 @@ select distinct ${sql.join(
                               return isConnection
                                 ? (connection($rights) as any)
                                 : $rights;
-                            },
+                            },*/
                           })
                         ),
                       },
