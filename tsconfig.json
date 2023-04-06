@@ -22,7 +22,6 @@
     "importHelpers": false,
     "experimentalDecorators": false,
     "noImplicitAny": true,
-    "suppressImplicitAnyIndexErrors": true,
     "strictNullChecks": true,
     "noFallthroughCasesInSwitch": true,
     "preserveWatchOutput": true,
