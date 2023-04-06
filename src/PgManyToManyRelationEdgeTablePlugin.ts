@@ -143,7 +143,7 @@ field to the edges where all of the join records can be traversed.`,
                 [fieldName]: fieldWithHooks(
                   {
                     fieldName,
-                    pgSource: junctionTable,
+                    pgResource: junctionTable,
                     isPgFieldConnection: isConnection,
                     isPgFieldSimpleCollection: !isConnection,
                     isPgManyToManyRelationEdgeTableField: true,
@@ -161,14 +161,7 @@ field to the edges where all of the join records can be traversed.`,
                           )
                         ),
                     args: Object.create(null),
-                    plan(
-                      $edge: EdgeStep<
-                        any,
-                        any,
-                        any,
-                        PgSelectSingleStep<any, any, any, any>
-                      >
-                    ) {
+                    plan($edge: EdgeStep<any, any, any, PgSelectSingleStep>) {
                       const $right = $edge.node();
 
                       // Create a spec that all entries in the collection must

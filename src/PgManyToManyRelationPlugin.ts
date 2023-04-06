@@ -5,6 +5,7 @@ import { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
 import createManyToManyConnectionType from "./createManyToManyConnectionType";
 import manyToManyRelationships from "./manyToManyRelationships";
+import { PgTableResource } from ".";
 
 const version = require("../package.json").version;
 
@@ -17,10 +18,13 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
   schema: {
     hooks: {
       init(_, build, _context) {
-        for (const leftTable of build.input.pgSources) {
-          if (!leftTable.codec.columns || leftTable.parameters) {
+        for (const rawResource of Object.values(
+          build.input.pgRegistry.pgResources
+        )) {
+          if (!rawResource.codec.columns || rawResource.parameters) {
             continue;
           }
+          const leftTable = rawResource as PgTableResource;
 
           const relationships = manyToManyRelationships(leftTable, build);
 
@@ -46,9 +50,9 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
           return fields;
         }
 
-        const leftTables = build.input.pgSources.filter(
-          (s) => s.codec === leftTableCodec && !s.parameters
-        );
+        const leftTables = Object.values(
+          build.input.pgRegistry.pgResources
+        ).filter((s) => s.codec === leftTableCodec && !s.parameters);
         if (leftTables.length !== 1) {
           if (leftTables.length > 2) {
             throw new Error(
@@ -57,7 +61,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
           }
           return fields;
         }
-        const leftTable = leftTables[0];
+        const leftTable = leftTables[0] as PgTableResource;
 
         const relationships = manyToManyRelationships(leftTable, build);
         return extend(
@@ -125,7 +129,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                         [manyRelationFieldName]: fieldWithHooks(
                           {
                             fieldName: manyRelationFieldName,
-                            pgSource: rightTable,
+                            pgResource: rightTable,
                             isPgFieldConnection: isConnection,
                             isPgFieldSimpleCollection: !isConnection,
                             isPgManyToManyRelationField: true,
@@ -143,9 +147,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                                   )
                                 ),
                             args: Object.create(null),
-                            plan(
-                              $left: PgSelectSingleStep<any, any, any, any>
-                            ) {
+                            plan($left: PgSelectSingleStep) {
                               const $junctions =
                                 $left.manyRelation(leftRelationName);
                               // Fetch the identifiers and the return the relevant
@@ -157,22 +159,12 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
 
                                   for (const colName of leftJunctionColumnNames) {
                                     spec[colName] = (
-                                      $junction as PgSelectSingleStep<
-                                        any,
-                                        any,
-                                        any,
-                                        any
-                                      >
+                                      $junction as PgSelectSingleStep
                                     ).get(colName);
                                   }
                                   for (const colName of rightJunctionColumnNames) {
                                     spec[colName] = (
-                                      $junction as PgSelectSingleStep<
-                                        any,
-                                        any,
-                                        any,
-                                        any
-                                      >
+                                      $junction as PgSelectSingleStep
                                     ).get(colName);
                                   }
 

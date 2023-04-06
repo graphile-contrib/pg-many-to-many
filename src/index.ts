@@ -4,7 +4,7 @@ import { PgManyToManyRelationPlugin } from "./PgManyToManyRelationPlugin.js";
 import { PgManyToManyRelationEdgeColumnsPlugin } from "./PgManyToManyRelationEdgeColumnsPlugin.js";
 import { PgManyToManyRelationEdgeTablePlugin } from "./PgManyToManyRelationEdgeTablePlugin.js";
 export type {
-  PgTableSource,
+  PgTableResource,
   PgManyToManyRelationDetails,
   PgManyToManyRelationDetailsWithExtras,
 } from "./interfaces";

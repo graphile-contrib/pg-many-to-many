@@ -1,6 +1,5 @@
-import { resolveSource } from "@dataplan/pg";
 import type {
-  PgTableSource,
+  PgTableResource,
   PgManyToManyRelationDetails,
 } from "./interfaces.js";
 
@@ -18,7 +17,7 @@ const defaultBehavior = "manyToMany select";
 // and identify a `junctionTable` and `rightTable`.
 // Returns a list of data objects for these many-to-many relationships.
 export default function manyToManyRelationships(
-  leftTable: PgTableSource,
+  leftTable: PgTableResource,
   build: GraphileBuild.Build
 ): PgManyToManyRelationDetails[] {
   return Object.entries(leftTable.getRelations()).reduce(
@@ -32,9 +31,8 @@ export default function manyToManyRelationships(
         return memoLeft;
       }
 
-      const junctionTable: PgTableSource = resolveSource(
-        junctionLeftRelation.source
-      );
+      const junctionTable: PgTableResource =
+        junctionLeftRelation.remoteResource;
 
       const junctionBehavior = build.pgGetBehavior(
         junctionLeftRelation.extensions
@@ -56,7 +54,7 @@ export default function manyToManyRelationships(
             return false;
           }
           if (
-            rel.source === leftTable &&
+            rel.remoteResource === leftTable &&
             arraysAreEqual(rel.localColumns, junctionLeftRelation.remoteColumns)
           ) {
             return false;
@@ -74,7 +72,7 @@ export default function manyToManyRelationships(
           return true;
         })
         .reduce((memoRight, [rightRelationName, junctionRightRelation]) => {
-          const rightTable = resolveSource(junctionRightRelation.source);
+          const rightTable = junctionRightRelation.remoteResource;
 
           const rightTableBehavior = build.pgGetBehavior(rightTable.extensions);
           if (

@@ -2,7 +2,7 @@ import { PgSelectSingleStep } from "@dataplan/pg";
 import { ConnectionStep, EdgeStep, ExecutableStep } from "grafast";
 import { GraphQLObjectType, GraphQLOutputType } from "graphql";
 import {
-  PgTableSource,
+  PgTableResource,
   PgManyToManyRelationDetails,
   PgManyToManyRelationDetailsWithExtras,
 } from "./interfaces.js";
@@ -10,7 +10,7 @@ import {
 export default function createManyToManyConnectionType(
   relationship: PgManyToManyRelationDetails,
   build: GraphileBuild.Build,
-  leftTable: PgTableSource
+  leftTable: PgTableResource
 ) {
   const {
     // leftRelationName,
@@ -77,14 +77,7 @@ export default function createManyToManyConnectionType(
                 !pgForbidSetofFunctionsToReturnNull,
                 getTypeByName(rightTableTypeName) as GraphQLObjectType
               ),
-              plan(
-                $edge: EdgeStep<
-                  any,
-                  any,
-                  any,
-                  PgSelectSingleStep<any, any, any>
-                >
-              ) {
+              plan($edge: EdgeStep<any, any, any, PgSelectSingleStep>) {
                 const $right = $edge.node();
                 return $right;
               },
