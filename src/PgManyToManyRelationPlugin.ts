@@ -161,26 +161,18 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                                 rightRelation.remoteResource.find();
                               const junctionAlias =
                                 sql.identifier(junctionSymbol);
-                              // TODO: DISTINCT
-                              $rights.join({
-                                type: "inner",
-                                source: leftRelationSource,
-                                alias: junctionAlias,
-                                conditions: rightJunctionColumnNames.map(
-                                  (jName, i) =>
-                                    sql`${junctionAlias}.${sql.identifier(
-                                      jName
-                                    )} = ${$rights.alias}.${sql.identifier(
-                                      rightTableRelationColumnNames[i]
-                                    )}`
-                                ),
-                              });
+                              const rightIdentifiers =
+                                rightTableRelationColumnNames.map(
+                                  (n) =>
+                                    sql`${$rights.alias}.${sql.identifier(n)}`
+                                );
+                              const conditions: SQL[] = [];
                               for (
-                                let i = 0;
-                                i < leftJunctionColumnNames.length;
+                                let i = 0, l = leftJunctionColumnNames.length;
+                                i < l;
                                 i++
                               ) {
-                                $rights.where(
+                                conditions.push(
                                   sql`${junctionAlias}.${sql.identifier(
                                     leftJunctionColumnNames[i]
                                   )} = ${$rights.placeholder(
@@ -188,6 +180,25 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                                   )}`
                                 );
                               }
+                              const junctionSubquery = sql.indent`select ${sql.join(
+                                rightJunctionColumnNames.map(
+                                  (n) =>
+                                    sql`${junctionAlias}.${sql.identifier(n)}`
+                                ),
+                                ", "
+                              )}
+from ${leftRelationSource} ${junctionAlias}
+where ${sql.join(
+                                conditions.map((c) => sql.indent(c)),
+                                "\nand\n"
+                              )}`;
+                              $rights.where(
+                                sql`(${sql.join(
+                                  rightIdentifiers,
+                                  ", "
+                                )}) in (${junctionSubquery})`
+                              );
+
                               return isConnection
                                 ? (connection($rights) as any)
                                 : $rights;
