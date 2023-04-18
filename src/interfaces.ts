@@ -1,28 +1,25 @@
 import type {
-  PgSource,
-  PgSourceRelation,
-  PgTypeColumns,
-  PgSourceUnique,
+  PgResource,
+  PgResourceUnique,
+  PgRegistry,
+  PgCodecWithAttributes,
 } from "@dataplan/pg";
 
-// A generic table source with columns, uniques, relations and no parameters.
-export type PgTableSource = PgSource<
-  PgTypeColumns,
-  PgSourceUnique[],
-  {
-    [relationName: string]: PgSourceRelation<
-      PgTypeColumns<string>,
-      PgTypeColumns<string>
-    >;
-  }
+// A generic table resource with attributes, uniques, relations and no parameters.
+export type PgTableResource = PgResource<
+  string,
+  PgCodecWithAttributes,
+  PgResourceUnique[],
+  undefined,
+  PgRegistry
 >;
 
 export interface PgManyToManyRelationDetails {
-  leftTable: PgTableSource;
+  leftTable: PgTableResource;
   leftRelationName: string;
-  junctionTable: PgTableSource;
+  junctionTable: PgTableResource;
   rightRelationName: string;
-  rightTable: PgTableSource;
+  rightTable: PgTableResource;
   allowsMultipleEdgesToNode: boolean;
 }
 
@@ -34,13 +31,13 @@ export interface PgManyToManyRelationDetailsWithExtras
 declare global {
   namespace GraphileBuild {
     interface ScopeObjectFieldsField {
-      isPgManyToManyRelationEdgeColumnField?: boolean;
+      isPgManyToManyRelationEdgeAttributeField?: boolean;
 
       isPgManyToManyRelationField?: boolean;
-      pgManyToManyRightTable?: PgSource<any, any, any, any>;
+      pgManyToManyRightTable?: PgResource;
 
       isPgManyToManyRelationEdgeTableField?: boolean;
-      pgManyToManyJunctionTable?: PgSource<any, any, any, any>;
+      pgManyToManyJunctionTable?: PgResource;
     }
 
     interface ScopeObject {

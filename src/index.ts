@@ -1,10 +1,10 @@
 import type {} from "graphile-config";
 import { PgManyToManyRelationInflectionPlugin } from "./PgManyToManyRelationInflectionPlugin.js";
 import { PgManyToManyRelationPlugin } from "./PgManyToManyRelationPlugin.js";
-import { PgManyToManyRelationEdgeColumnsPlugin } from "./PgManyToManyRelationEdgeColumnsPlugin.js";
+import { PgManyToManyRelationEdgeAttributesPlugin } from "./PgManyToManyRelationEdgeAttributesPlugin.js";
 import { PgManyToManyRelationEdgeTablePlugin } from "./PgManyToManyRelationEdgeTablePlugin.js";
 export type {
-  PgTableSource,
+  PgTableResource,
   PgManyToManyRelationDetails,
   PgManyToManyRelationDetailsWithExtras,
 } from "./interfaces";
@@ -13,7 +13,7 @@ export const PgManyToManyPreset: GraphileConfig.Preset = {
   plugins: [
     PgManyToManyRelationInflectionPlugin,
     PgManyToManyRelationPlugin,
-    PgManyToManyRelationEdgeColumnsPlugin,
+    PgManyToManyRelationEdgeAttributesPlugin,
     PgManyToManyRelationEdgeTablePlugin,
   ],
 };
@@ -21,6 +21,6 @@ export const PgManyToManyPreset: GraphileConfig.Preset = {
 export {
   PgManyToManyRelationInflectionPlugin,
   PgManyToManyRelationPlugin,
-  PgManyToManyRelationEdgeColumnsPlugin,
+  PgManyToManyRelationEdgeAttributesPlugin,
   PgManyToManyRelationEdgeTablePlugin,
 };

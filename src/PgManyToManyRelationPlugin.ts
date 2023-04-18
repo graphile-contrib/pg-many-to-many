@@ -1,10 +1,12 @@
-import { PgSelectSingleStep, TYPES } from "@dataplan/pg";
+import { PgResource, PgSelectSingleStep, TYPES } from "@dataplan/pg";
 import { connection, each, object } from "grafast";
 import type {} from "graphile-config";
 import { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
 import createManyToManyConnectionType from "./createManyToManyConnectionType";
 import manyToManyRelationships from "./manyToManyRelationships";
+import { PgTableResource } from ".";
+import { SQL } from "pg-sql2";
 
 const version = require("../package.json").version;
 
@@ -17,10 +19,13 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
   schema: {
     hooks: {
       init(_, build, _context) {
-        for (const leftTable of build.input.pgSources) {
-          if (!leftTable.codec.columns || leftTable.parameters) {
+        for (const rawResource of Object.values(
+          build.input.pgRegistry.pgResources
+        )) {
+          if (!rawResource.codec.attributes || rawResource.parameters) {
             continue;
           }
+          const leftTable = rawResource as PgTableResource;
 
           const relationships = manyToManyRelationships(leftTable, build);
 
@@ -38,17 +43,17 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
           inflection,
         } = build;
         const {
-          scope: { isPgTableType, pgCodec: leftTableCodec },
+          scope: { isPgClassType, pgCodec: leftTableCodec },
           fieldWithHooks,
           Self,
         } = context;
-        if (!isPgTableType || !leftTableCodec || !leftTableCodec.columns) {
+        if (!isPgClassType || !leftTableCodec || !leftTableCodec.attributes) {
           return fields;
         }
 
-        const leftTables = build.input.pgSources.filter(
-          (s) => s.codec === leftTableCodec && !s.parameters
-        );
+        const leftTables = Object.values(
+          build.input.pgRegistry.pgResources
+        ).filter((s) => s.codec === leftTableCodec && !s.parameters);
         if (leftTables.length !== 1) {
           if (leftTables.length > 2) {
             throw new Error(
@@ -57,7 +62,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
           }
           return fields;
         }
-        const leftTable = leftTables[0];
+        const leftTable = leftTables[0] as PgTableResource;
 
         const relationships = manyToManyRelationships(leftTable, build);
         return extend(
@@ -97,20 +102,27 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                   );
                 }
 
-                const leftJunctionColumnNames =
-                  leftTable.getRelation(leftRelationName).remoteColumns;
-                const leftJunctionColumnCodecs = leftJunctionColumnNames.map(
-                  (colName) => junctionTable.codec.columns[colName].codec
-                );
-                const rightJunctionColumnNames =
-                  junctionTable.getRelation(rightRelationName).localColumns;
-                const rightJunctionColumnCodecs = rightJunctionColumnNames.map(
-                  (colName) => junctionTable.codec.columns[colName].codec
-                );
-                const rightTableRelationColumnNames =
-                  junctionTable.getRelation(rightRelationName).remoteColumns;
+                const leftRelation = leftTable.getRelation(leftRelationName);
+                if (typeof leftRelation.remoteResource.from === "function") {
+                  throw new Error(
+                    `Function resource not supported for relation`
+                  );
+                }
+                const junctionFrom = leftRelation.remoteResource.from;
+                const leftTableAttributeNames = leftRelation.localAttributes;
+                const leftJunctionAttributeNames =
+                  leftRelation.remoteAttributes;
+                const rightRelation =
+                  junctionTable.getRelation(rightRelationName);
+                const rightJunctionAttributeNames =
+                  rightRelation.localAttributes;
+                const rightTableAttributeNames = rightRelation.remoteAttributes;
+                const rightResource = rightRelation.remoteResource;
+                const junctionAlias = sql.identifier(junctionSymbol);
+                const leftAttributeCount = leftJunctionAttributeNames.length;
+                const rightAttributeCount = rightJunctionAttributeNames.length;
 
-                // TODO: throw an error if localColumns or remoteColumns involve
+                // TODO: throw an error if localAttributes or remoteAttributes involve
                 // `via` or `expression` - we only want pure column relations.
 
                 function makeFields(isConnection: boolean) {
@@ -125,7 +137,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                         [manyRelationFieldName]: fieldWithHooks(
                           {
                             fieldName: manyRelationFieldName,
-                            pgSource: rightTable,
+                            pgFieldResource: rightTable,
                             isPgFieldConnection: isConnection,
                             isPgFieldSimpleCollection: !isConnection,
                             isPgManyToManyRelationField: true,
@@ -143,156 +155,169 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                                   )
                                 ),
                             args: Object.create(null),
-                            plan(
-                              $left: PgSelectSingleStep<any, any, any, any>
-                            ) {
-                              const $junctions =
-                                $left.manyRelation(leftRelationName);
-                              // Fetch the identifiers and the return the relevant
-                              // rightTable entries for them.
-                              const $rightIdentifiers = each(
-                                $junctions,
-                                ($junction) => {
-                                  const spec = Object.create(null);
+                            plan:
+                              allowsMultipleEdgesToNode && isConnection
+                                ? // Distinct join strategy so we can determine the joined-on records for edges.
+                                  ($left: PgSelectSingleStep) => {
+                                    const $rights = rightResource.find();
 
-                                  for (const colName of leftJunctionColumnNames) {
-                                    spec[colName] = (
-                                      $junction as PgSelectSingleStep<
-                                        any,
-                                        any,
-                                        any,
-                                        any
-                                      >
-                                    ).get(colName);
-                                  }
-                                  for (const colName of rightJunctionColumnNames) {
-                                    spec[colName] = (
-                                      $junction as PgSelectSingleStep<
-                                        any,
-                                        any,
-                                        any,
-                                        any
-                                      >
-                                    ).get(colName);
-                                  }
+                                    const leftConditions: SQL[] = [];
+                                    for (
+                                      let i = 0;
+                                      i < leftAttributeCount;
+                                      i++
+                                    ) {
+                                      leftConditions.push(
+                                        sql`${junctionAlias}.${sql.identifier(
+                                          leftJunctionAttributeNames[i]
+                                        )} = ${$rights.placeholder(
+                                          $left.get(leftTableAttributeNames[i])
+                                        )}`
+                                      );
+                                    }
 
-                                  return object(spec);
-                                }
-                              );
-                              const $rights = rightTable.find();
+                                    const rightConditions: SQL[] = [];
+                                    for (
+                                      let i = 0;
+                                      i < rightAttributeCount;
+                                      i++
+                                    ) {
+                                      rightConditions.push(
+                                        sql`${junctionAlias}.${sql.identifier(
+                                          rightJunctionAttributeNames[i]
+                                        )} = ${$rights.alias}.${sql.identifier(
+                                          rightTableAttributeNames[i]
+                                        )}`
+                                      );
+                                    }
 
-                              // Join the rights to our junction entries; we do
-                              // this because we need to be able to access the
-                              // junction identifier in
-                              // PgManyToManyRelationEdgeTablePlugin (otherwise we
-                              // could have just done a `where` subquery).
-                              const junctionAlias =
-                                sql.identifier(junctionSymbol);
-                              if (allowsMultipleEdgesToNode) {
-                                $rights.join({
-                                  type: "inner",
-                                  source: sql`(${sql.indent`\
-select distinct ${sql.join(
-                                    leftJunctionColumnNames.map(
-                                      (colName, i) =>
-                                        sql`(el.el->>${sql.literal(
-                                          colName
-                                        )})::${
-                                          leftJunctionColumnCodecs[i].sqlType
-                                        } as ${sql.identifier(colName)}`
-                                    ),
-                                    ", "
-                                  )}, ${sql.join(
-                                    rightJunctionColumnNames.map(
-                                      (colName, i) =>
-                                        sql`(el.el->>${sql.literal(
-                                          colName
-                                        )})::${
-                                          rightJunctionColumnCodecs[i].sqlType
-                                        } as ${sql.identifier(colName)}`
-                                    ),
-                                    ", "
-                                  )} from json_array_elements(${$rights.placeholder(
-                                    $rightIdentifiers,
-                                    TYPES.json
-                                  )}) as el(el)`})`,
-                                  alias: junctionAlias,
-                                  conditions: [
-                                    ...rightJunctionColumnNames.map(
-                                      (junctionColName, i) => {
-                                        const rightColName =
-                                          rightTableRelationColumnNames[i];
-                                        const sqlRight = sql`${
-                                          $rights.alias
-                                        }.${sql.identifier(
-                                          // TODO: is this safe? What if this column has `via` or `expression`?
-                                          rightColName
-                                        )}`;
-                                        return sql`${junctionAlias}.${sql.identifier(
-                                          junctionColName
-                                        )} = ${sqlRight}`;
-                                      }
-                                    ),
-                                  ],
-                                });
-                              } else {
-                                const junctionTableSource =
-                                  junctionTable.source;
-                                if (typeof junctionTableSource === "function") {
-                                  throw new Error(`Function source forbidden`);
-                                }
-                                $rights.join({
-                                  type: "inner",
-                                  source: junctionTableSource,
-                                  alias: junctionAlias,
-                                  conditions: [
-                                    sql`(${sql.join(
-                                      leftJunctionColumnNames.map(
-                                        (junctionColName, i) => {
-                                          return sql`${junctionAlias}.${sql.identifier(
-                                            // TODO: is this safe? What if this column has `via` or `expression`?
-                                            junctionColName
-                                          )}`;
-                                        }
+                                    // Join to a distinct version of junction table
+                                    const leftDistinctFrom = sql`(${sql.indent`select distinct ${sql.join(
+                                      leftJunctionAttributeNames.map(
+                                        (c) =>
+                                          sql`${junctionAlias}.${sql.identifier(
+                                            c
+                                          )}`
                                       ),
                                       ", "
-                                    )}) in (
-                              select distinct ${sql.join(
-                                leftJunctionColumnNames.map(
-                                  (colName, i) =>
-                                    sql`(el.el->>${sql.literal(colName)})::${
-                                      leftJunctionColumnCodecs[i].sqlType
-                                    } as ${sql.identifier(colName)}`
-                                ),
-                                ", "
-                              )} from json_array_elements(${$rights.placeholder(
-                                      $rightIdentifiers,
-                                      TYPES.json
-                                    )}) as el(el))`,
+                                    )}, ${sql.join(
+                                      rightJunctionAttributeNames.map(
+                                        (c) =>
+                                          sql`${junctionAlias}.${sql.identifier(
+                                            c
+                                          )}`
+                                      ),
+                                      ", "
+                                    )}\n
+from ${junctionFrom} ${junctionAlias}
+where ${sql.join(leftConditions, "\nand ")}
+`})`;
+                                    $rights.join({
+                                      type: "inner",
+                                      conditions: rightConditions,
+                                      alias: junctionAlias,
+                                      from: leftDistinctFrom,
+                                    });
 
-                                    ...rightJunctionColumnNames.map(
-                                      (junctionColName, i) => {
-                                        const rightColName =
-                                          rightTableRelationColumnNames[i];
-                                        const sqlRight = sql`${
-                                          $rights.alias
-                                        }.${sql.identifier(
-                                          // TODO: is this safe? What if this column has `via` or `expression`?
-                                          rightColName
-                                        )}`;
-                                        return sql`${junctionAlias}.${sql.identifier(
-                                          junctionColName
-                                        )} = ${sqlRight}`;
-                                      }
-                                    ),
-                                  ],
-                                });
-                              }
+                                    return connection($rights) as any;
+                                  }
+                                : isConnection
+                                ? // Simple join strategy so we can grab attributes on the connection edges
+                                  ($left: PgSelectSingleStep) => {
+                                    const $rights = rightResource.find();
 
-                              return isConnection
-                                ? (connection($rights) as any)
-                                : $rights;
-                            },
+                                    const leftConditions: SQL[] = [];
+                                    for (
+                                      let i = 0;
+                                      i < leftAttributeCount;
+                                      i++
+                                    ) {
+                                      leftConditions.push(
+                                        sql`${junctionAlias}.${sql.identifier(
+                                          leftJunctionAttributeNames[i]
+                                        )} = ${$rights.placeholder(
+                                          $left.get(leftTableAttributeNames[i])
+                                        )}`
+                                      );
+                                    }
+
+                                    const rightConditions: SQL[] = [];
+                                    for (
+                                      let i = 0;
+                                      i < rightAttributeCount;
+                                      i++
+                                    ) {
+                                      rightConditions.push(
+                                        sql`${junctionAlias}.${sql.identifier(
+                                          rightJunctionAttributeNames[i]
+                                        )} = ${$rights.alias}.${sql.identifier(
+                                          rightTableAttributeNames[i]
+                                        )}`
+                                      );
+                                    }
+
+                                    // Join to junction table
+                                    $rights.join({
+                                      type: "inner",
+                                      conditions: rightConditions,
+                                      alias: junctionAlias,
+                                      from: junctionFrom,
+                                    });
+
+                                    // Limit to only the junction entries that match $left
+                                    for (const leftCondition of leftConditions) {
+                                      $rights.where(leftCondition);
+                                    }
+
+                                    return connection($rights) as any;
+                                  }
+                                : // Subquery strategy - most efficient, but we cannot query attributes from the junction table
+                                  ($left: PgSelectSingleStep) => {
+                                    const $rights = rightResource.find();
+
+                                    const leftConditions: SQL[] = [];
+                                    for (
+                                      let i = 0;
+                                      i < leftAttributeCount;
+                                      i++
+                                    ) {
+                                      leftConditions.push(
+                                        sql`${junctionAlias}.${sql.identifier(
+                                          leftJunctionAttributeNames[i]
+                                        )} = ${$rights.placeholder(
+                                          $left.get(leftTableAttributeNames[i])
+                                        )}`
+                                      );
+                                    }
+
+                                    const rightJunctionAttributes = sql`(${sql.join(
+                                      rightJunctionAttributeNames.map(
+                                        (n) =>
+                                          sql`${junctionAlias}.${sql.identifier(
+                                            n
+                                          )}`
+                                      ),
+                                      ", "
+                                    )})`;
+                                    const rightTableAttribute = sql`(${sql.join(
+                                      rightTableAttributeNames.map(
+                                        (n) =>
+                                          sql`${$rights.alias}.${sql.identifier(
+                                            n
+                                          )}`
+                                      ),
+                                      ", "
+                                    )})`;
+                                    const junctionSubquery = sql.indent`select ${rightJunctionAttributes}
+from ${junctionFrom} ${junctionAlias}
+where ${sql.join(leftConditions, "\nand ")}`;
+
+                                    $rights.where(
+                                      sql`${rightTableAttribute} in (${junctionSubquery})`
+                                    );
+
+                                    return $rights;
+                                  },
                           })
                         ),
                       },

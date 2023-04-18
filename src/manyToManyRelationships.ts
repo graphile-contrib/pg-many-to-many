@@ -1,6 +1,5 @@
-import { resolveSource } from "@dataplan/pg";
 import type {
-  PgTableSource,
+  PgTableResource,
   PgManyToManyRelationDetails,
 } from "./interfaces.js";
 
@@ -18,7 +17,7 @@ const defaultBehavior = "manyToMany select";
 // and identify a `junctionTable` and `rightTable`.
 // Returns a list of data objects for these many-to-many relationships.
 export default function manyToManyRelationships(
-  leftTable: PgTableSource,
+  leftTable: PgTableResource,
   build: GraphileBuild.Build
 ): PgManyToManyRelationDetails[] {
   return Object.entries(leftTable.getRelations()).reduce(
@@ -32,9 +31,8 @@ export default function manyToManyRelationships(
         return memoLeft;
       }
 
-      const junctionTable: PgTableSource = resolveSource(
-        junctionLeftRelation.source
-      );
+      const junctionTable: PgTableResource =
+        junctionLeftRelation.remoteResource;
 
       const junctionBehavior = build.pgGetBehavior(
         junctionLeftRelation.extensions
@@ -56,8 +54,11 @@ export default function manyToManyRelationships(
             return false;
           }
           if (
-            rel.source === leftTable &&
-            arraysAreEqual(rel.localColumns, junctionLeftRelation.remoteColumns)
+            rel.remoteResource === leftTable &&
+            arraysAreEqual(
+              rel.localAttributes,
+              junctionLeftRelation.remoteAttributes
+            )
           ) {
             return false;
           }
@@ -74,7 +75,7 @@ export default function manyToManyRelationships(
           return true;
         })
         .reduce((memoRight, [rightRelationName, junctionRightRelation]) => {
-          const rightTable = resolveSource(junctionRightRelation.source);
+          const rightTable = junctionRightRelation.remoteResource;
 
           const rightTableBehavior = build.pgGetBehavior(rightTable.extensions);
           if (
@@ -96,10 +97,17 @@ export default function manyToManyRelationships(
           const junctionLeftConstraintIsUnique = !!junctionTable.uniques.find(
             (c) =>
               // TODO: order is unimportant
-              arraysAreEqual(c.columns, junctionLeftRelation.remoteColumns)
+              arraysAreEqual(
+                c.attributes,
+                junctionLeftRelation.remoteAttributes
+              )
           );
           const junctionRightConstraintIsUnique = !!junctionTable.uniques.find(
-            (c) => arraysAreEqual(c.columns, junctionRightRelation.localColumns)
+            (c) =>
+              arraysAreEqual(
+                c.attributes,
+                junctionRightRelation.localAttributes
+              )
           );
           if (
             junctionLeftConstraintIsUnique ||
@@ -108,12 +116,12 @@ export default function manyToManyRelationships(
             return memoRight;
           }
 
-          const relationColumns = [
-            ...junctionLeftRelation.remoteColumns,
-            ...junctionRightRelation.localColumns,
+          const relationAttributes = [
+            ...junctionLeftRelation.remoteAttributes,
+            ...junctionRightRelation.localAttributes,
           ].sort();
           const allowsMultipleEdgesToNode = !junctionTable.uniques.find((c) =>
-            arraysAreEqual(c.columns.concat().sort(), relationColumns)
+            arraysAreEqual(c.attributes.concat().sort(), relationAttributes)
           );
 
           memoRight.push({

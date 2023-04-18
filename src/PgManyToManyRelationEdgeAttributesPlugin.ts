@@ -7,8 +7,8 @@ import { junctionSymbol } from "./PgManyToManyRelationPlugin";
 
 const version = require("../package.json").version;
 
-export const PgManyToManyRelationEdgeColumnsPlugin: GraphileConfig.Plugin = {
-  name: "PgManyToManyRelationEdgeColumnsPlugin",
+export const PgManyToManyRelationEdgeAttributesPlugin: GraphileConfig.Plugin = {
+  name: "PgManyToManyRelationEdgeAttributesPlugin",
   description: `\
 When a many-to-many relationship is unique (i.e. there can be at most one
 record in the junction table for each record in the left and right tables),
@@ -39,9 +39,9 @@ junction table.`,
         } = pgManyToManyRelationship;
 
         const junctionLeftKeyAttributeNames =
-          leftTable.getRelation(leftRelationName).remoteColumns;
+          leftTable.getRelation(leftRelationName).remoteAttributes;
         const junctionRightKeyAttributeNames =
-          junctionTable.getRelation(rightRelationName).localColumns;
+          junctionTable.getRelation(rightRelationName).localAttributes;
 
         if (allowsMultipleEdgesToNode) {
           return fields;
@@ -49,29 +49,29 @@ junction table.`,
 
         return extend(
           fields,
-          Object.entries(junctionTable.codec.columns).reduce(
-            (memo, [columnName, column]) =>
+          Object.entries(junctionTable.codec.attributes).reduce(
+            (memo, [attributeName, attribute]) =>
               build.recoverable(memo, () => {
-                const behavior = build.pgGetBehavior(column.extensions);
+                const behavior = build.pgGetBehavior(attribute.extensions);
                 if (!build.behavior.matches(behavior, "select", "select")) {
                   return memo;
                 }
 
                 // Skip left and right key attributes
-                if (junctionLeftKeyAttributeNames.includes(columnName)) {
+                if (junctionLeftKeyAttributeNames.includes(attributeName)) {
                   return memo;
                 }
-                if (junctionRightKeyAttributeNames.includes(columnName)) {
+                if (junctionRightKeyAttributeNames.includes(attributeName)) {
                   return memo;
                 }
 
-                const codec = column.codec;
-                const fieldName = inflection.column({
+                const codec = attribute.codec;
+                const fieldName = inflection.attribute({
                   codec: junctionTable.codec,
-                  columnName,
+                  attributeName,
                 });
                 const ReturnType = build.getGraphQLTypeByPgCodec(
-                  column.codec,
+                  attribute.codec,
                   "output"
                 );
                 if (!ReturnType || !isOutputType(ReturnType)) {
@@ -84,43 +84,38 @@ junction table.`,
                     [fieldName]: fieldWithHooks(
                       {
                         fieldName,
-                        isPgManyToManyRelationEdgeColumnField: true,
-                        pgFieldCodec: column.codec,
+                        isPgManyToManyRelationEdgeAttributeField: true,
+                        pgFieldCodec: attribute.codec,
                       },
                       () => ({
-                        description: column.description,
+                        description: attribute.description,
                         type: nullableIf(
-                          !column.notNull &&
-                            !column.codec.notNull &&
-                            !column.extensions?.tags?.notNull,
+                          !attribute.notNull &&
+                            !attribute.codec.notNull &&
+                            !attribute.extensions?.tags?.notNull,
                           ReturnType
                         ),
                         plan(
-                          $edge: EdgeStep<
-                            any,
-                            any,
-                            any,
-                            PgSelectSingleStep<any, any, any, any>
-                          >
+                          $edge: EdgeStep<any, any, any, PgSelectSingleStep>
                         ) {
                           const $right = $edge.node();
                           return $right.select(
                             sql`${sql.identifier(
                               junctionSymbol
-                            )}.${sql.identifier(columnName)}`,
+                            )}.${sql.identifier(attributeName)}`,
                             codec
                           );
                         },
                       })
                     ),
                   },
-                  `PgManyToMany adding edge field for '${junctionTable.name}.${columnName}' to ${Self.name}.`
+                  `PgManyToMany adding edge field for '${junctionTable.name}.${attributeName}' to ${Self.name}.`
                 );
                 return memo;
               }),
             Object.create(null)
           ),
-          `Adding columns to '${junctionTable.name}'`
+          `Adding attributes to '${junctionTable.name}'`
         );
       },
     },
