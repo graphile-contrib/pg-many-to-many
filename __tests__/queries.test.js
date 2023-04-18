@@ -50,10 +50,10 @@ const queryResult = async (sqlSchema, fixture) => {
 
     const { schema, resolvedPreset } = await makeSchema({
       extends: [postgraphilePresetAmber, makeV4Preset({}), PgManyToManyPreset],
-      pgConfigs: /* makePgConfigs(DATABASE_URL, ["app_public"]) */ [
+      pgServices: /* makePgServices(DATABASE_URL, ["app_public"]) */ [
         {
           name: "main",
-          adaptor: "@dataplan/pg/adaptors/node-postgres",
+          adaptor: "@dataplan/pg/adaptors/pg",
           withPgClientKey: "withPgClient",
           pgSettingsKey: "pgSettings",
           pgSettingsForIntrospection: {},
@@ -72,13 +72,9 @@ const queryResult = async (sqlSchema, fixture) => {
       schema,
       source: query,
     };
-    await hookArgs(
-      args,
-      {
-        /* optional details for your context callback(s) to use */
-      },
-      resolvedPreset
-    );
+    await hookArgs(args, resolvedPreset, {
+      /* optional details for your context callback(s) to use */
+    });
 
     return await graphql(args);
   });
