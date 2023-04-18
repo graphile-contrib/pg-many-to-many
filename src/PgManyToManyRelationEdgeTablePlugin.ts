@@ -34,11 +34,11 @@ field to the edges where all of the join records can be traversed.`,
         // E.g. users(id) references posts(author_id)
         const remoteType = this.tableType(junctionTable.codec);
         const rightRelation = junctionTable.getRelation(rightRelationName);
-        const rightColumns = rightRelation.localColumns as string[];
+        const rightAttributes = rightRelation.localAttributes as string[];
         return this.camelCase(
-          `${this.pluralize(remoteType)}-by-${this._joinColumnNames(
+          `${this.pluralize(remoteType)}-by-${this._joinAttributeNames(
             junctionTable.codec,
-            rightColumns
+            rightAttributes
           )}`
         );
       },
@@ -96,15 +96,15 @@ field to the edges where all of the join records can be traversed.`,
           return fields;
         }
 
-        const leftColumns =
-          leftTable.getRelation(leftRelationName).remoteColumns;
-        const leftColumnCodecs = leftColumns.map(
-          (colName) => junctionTable.codec.columns[colName].codec
+        const leftAttributes =
+          leftTable.getRelation(leftRelationName).remoteAttributes;
+        const leftAttributeCodecs = leftAttributes.map(
+          (colName) => junctionTable.codec.attributes[colName].codec
         );
-        const rightColumns =
-          junctionTable.getRelation(rightRelationName).localColumns;
-        const rightRemoteColumns =
-          junctionTable.getRelation(rightRelationName).remoteColumns;
+        const rightAttributes =
+          junctionTable.getRelation(rightRelationName).localAttributes;
+        const rightRemoteAttributes =
+          junctionTable.getRelation(rightRelationName).remoteAttributes;
 
         const JunctionTableType = build.getGraphQLTypeByPgCodec(
           junctionTable.codec,
@@ -143,7 +143,7 @@ field to the edges where all of the join records can be traversed.`,
                 [fieldName]: fieldWithHooks(
                   {
                     fieldName,
-                    pgResource: junctionTable,
+                    pgFieldResource: junctionTable,
                     isPgFieldConnection: isConnection,
                     isPgFieldSimpleCollection: !isConnection,
                     isPgManyToManyRelationEdgeTableField: true,
@@ -168,23 +168,24 @@ field to the edges where all of the join records can be traversed.`,
                       // match
                       const spec = Object.create(null);
 
-                      // Add left columns to spec
-                      for (let i = 0, l = leftColumns.length; i < l; i++) {
-                        const junctionColumnName = leftColumns[i];
-                        const junctionColumnCodec = leftColumnCodecs[i];
-                        spec[junctionColumnName] = $right.select(
+                      // Add left attributes to spec
+                      for (let i = 0, l = leftAttributes.length; i < l; i++) {
+                        const junctionAttributeName = leftAttributes[i];
+                        const junctionAttributeCodec = leftAttributeCodecs[i];
+                        spec[junctionAttributeName] = $right.select(
                           sql`${sql.identifier(
                             junctionSymbol
-                          )}.${sql.identifier(junctionColumnName)}`,
-                          junctionColumnCodec
+                          )}.${sql.identifier(junctionAttributeName)}`,
+                          junctionAttributeCodec
                         );
                       }
 
-                      // Add right columns to spec
-                      for (let i = 0, l = rightColumns.length; i < l; i++) {
-                        const junctionColumnName = rightColumns[i];
-                        const rightColumnName = rightRemoteColumns[i];
-                        spec[junctionColumnName] = $right.get(rightColumnName);
+                      // Add right attributes to spec
+                      for (let i = 0, l = rightAttributes.length; i < l; i++) {
+                        const junctionAttributeName = rightAttributes[i];
+                        const rightAttributeName = rightRemoteAttributes[i];
+                        spec[junctionAttributeName] =
+                          $right.get(rightAttributeName);
                       }
 
                       // These are the equivalent junction records for this entry

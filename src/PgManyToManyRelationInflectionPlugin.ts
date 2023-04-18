@@ -13,18 +13,18 @@ const processDetails = (details: PgManyToManyRelationDetails) => {
     // rightTable,
   } = details;
   const junctionRightRelation = junctionTable.getRelation(rightRelationName);
-  const columnInflectionDataFromJunction = (columnName: string) => {
+  const attributeInflectionDataFromJunction = (attributeName: string) => {
     return {
-      columnName,
+      attributeName,
       codec: junctionTable.codec,
     };
   };
   const junctionLeftKeyAttributes = leftTable
     .getRelation(leftRelationName)
-    .remoteColumns.map(columnInflectionDataFromJunction);
+    .remoteAttributes.map(attributeInflectionDataFromJunction);
   const junctionRightKeyAttributes = junctionTable
     .getRelation(rightRelationName)
-    .localColumns.map(columnInflectionDataFromJunction);
+    .localAttributes.map(attributeInflectionDataFromJunction);
   return {
     ...details,
     junctionRightRelation,
@@ -59,7 +59,7 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
             ...junctionLeftKeyAttributes,
             ...junctionRightKeyAttributes,
           ]
-            .map((attr) => this.column(attr))
+            .map((attr) => this.attribute(attr))
             .join("-and-")}`
         );
       },

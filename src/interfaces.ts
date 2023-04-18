@@ -2,13 +2,13 @@ import type {
   PgResource,
   PgResourceUnique,
   PgRegistry,
-  PgCodecWithColumns,
+  PgCodecWithAttributes,
 } from "@dataplan/pg";
 
-// A generic table resource with columns, uniques, relations and no parameters.
+// A generic table resource with attributes, uniques, relations and no parameters.
 export type PgTableResource = PgResource<
   string,
-  PgCodecWithColumns,
+  PgCodecWithAttributes,
   PgResourceUnique[],
   undefined,
   PgRegistry
@@ -31,7 +31,7 @@ export interface PgManyToManyRelationDetailsWithExtras
 declare global {
   namespace GraphileBuild {
     interface ScopeObjectFieldsField {
-      isPgManyToManyRelationEdgeColumnField?: boolean;
+      isPgManyToManyRelationEdgeAttributeField?: boolean;
 
       isPgManyToManyRelationField?: boolean;
       pgManyToManyRightTable?: PgResource;

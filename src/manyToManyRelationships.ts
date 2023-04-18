@@ -55,7 +55,10 @@ export default function manyToManyRelationships(
           }
           if (
             rel.remoteResource === leftTable &&
-            arraysAreEqual(rel.localColumns, junctionLeftRelation.remoteColumns)
+            arraysAreEqual(
+              rel.localAttributes,
+              junctionLeftRelation.remoteAttributes
+            )
           ) {
             return false;
           }
@@ -94,10 +97,17 @@ export default function manyToManyRelationships(
           const junctionLeftConstraintIsUnique = !!junctionTable.uniques.find(
             (c) =>
               // TODO: order is unimportant
-              arraysAreEqual(c.columns, junctionLeftRelation.remoteColumns)
+              arraysAreEqual(
+                c.attributes,
+                junctionLeftRelation.remoteAttributes
+              )
           );
           const junctionRightConstraintIsUnique = !!junctionTable.uniques.find(
-            (c) => arraysAreEqual(c.columns, junctionRightRelation.localColumns)
+            (c) =>
+              arraysAreEqual(
+                c.attributes,
+                junctionRightRelation.localAttributes
+              )
           );
           if (
             junctionLeftConstraintIsUnique ||
@@ -106,12 +116,12 @@ export default function manyToManyRelationships(
             return memoRight;
           }
 
-          const relationColumns = [
-            ...junctionLeftRelation.remoteColumns,
-            ...junctionRightRelation.localColumns,
+          const relationAttributes = [
+            ...junctionLeftRelation.remoteAttributes,
+            ...junctionRightRelation.localAttributes,
           ].sort();
           const allowsMultipleEdgesToNode = !junctionTable.uniques.find((c) =>
-            arraysAreEqual(c.columns.concat().sort(), relationColumns)
+            arraysAreEqual(c.attributes.concat().sort(), relationAttributes)
           );
 
           memoRight.push({
