@@ -11,7 +11,6 @@ function arraysAreEqual<A extends readonly any[]>(
     array1.length === array2.length && array1.every((el, i) => array2[i] === el)
   );
 }
-const defaultBehavior = "manyToMany select";
 
 // Given a `leftTable`, trace through the foreign key relations
 // and identify a `junctionTable` and `rightTable`.
@@ -22,11 +21,11 @@ export default function manyToManyRelationships(
 ): PgManyToManyRelationDetails[] {
   return Object.entries(leftTable.getRelations()).reduce(
     (memoLeft, [leftRelationName, junctionLeftRelation]) => {
-      const relationBehavior = build.pgGetBehavior(
-        junctionLeftRelation.extensions
-      );
       if (
-        !build.behavior.matches(relationBehavior, "manyToMany", defaultBehavior)
+        !build.behavior.pgCodecRelationMatches(
+          junctionLeftRelation,
+          "manyToMany"
+        )
       ) {
         return memoLeft;
       }
@@ -34,16 +33,12 @@ export default function manyToManyRelationships(
       const junctionTable: PgTableResource =
         junctionLeftRelation.remoteResource;
 
-      const junctionBehavior = build.pgGetBehavior(
-        junctionLeftRelation.extensions
-      );
       if (
-        !build.behavior.matches(
-          junctionBehavior,
-          "manyToMany",
-          defaultBehavior
+        !build.behavior.pgCodecRelationMatches(
+          junctionLeftRelation,
+          "manyToMany"
         ) ||
-        !build.behavior.matches(junctionBehavior, "select", defaultBehavior)
+        !build.behavior.pgCodecRelationMatches(junctionLeftRelation, "select")
       ) {
         return memoLeft;
       }
@@ -62,14 +57,7 @@ export default function manyToManyRelationships(
           ) {
             return false;
           }
-          const otherRelationBehavior = build.pgGetBehavior(rel.extensions);
-          if (
-            !build.behavior.matches(
-              otherRelationBehavior,
-              "manyToMany",
-              defaultBehavior
-            )
-          ) {
+          if (!build.behavior.pgCodecRelationMatches(rel, "manyToMany")) {
             return false;
           }
           return true;
@@ -77,18 +65,9 @@ export default function manyToManyRelationships(
         .reduce((memoRight, [rightRelationName, junctionRightRelation]) => {
           const rightTable = junctionRightRelation.remoteResource;
 
-          const rightTableBehavior = build.pgGetBehavior(rightTable.extensions);
           if (
-            !build.behavior.matches(
-              rightTableBehavior,
-              "manyToMany",
-              defaultBehavior
-            ) ||
-            !build.behavior.matches(
-              rightTableBehavior,
-              "select",
-              defaultBehavior
-            )
+            !build.behavior.pgResourceMatches(rightTable, "manyToMany") ||
+            !build.behavior.pgResourceMatches(rightTable, "select")
           ) {
             return memoRight;
           }

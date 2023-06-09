@@ -5,36 +5,79 @@ import { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
 import createManyToManyConnectionType from "./createManyToManyConnectionType";
 import manyToManyRelationships from "./manyToManyRelationships";
-import { PgTableResource } from ".";
+import { PgManyToManyRelationDetails, PgTableResource } from ".";
 import { SQL } from "pg-sql2";
 
 const version = require("../package.json").version;
 
 export const junctionSymbol = Symbol("junction");
 
+declare global {
+  namespace GraphileBuild {
+    interface BehaviorEntities {
+      pgManyToMany: PgManyToManyRelationDetails;
+    }
+    interface Build {
+      pgManyToManyRealtionshipsByResource: Map<
+        PgTableResource,
+        PgManyToManyRelationDetails[]
+      >;
+    }
+  }
+}
+
+function isPgTableResource(r: PgResource): r is PgTableResource {
+  return !!r.codec.attributes && !r.parameters;
+}
+
 export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
   name: "PgManyToManyRelationPlugin",
   version,
 
   schema: {
+    entityBehavior: {
+      pgResource: "manyToMany select",
+      pgCodecRelation: "manyToMany select",
+      pgManyToMany: {
+        after: ["default", "inferred"],
+        provides: ["override"],
+        callback(behavior, relation, build) {
+          const { junctionTable, rightTable, rightRelationName } = relation;
+          const overrides = build.pgGetBehavior([
+            junctionTable.extensions,
+            junctionTable.getRelation(rightRelationName).extensions,
+            rightTable.extensions,
+          ]);
+          return ["manyToMany connection -list", behavior, overrides];
+        },
+      },
+    },
+
     hooks: {
+      build(build) {
+        build.pgManyToManyRealtionshipsByResource = new Map();
+        return build;
+      },
+
       init(_, build, _context) {
-        for (const rawResource of Object.values(
+        for (const leftTable of Object.values(
           build.input.pgRegistry.pgResources
         )) {
-          if (!rawResource.codec.attributes || rawResource.parameters) {
+          if (!isPgTableResource(leftTable)) {
             continue;
           }
-          const leftTable = rawResource as PgTableResource;
-
           const relationships = manyToManyRelationships(leftTable, build);
-
+          build.pgManyToManyRealtionshipsByResource.set(
+            leftTable,
+            relationships
+          );
           for (const relationship of relationships) {
             createManyToManyConnectionType(relationship, build, leftTable);
           }
         }
         return _;
       },
+
       GraphQLObjectType_fields(fields, build, context) {
         const {
           extend,
@@ -64,7 +107,11 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
         }
         const leftTable = leftTables[0] as PgTableResource;
 
-        const relationships = manyToManyRelationships(leftTable, build);
+        const relationships =
+          build.pgManyToManyRealtionshipsByResource.get(leftTable);
+        if (!relationships || relationships.length === 0) {
+          return fields;
+        }
         return extend(
           fields,
           relationships.reduce(
@@ -331,26 +378,19 @@ where ${sql.join(leftConditions, "\nand ")}`;
                   );
                 }
 
-                const behavior = build.pgGetBehavior([
-                  junctionTable.extensions,
-                  junctionTable.getRelation(rightRelationName).extensions,
-                  rightTable.extensions,
-                ]);
-
                 if (
-                  build.behavior.matches(behavior, "manyToMany", "manyToMany")
+                  build.behavior.pgManyToManyMatches(relationship, "manyToMany")
                 ) {
                   if (
-                    build.behavior.matches(
-                      behavior,
-                      "connection",
-                      "connection -list"
+                    build.behavior.pgManyToManyMatches(
+                      relationship,
+                      "connection"
                     )
                   ) {
                     makeFields(true);
                   }
                   if (
-                    build.behavior.matches(behavior, "list", "connection -list")
+                    build.behavior.pgManyToManyMatches(relationship, "list")
                   ) {
                     makeFields(false);
                   }

@@ -52,8 +52,12 @@ junction table.`,
           Object.entries(junctionTable.codec.attributes).reduce(
             (memo, [attributeName, attribute]) =>
               build.recoverable(memo, () => {
-                const behavior = build.pgGetBehavior(attribute.extensions);
-                if (!build.behavior.matches(behavior, "select", "select")) {
+                if (
+                  !build.behavior.pgCodecAttributeMatches(
+                    [junctionTable.codec, attribute],
+                    "select"
+                  )
+                ) {
                   return memo;
                 }
 

@@ -205,16 +205,17 @@ field to the edges where all of the join records can be traversed.`,
             )
           );
         }
-        const behavior = build.pgGetBehavior([
-          junctionTable.getRelation(rightRelationName).extensions,
-          junctionTable.extensions,
-        ]);
         if (
-          build.behavior.matches(behavior, "connection", "connection -list")
+          build.behavior.pgManyToManyMatches(
+            pgManyToManyRelationship,
+            "connection"
+          )
         ) {
           makeFields(true);
         }
-        if (build.behavior.matches(behavior, "list", "connection -list")) {
+        if (
+          build.behavior.pgManyToManyMatches(pgManyToManyRelationship, "list")
+        ) {
           makeFields(false);
         }
         return fields;
