@@ -1,7 +1,7 @@
-import { PgSelectSingleStep } from "@dataplan/pg";
-import { EdgeStep, connection } from "grafast";
+import type { PgSelectSingleStep } from "@dataplan/pg";
+import type { EdgeStep } from "grafast";
 import type {} from "graphile-config";
-import { GraphQLObjectType } from "graphql";
+import type { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
 import { junctionSymbol } from "./PgManyToManyRelationPlugin";
 
@@ -71,6 +71,7 @@ field to the edges where all of the join records can be traversed.`,
           extend,
           getTypeByName,
           graphql: { GraphQLNonNull, GraphQLList },
+          grafast: { connection },
           inflection,
           sql,
         } = build;

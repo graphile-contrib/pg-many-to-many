@@ -1,12 +1,11 @@
-import { PgResource, PgSelectSingleStep, TYPES } from "@dataplan/pg";
-import { connection, each, object } from "grafast";
+import type { PgResource, PgSelectSingleStep } from "@dataplan/pg";
 import type {} from "graphile-config";
-import { GraphQLObjectType } from "graphql";
+import type { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
 import createManyToManyConnectionType from "./createManyToManyConnectionType";
 import manyToManyRelationships from "./manyToManyRelationships";
 import { PgManyToManyRelationDetails, PgTableResource } from ".";
-import { SQL } from "pg-sql2";
+import type { SQL } from "pg-sql2";
 
 const version = require("../package.json").version;
 
@@ -83,6 +82,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
           extend,
           sql,
           graphql: { GraphQLNonNull, GraphQLList },
+          grafast: { connection },
           inflection,
         } = build;
         const {

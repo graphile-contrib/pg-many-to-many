@@ -1,6 +1,6 @@
-import { PgSelectSingleStep } from "@dataplan/pg";
-import { ConnectionStep, EdgeStep, ExecutableStep } from "grafast";
-import { GraphQLObjectType, GraphQLOutputType } from "graphql";
+import type { PgSelectSingleStep } from "@dataplan/pg";
+import type { ConnectionStep, EdgeStep } from "grafast";
+import type { GraphQLObjectType, GraphQLOutputType } from "graphql";
 import {
   PgTableResource,
   PgManyToManyRelationDetails,
@@ -22,6 +22,7 @@ export default function createManyToManyConnectionType(
   const {
     inflection,
     graphql: { GraphQLNonNull, GraphQLList },
+    grafast: { ConnectionStep, EdgeStep },
     getTypeByName,
     options: { pgForbidSetofFunctionsToReturnNull = false },
     nullableIf,
@@ -47,8 +48,12 @@ export default function createManyToManyConnectionType(
       // nodeType: TableType,
       pgManyToManyRelationship: relationship,
     },
-    ExecutableStep as any,
     () => ({
+      assertStep($step: any): asserts $step is EdgeStep<any, any, any, any> {
+        if (!($step instanceof EdgeStep)) {
+          throw new Error(`Expected ${$step} to be an EdgeStep`);
+        }
+      },
       description: `A \`${rightTableTypeName}\` edge in the connection, with data from \`${junctionTypeName}\`.`,
       fields: ({ fieldWithHooks }) => {
         return {
@@ -102,8 +107,14 @@ export default function createManyToManyConnectionType(
       // nodeType: TableType,
       // pgIntrospection: rightTable,
     },
-    ExecutableStep as any,
     () => ({
+      assertStep(
+        $step: any
+      ): asserts $step is ConnectionStep<any, any, any, any> {
+        if (!($step instanceof ConnectionStep)) {
+          throw new Error(`Expected ${$step} to be a ConnectionStep`);
+        }
+      },
       description: `A connection to a list of \`${rightTableTypeName}\` values, with data from \`${junctionTypeName}\`.`,
       fields: ({ fieldWithHooks }) => {
         const PageInfo = getTypeByName(inflection.builtin("PageInfo")) as

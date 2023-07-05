@@ -1,7 +1,6 @@
-import { PgSelectSingleStep } from "@dataplan/pg";
-import { EdgeStep } from "grafast";
+import type { PgSelectSingleStep } from "@dataplan/pg";
+import type { EdgeStep } from "grafast";
 import type {} from "graphile-config";
-import { isOutputType } from "graphql";
 import type {} from "postgraphile";
 import { junctionSymbol } from "./PgManyToManyRelationPlugin";
 
@@ -19,7 +18,13 @@ junction table.`,
   schema: {
     hooks: {
       GraphQLObjectType_fields(fields, build, context) {
-        const { extend, sql, inflection, nullableIf } = build;
+        const {
+          extend,
+          sql,
+          inflection,
+          nullableIf,
+          graphql: { isOutputType },
+        } = build;
         const {
           scope: { isPgManyToManyEdgeType, pgManyToManyRelationship },
           fieldWithHooks,
