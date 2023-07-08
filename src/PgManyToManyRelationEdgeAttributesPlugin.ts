@@ -59,7 +59,7 @@ junction table.`,
               build.recoverable(memo, () => {
                 if (
                   !build.behavior.pgCodecAttributeMatches(
-                    [junctionTable.codec, attribute],
+                    [junctionTable.codec, attributeName],
                     "select"
                   )
                 ) {
