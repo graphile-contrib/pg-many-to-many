@@ -20,8 +20,14 @@
     "url": "https://github.com/graphile-contrib/pg-many-to-many/issues"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.23.3",
+    "@babel/plugin-transform-modules-commonjs": "^7.23.3",
+    "@babel/preset-env": "^7.23.5",
+    "@babel/preset-typescript": "^7.23.3",
     "@dataplan/pg": "^0.0.1-beta.1",
     "@tsconfig/node16": "^1.0.3",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^27.1.5",
