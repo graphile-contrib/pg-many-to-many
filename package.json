@@ -30,6 +30,7 @@
     "@typescript-eslint/parser": "^6.13.1",
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-graphile-export": "^0.0.2-beta.3",
     "eslint-plugin-jest": "^27.1.5",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint_d": "^12.2.1",
