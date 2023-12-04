@@ -16,7 +16,7 @@ exports.test = (schemas, options, setup) => () =>
         await client.query(setup);
       }
     }
-    const { schema, resolvedPreset } = await makeSchema({
+    const { schema } = await makeSchema({
       extends: [
         postgraphilePresetAmber,
         makeV4Preset(options),
