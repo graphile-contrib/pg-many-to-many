@@ -22,7 +22,7 @@ export default function createManyToManyConnectionType(
   const {
     inflection,
     graphql: { GraphQLNonNull, GraphQLList },
-    grafast: { ConnectionStep, EdgeStep },
+    grafast: { ConnectionStep, assertEdgeCapableStep },
     getTypeByName,
     options: { pgForbidSetofFunctionsToReturnNull = false },
     nullableIf,
@@ -49,11 +49,7 @@ export default function createManyToManyConnectionType(
       pgManyToManyRelationship: relationship,
     },
     () => ({
-      assertStep($step: any): asserts $step is EdgeStep<any, any, any, any> {
-        if (!($step instanceof EdgeStep)) {
-          throw new Error(`Expected ${$step} to be an EdgeStep`);
-        }
-      },
+      assertStep: assertEdgeCapableStep,
       description: `A \`${rightTableTypeName}\` edge in the connection, with data from \`${junctionTypeName}\`.`,
       fields: ({ fieldWithHooks }) => {
         return {
