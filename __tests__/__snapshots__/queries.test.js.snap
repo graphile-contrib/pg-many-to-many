@@ -792,6 +792,107 @@ exports[`schema=f query=f.graphql 1`] = `
 }
 `;
 
+exports[`schema=h query=many-to-many.graphql 1`] = `
+{
+  "data": {
+    "a": {
+      "nodes": [
+        {
+          "members": {
+            "nodes": [
+              {
+                "personName": "Person1",
+              },
+              {
+                "personName": "Person2",
+              },
+            ],
+          },
+          "membersList": [
+            {
+              "personName": "Person1",
+            },
+            {
+              "personName": "Person2",
+            },
+          ],
+          "teamName": "Team1",
+        },
+        {
+          "members": {
+            "nodes": [
+              {
+                "personName": "Person1",
+              },
+            ],
+          },
+          "membersList": [
+            {
+              "personName": "Person1",
+            },
+          ],
+          "teamName": "Team2",
+        },
+        {
+          "members": {
+            "nodes": [],
+          },
+          "membersList": [],
+          "teamName": "Team3",
+        },
+      ],
+    },
+    "b": {
+      "nodes": [
+        {
+          "personName": "Person1",
+          "teams": {
+            "nodes": [
+              {
+                "teamName": "Team1",
+              },
+              {
+                "teamName": "Team2",
+              },
+            ],
+          },
+          "teamsList": [
+            {
+              "teamName": "Team1",
+            },
+            {
+              "teamName": "Team2",
+            },
+          ],
+        },
+        {
+          "personName": "Person2",
+          "teams": {
+            "nodes": [
+              {
+                "teamName": "Team1",
+              },
+            ],
+          },
+          "teamsList": [
+            {
+              "teamName": "Team1",
+            },
+          ],
+        },
+        {
+          "personName": "Person3",
+          "teams": {
+            "nodes": [],
+          },
+          "teamsList": [],
+        },
+      ],
+    },
+  },
+}
+`;
+
 exports[`schema=p query=edge-fields.graphql 1`] = `
 {
   "data": {

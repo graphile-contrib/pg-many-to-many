@@ -1,0 +1,5 @@
+{
+    "disableDefaultMutations": true,
+    "legacyRelations": "omit",
+    "simpleCollections": "both"
+  }

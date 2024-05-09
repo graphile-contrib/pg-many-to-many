@@ -1,0 +1,28 @@
+query {
+  a: allTeams {
+    nodes {
+      teamName
+      members {
+        nodes {
+          personName
+        }
+      }
+      membersList {
+        personName
+      }
+    }
+  }
+  b: allPeople {
+    nodes {
+      personName
+      teams {
+        nodes {
+          teamName
+        }
+      }
+      teamsList {
+        teamName
+      }
+    }
+  }
+}
