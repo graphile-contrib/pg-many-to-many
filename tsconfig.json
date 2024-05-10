@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/node16/tsconfig.json",
+  "extends": "@tsconfig/node18/tsconfig.json",
   "ts-node": {
     "experimentalResolver": true
   },
@@ -12,10 +12,6 @@
     "declaration": true,
     "declarationMap": true,
     "allowJs": false,
-
-    "module": "CommonJS",
-    "moduleResolution": "nodenext",
-    "target": "ES2022",
 
     "sourceMap": true,
     "pretty": true,
