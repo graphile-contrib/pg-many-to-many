@@ -1,0 +1,29 @@
+query {
+  a: allTeams {
+    nodes {
+      teamName
+      members {
+        nodes {
+          personName
+        }
+      }
+      # Ensure that simple connections with multiple reference columns work
+      membersList {
+        personName
+      }
+    }
+  }
+  b: allPeople {
+    nodes {
+      personName
+      teams {
+        nodes {
+          teamName
+        }
+      }
+      teamsList {
+        teamName
+      }
+    }
+  }
+}

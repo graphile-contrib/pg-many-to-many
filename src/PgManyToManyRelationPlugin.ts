@@ -337,7 +337,7 @@ where ${sql.join(leftConditions, "\nand ")}
                                       );
                                     }
 
-                                    const rightJunctionAttributes = sql`(${sql.join(
+                                    const rightJunctionAttributes = sql`${sql.join(
                                       rightJunctionAttributeNames.map(
                                         (n) =>
                                           sql`${junctionAlias}.${sql.identifier(
@@ -345,7 +345,7 @@ where ${sql.join(leftConditions, "\nand ")}
                                           )}`
                                       ),
                                       ", "
-                                    )})`;
+                                    )}`;
                                     const rightTableAttribute = sql`(${sql.join(
                                       rightTableAttributeNames.map(
                                         (n) =>

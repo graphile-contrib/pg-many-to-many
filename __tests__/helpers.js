@@ -120,6 +120,23 @@ withPrepopulatedDb.teardown = () => {
   prepopulatedDBKeepalive = null;
 };
 
+const getSchemaPath = (sqlSchema) =>
+  path.resolve(__dirname, "schemas", sqlSchema);
+
+const getSchemaConfig = async (sqlSchema) => {
+  const configPath = path.join(getSchemaPath(sqlSchema), "config.json");
+  if (fs.existsSync(configPath)) {
+    const configJson = await readFile(
+      path.join(getSchemaPath(sqlSchema), "config.json"),
+      "utf8"
+    );
+    return JSON.parse(configJson);
+  }
+  return {};
+};
+
 exports.withRootDb = withRootDb;
 exports.withPrepopulatedDb = withPrepopulatedDb;
 exports.withPgClient = withPgClient;
+exports.getSchemaPath = getSchemaPath;
+exports.getSchemaConfig = getSchemaConfig;
