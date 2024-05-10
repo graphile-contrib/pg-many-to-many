@@ -124,16 +124,15 @@ const getSchemaPath = (sqlSchema) =>
   path.resolve(__dirname, "schemas", sqlSchema);
 
 const getSchemaConfig = async (sqlSchema) => {
-  let config = {};
   const configPath = path.join(getSchemaPath(sqlSchema), "config.json");
   if (fs.existsSync(configPath)) {
     const configJson = await readFile(
       path.join(getSchemaPath(sqlSchema), "config.json"),
       "utf8"
     );
-    config = JSON.parse(configJson);
+    return JSON.parse(configJson);
   }
-  return config;
+  return {};
 };
 
 exports.withRootDb = withRootDb;
