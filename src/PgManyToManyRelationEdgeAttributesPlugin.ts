@@ -105,7 +105,13 @@ junction table.`,
                           ReturnType
                         ),
                         plan(
-                          $edge: EdgeStep<any, any, any, PgSelectSingleStep>
+                          $edge: EdgeStep<
+                            any,
+                            any,
+                            any,
+                            any,
+                            PgSelectSingleStep
+                          >
                         ) {
                           const $right = $edge.node();
                           return $right.select(

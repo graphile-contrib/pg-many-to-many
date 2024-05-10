@@ -162,7 +162,9 @@ field to the edges where all of the join records can be traversed.`,
                           )
                         ),
                     args: Object.create(null),
-                    plan($edge: EdgeStep<any, any, any, PgSelectSingleStep>) {
+                    plan(
+                      $edge: EdgeStep<any, any, any, any, PgSelectSingleStep>
+                    ) {
                       const $right = $edge.node();
 
                       // Create a spec that all entries in the collection must
