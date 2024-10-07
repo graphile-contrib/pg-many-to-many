@@ -37,6 +37,25 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
   version,
 
   schema: {
+    behaviorRegistry: {
+      add: {
+        manyToMany: {
+          description:
+            "Should this table/relation expose a many-to-many relationship via GraphQL",
+          entities: ["pgResource", "pgCodecRelation", "pgManyToMany"],
+        },
+        connection: {
+          description:
+            "Should we use a connection to represent this many-to-many relationship",
+          entities: ["pgManyToMany"],
+        },
+        list: {
+          description:
+            "Should we use a list to represent this many-to-many relationship",
+          entities: ["pgManyToMany"],
+        },
+      },
+    },
     entityBehavior: {
       pgResource: ["manyToMany", "select"],
       pgCodecRelation: ["manyToMany", "select"],
