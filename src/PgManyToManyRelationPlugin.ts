@@ -13,6 +13,9 @@ export const junctionSymbol = Symbol("junction");
 
 declare global {
   namespace GraphileBuild {
+    interface BehaviorStrings {
+      manyToMany: true;
+    }
     interface BehaviorEntities {
       pgManyToMany: PgManyToManyRelationDetails;
     }
@@ -35,19 +38,17 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
 
   schema: {
     entityBehavior: {
-      pgResource: "manyToMany select",
-      pgCodecRelation: "manyToMany select",
+      pgResource: ["manyToMany", "select"],
+      pgCodecRelation: ["manyToMany", "select"],
       pgManyToMany: {
-        after: ["default", "inferred"],
-        provides: ["override"],
-        callback(behavior, relation, build) {
+        override(behavior, relation, build) {
           const { junctionTable, rightTable, rightRelationName } = relation;
           const overrides = build.pgGetBehavior([
             junctionTable.extensions,
             junctionTable.getRelation(rightRelationName).extensions,
             rightTable.extensions,
           ]);
-          return ["manyToMany connection -list", behavior, overrides];
+          return ["manyToMany", "connection", "-list", behavior, overrides];
         },
       },
     },
