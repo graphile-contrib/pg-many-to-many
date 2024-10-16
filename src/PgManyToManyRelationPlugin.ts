@@ -67,7 +67,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
             junctionTable.getRelation(rightRelationName).extensions,
             rightTable.extensions,
           ]);
-          return ["manyToMany", "connection", "-list", behavior, overrides];
+          return ["manyToMany", "connection", "list", behavior, overrides];
         },
       },
     },
