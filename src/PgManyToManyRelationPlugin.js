@@ -2,7 +2,7 @@ const createManyToManyConnectionType = require("./createManyToManyConnectionType
 const manyToManyRelationships = require("./manyToManyRelationships");
 
 module.exports = function PgManyToManyRelationPlugin(builder, options) {
-  const { pgSimpleCollections } = options;
+  const { pgSimpleCollections, pgManyToManyFilter } = options;
   builder.hook("GraphQLObjectType:fields", (fields, build, context) => {
     const {
       extend,
@@ -25,7 +25,11 @@ module.exports = function PgManyToManyRelationPlugin(builder, options) {
       return fields;
     }
 
-    const relationships = manyToManyRelationships(leftTable, build);
+    const relationships = manyToManyRelationships(leftTable, build).filter(
+      (relationship) =>
+        pgManyToManyFilter === undefined ||
+        pgManyToManyFilter(leftTable, relationship)
+    );
     return extend(
       fields,
       relationships.reduce((memo, relationship) => {
