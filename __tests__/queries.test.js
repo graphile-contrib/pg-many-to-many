@@ -2,7 +2,7 @@
 const fs = require("fs");
 const util = require("util");
 const path = require("path");
-const { grafastGraphql: graphql, hookArgs } = require("grafast");
+const { grafastGraphql: graphql } = require("grafast");
 const { withPgClient, getSchemaPath, getSchemaConfig } = require("./helpers");
 const { printSchema } = require("graphql");
 const debug = require("debug")("graphile-build:schema");
@@ -12,6 +12,7 @@ const {
 } = require("postgraphile/presets/amber");
 const { makeV4Preset } = require("postgraphile/presets/v4");
 const { PgManyToManyPreset } = require("../");
+const pgAdaptor = require("@dataplan/pg/adaptors/pg");
 
 const readFile = util.promisify(fs.readFile);
 
@@ -46,11 +47,12 @@ const queryResult = async (sqlSchema, fixture) => {
       pgServices: /* makePgServices(DATABASE_URL, ["app_public"]) */ [
         {
           name: "main",
-          adaptor: "@dataplan/pg/adaptors/pg",
-          withPgClientKey: "withPgClient",
+          adaptor: pgAdaptor,
           pgSettingsKey: "pgSettings",
-          pgSettingsForIntrospection: {},
           pgSettings: {},
+          withPgClientKey: "withPgClient",
+          withPgClient,
+          pgSettingsForIntrospection: {},
           schemas: [sqlSchema],
           adaptorSettings: {
             poolClient: pgClient,
@@ -63,11 +65,10 @@ const queryResult = async (sqlSchema, fixture) => {
     const query = await readFixtureForSqlSchema(sqlSchema, fixture);
     const args = {
       schema,
+      resolvedPreset,
+      requestContext: {},
       source: query,
     };
-    await hookArgs(args, resolvedPreset, {
-      /* optional details for your context callback(s) to use */
-    });
 
     return await graphql(args);
   });
