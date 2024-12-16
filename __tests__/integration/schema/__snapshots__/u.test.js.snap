@@ -1,0 +1,506 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`prints a schema with the many-to-many plugin 1`] = `
+"""A location in a connection that can be used for resuming pagination."""
+scalar Cursor
+
+"""
+A point in time as described by the [ISO
+8601](https://en.wikipedia.org/wiki/ISO_8601) and, if it has a timezone, [RFC
+3339](https://datatracker.ietf.org/doc/html/rfc3339) standards. Input values
+that do not conform to both ISO 8601 and RFC 3339 may be coerced, which may lead
+to unexpected results.
+"""
+scalar Datetime
+
+"""A connection to a list of \`Entity\` values."""
+type EntitiesConnection {
+  """
+  A list of edges which contains the \`Entity\` and cursor to aid in pagination.
+  """
+  edges: [EntitiesEdge]!
+
+  """A list of \`Entity\` objects."""
+  nodes: [Entity]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Entity\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Entity\` edge in the connection."""
+type EntitiesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Entity\` at the end of the edge."""
+  node: Entity
+}
+
+"""Methods to use when ordering \`Entity\`."""
+enum EntitiesOrderBy {
+  ID_ASC
+  ID_DESC
+  NAME_ASC
+  NAME_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type Entity implements Node {
+  """Reads and enables pagination through a set of \`Entity\`."""
+  entitiesByMembershipEntityIdAndMemberId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EntityCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Entity\`."""
+    orderBy: [EntitiesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): EntityEntitiesByMembershipEntityIdAndMemberIdManyToManyConnection!
+
+  """Reads and enables pagination through a set of \`Entity\`."""
+  entitiesByMembershipMemberIdAndEntityId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EntityCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Entity\`."""
+    orderBy: [EntitiesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): EntityEntitiesByMembershipMemberIdAndEntityIdManyToManyConnection!
+  id: Int!
+
+  """Reads and enables pagination through a set of \`Membership\`."""
+  membershipsByEntityId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MembershipCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Membership\`."""
+    orderBy: [MembershipsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MembershipsConnection!
+
+  """Reads and enables pagination through a set of \`Membership\`."""
+  membershipsByMemberId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MembershipCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Membership\`."""
+    orderBy: [MembershipsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MembershipsConnection!
+  name: String!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+}
+
+"""
+A condition to be used against \`Entity\` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input EntityCondition {
+  """Checks for equality with the object’s \`id\` field."""
+  id: Int
+
+  """Checks for equality with the object’s \`name\` field."""
+  name: String
+}
+
+"""
+A connection to a list of \`Entity\` values, with data from \`Membership\`.
+"""
+type EntityEntitiesByMembershipEntityIdAndMemberIdManyToManyConnection {
+  """
+  A list of edges which contains the \`Entity\`, info from the \`Membership\`, and the cursor to aid in pagination.
+  """
+  edges: [EntityEntitiesByMembershipEntityIdAndMemberIdManyToManyEdge!]!
+
+  """A list of \`Entity\` objects."""
+  nodes: [Entity]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Entity\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Entity\` edge in the connection, with data from \`Membership\`."""
+type EntityEntitiesByMembershipEntityIdAndMemberIdManyToManyEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """Reads and enables pagination through a set of \`Membership\`."""
+  membershipsByMemberId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MembershipCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Membership\`."""
+    orderBy: [MembershipsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MembershipsConnection!
+
+  """The \`Entity\` at the end of the edge."""
+  node: Entity
+}
+
+"""
+A connection to a list of \`Entity\` values, with data from \`Membership\`.
+"""
+type EntityEntitiesByMembershipMemberIdAndEntityIdManyToManyConnection {
+  """
+  A list of edges which contains the \`Entity\`, info from the \`Membership\`, and the cursor to aid in pagination.
+  """
+  edges: [EntityEntitiesByMembershipMemberIdAndEntityIdManyToManyEdge!]!
+
+  """A list of \`Entity\` objects."""
+  nodes: [Entity]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Entity\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Entity\` edge in the connection, with data from \`Membership\`."""
+type EntityEntitiesByMembershipMemberIdAndEntityIdManyToManyEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """Reads and enables pagination through a set of \`Membership\`."""
+  membershipsByEntityId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MembershipCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Membership\`."""
+    orderBy: [MembershipsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MembershipsConnection!
+
+  """The \`Entity\` at the end of the edge."""
+  node: Entity
+}
+
+type Membership implements Node {
+  endAt: Datetime
+
+  """Reads a single \`Entity\` that is related to this \`Membership\`."""
+  entityByEntityId: Entity
+
+  """Reads a single \`Entity\` that is related to this \`Membership\`."""
+  entityByMemberId: Entity
+  entityId: Int!
+  id: Int!
+  memberId: Int!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  startAt: Datetime!
+}
+
+"""
+A condition to be used against \`Membership\` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input MembershipCondition {
+  """Checks for equality with the object’s \`endAt\` field."""
+  endAt: Datetime
+
+  """Checks for equality with the object’s \`entityId\` field."""
+  entityId: Int
+
+  """Checks for equality with the object’s \`id\` field."""
+  id: Int
+
+  """Checks for equality with the object’s \`memberId\` field."""
+  memberId: Int
+
+  """Checks for equality with the object’s \`startAt\` field."""
+  startAt: Datetime
+}
+
+"""A connection to a list of \`Membership\` values."""
+type MembershipsConnection {
+  """
+  A list of edges which contains the \`Membership\` and cursor to aid in pagination.
+  """
+  edges: [MembershipsEdge]!
+
+  """A list of \`Membership\` objects."""
+  nodes: [Membership]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Membership\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Membership\` edge in the connection."""
+type MembershipsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Membership\` at the end of the edge."""
+  node: Membership
+}
+
+"""Methods to use when ordering \`Membership\`."""
+enum MembershipsOrderBy {
+  END_AT_ASC
+  END_AT_DESC
+  ENTITY_ID_ASC
+  ENTITY_ID_DESC
+  ID_ASC
+  ID_DESC
+  MEMBER_ID_ASC
+  MEMBER_ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  START_AT_ASC
+  START_AT_DESC
+}
+
+"""An object with a globally unique \`ID\`."""
+interface Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, the cursor to continue."""
+  endCursor: Cursor
+
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: Cursor
+}
+
+"""The root query type which gives access points into the data universe."""
+type Query implements Node {
+  """Reads and enables pagination through a set of \`Entity\`."""
+  allEntities(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EntityCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Entity\`."""
+    orderBy: [EntitiesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): EntitiesConnection
+
+  """Reads and enables pagination through a set of \`Membership\`."""
+  allMemberships(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MembershipCondition
+
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """The method to use when ordering \`Membership\`."""
+    orderBy: [MembershipsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MembershipsConnection
+
+  """Reads a single \`Entity\` using its globally unique \`ID\`."""
+  entity(
+    """The globally unique \`ID\` to be used in selecting a single \`Entity\`."""
+    nodeId: ID!
+  ): Entity
+
+  """Get a single \`Entity\`."""
+  entityById(id: Int!): Entity
+
+  """Reads a single \`Membership\` using its globally unique \`ID\`."""
+  membership(
+    """
+    The globally unique \`ID\` to be used in selecting a single \`Membership\`.
+    """
+    nodeId: ID!
+  ): Membership
+
+  """Get a single \`Membership\`."""
+  membershipById(id: Int!): Membership
+
+  """Fetches an object given its globally unique \`ID\`."""
+  node(
+    """The globally unique \`ID\`."""
+    nodeId: ID!
+  ): Node
+
+  """
+  The root query type must be a \`Node\` to work well with Relay 1 mutations. This just resolves to \`query\`.
+  """
+  nodeId: ID!
+
+  """
+  Exposes the root query type nested one level down. This is helpful for Relay 1
+  which can only query top level fields if they are in a particular form.
+  """
+  query: Query!
+}
+`;
