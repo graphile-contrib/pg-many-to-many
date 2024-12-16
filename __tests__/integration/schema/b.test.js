@@ -5,6 +5,5 @@ test(
   core.test(["b"], {
     skipPlugins: [require("graphile-build-pg").PgConditionArgumentPlugin],
     disableDefaultMutations: true,
-    legacyRelations: "omit",
   })
 );
