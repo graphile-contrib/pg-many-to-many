@@ -32,7 +32,6 @@ const withPgClient = async (url, fn) => {
   }
 };
 
-
 const getSchemaPath = (sqlSchema) =>
   path.resolve(__dirname, "schemas", sqlSchema);
 
