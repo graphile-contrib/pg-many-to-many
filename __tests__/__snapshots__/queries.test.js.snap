@@ -936,6 +936,32 @@ exports[`schema=i query=many-to-many.graphql 1`] = `
 }
 `;
 
+exports[`schema=j query=many-to-many.graphql 1`] = `
+{
+  "data": {
+    "a": {
+      "nodes": [
+        {
+          "__typename": "ExternalPerson",
+          "companyName": "Company1",
+          "personName": "Person2",
+        },
+        {
+          "__typename": "InternalEmployee",
+          "department": "Department1",
+          "personName": "Person1",
+        },
+        {
+          "__typename": "InternalEmployee",
+          "department": "Department2",
+          "personName": "Person3",
+        },
+      ],
+    },
+  },
+}
+`;
+
 exports[`schema=p query=edge-fields.graphql 1`] = `
 {
   "data": {
