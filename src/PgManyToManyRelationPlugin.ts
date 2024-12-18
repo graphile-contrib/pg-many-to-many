@@ -60,14 +60,26 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
       pgResource: ["manyToMany", "select"],
       pgCodecRelation: ["manyToMany", "select"],
       pgManyToMany: {
-        override(behavior, relation, build) {
-          const { junctionTable, rightTable, rightRelationName } = relation;
-          const overrides = build.pgGetBehavior([
-            junctionTable.extensions,
-            junctionTable.getRelation(rightRelationName).extensions,
-            rightTable.extensions,
-          ]);
-          return ["manyToMany", behavior, overrides];
+        inferred: {
+          provides: ["default"],
+          before: ["inferred"],
+          callback(behavior) {
+            return ["manyToMany", "connection", "list", behavior];
+          },
+        },
+        override: {
+          provides: ["default"],
+          before: ["inferred", "override"],
+          callback(behavior, relation, build) {
+            const { junctionTable, rightTable, rightRelationName } = relation;
+            // Import overrides from the tables and relation related to this many-many
+            const overrides = build.pgGetBehavior([
+              junctionTable.extensions,
+              junctionTable.getRelation(rightRelationName).extensions,
+              rightTable.extensions,
+            ]);
+            return [behavior, overrides];
+          },
         },
       },
     },
