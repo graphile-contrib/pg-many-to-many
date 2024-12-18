@@ -1,0 +1,19 @@
+query {
+  a: allPeople {
+    nodes {
+      __typename
+      personType
+      personName
+      # Ensure that we can access the polymorphic join table from the person interface
+      teamsList {
+        id
+      }
+      ... on InternalEmployee {
+        department
+      }
+      ... on ExternalPerson {
+        companyName
+      }
+    }
+  }
+}
