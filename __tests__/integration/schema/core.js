@@ -6,6 +6,7 @@ const {
 } = require("postgraphile/presets/amber");
 const { makeV4Preset } = require("postgraphile/presets/v4");
 const { PgManyToManyPreset } = require("../../../");
+const pgAdaptor = require("@dataplan/pg/adaptors/pg");
 
 exports.test = (schemas, options, setup) => () =>
   withPgClient(async (client) => {
@@ -25,7 +26,7 @@ exports.test = (schemas, options, setup) => () =>
       pgServices: /* makePgServices(DATABASE_URL, ["app_public"]) */ [
         {
           name: "main",
-          adaptor: "@dataplan/pg/adaptors/pg",
+          adaptor: pgAdaptor,
           withPgClientKey: "withPgClient",
           pgSettingsKey: "pgSettings",
           pgSettingsForIntrospection: {},
