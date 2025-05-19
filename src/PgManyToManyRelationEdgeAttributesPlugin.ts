@@ -104,23 +104,27 @@ junction table.`,
                             !attribute.extensions?.tags?.notNull,
                           ReturnType
                         ),
-                        plan(
-                          $edge: EdgeStep<
-                            any,
-                            any,
-                            any,
-                            any,
-                            PgSelectSingleStep
-                          >
-                        ) {
-                          const $right = $edge.node();
-                          return $right.select(
-                            sql`${sql.identifier(
-                              junctionSymbol
-                            )}.${sql.identifier(attributeName)}`,
-                            codec
-                          );
-                        },
+                        plan: EXPORTABLE(
+                          (attributeName, codec, junctionSymbol, sql) =>
+                            function plan(
+                              $edge: EdgeStep<
+                                any,
+                                any,
+                                any,
+                                any,
+                                PgSelectSingleStep
+                              >
+                            ) {
+                              const $right = $edge.node();
+                              return $right.select(
+                                sql`${sql.identifier(
+                                  junctionSymbol
+                                )}.${sql.identifier(attributeName)}`,
+                                codec
+                              );
+                            },
+                          [attributeName, codec, junctionSymbol, sql]
+                        ),
                       })
                     ),
                   },
