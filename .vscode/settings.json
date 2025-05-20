@@ -1,3 +1,5 @@
 {
-  "eslint.format.enable": true
+  "eslint.format.enable": true,
+  "deno.enable": false,
+  "biome.enabled": false
 }

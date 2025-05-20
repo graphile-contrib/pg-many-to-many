@@ -36,10 +36,11 @@
     "eslint_d": "^12.2.1",
     "grafast": "^0.1.1-beta.21",
     "graphile-build-pg": "^5.0.0-beta.38",
+    "graphile-export": "^0.0.2-beta.26",
     "jest": "^29.3.1",
     "jest-serializer-graphql-schema": "^5.0.0-beta.3",
     "pg": ">=6.1.0 <9",
-    "postgraphile": "^5.0.0-beta.39",
+    "postgraphile": "^5.0.0-beta.40",
     "prettier": "2.8.0",
     "typescript": "^5.0.0"
   },

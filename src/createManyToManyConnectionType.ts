@@ -1,7 +1,7 @@
 import type { PgSelectSingleStep } from "@dataplan/pg";
 import type { ConnectionStep, EdgeStep } from "grafast";
 import type { GraphQLObjectType, GraphQLOutputType } from "graphql";
-import {
+import type {
   PgManyToManyRelationDetails,
   PgManyToManyRelationDetailsWithExtras,
   PgTableResource,

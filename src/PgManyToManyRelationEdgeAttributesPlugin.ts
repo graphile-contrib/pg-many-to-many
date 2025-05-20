@@ -23,6 +23,7 @@ junction table.`,
           sql,
           inflection,
           nullableIf,
+          EXPORTABLE,
           graphql: { isOutputType },
         } = build;
         const {
