@@ -11,24 +11,16 @@ const { PgManyToManyPreset } = require("../../../");
 const pgAdaptor = require("@dataplan/pg/adaptors/pg");
 const { exportSchema } = require("graphile-export");
 
-const readFile = util.promisify(fs.readFile);
-
 const exportFileLocation = `${__dirname}/exported-schema.mjs`;
 
-// afterAll(async () => {
-//   if (fs.existsSync(exportFileLocation)) {
-//     await fs.promises.rm(exportFileLocation);
-//   }
-// });
+afterAll(async () => {
+  if (fs.existsSync(exportFileLocation)) {
+    await fs.promises.rm(exportFileLocation);
+  }
+});
 
 test("exports a schema using the 'a' database schema", async () => {
   return withPgClient(async (client) => {
-    const data = await readFile(
-      path.join(getSchemaPath("a"), "schema.sql"),
-      "utf8"
-    );
-    await client.query(data);
-
     const { schema } = await makeSchema({
       extends: [postgraphilePresetAmber, makeV4Preset({}), PgManyToManyPreset],
       pgServices: /* makePgServices(DATABASE_URL, ["app_public"]) */ [
@@ -48,7 +40,7 @@ test("exports a schema using the 'a' database schema", async () => {
     });
     try {
       await exportSchema(schema, exportFileLocation, {
-        mode: "typeDefs",
+        mode: "graphql-js",
       });
     } catch (e) {
       console.error(e);

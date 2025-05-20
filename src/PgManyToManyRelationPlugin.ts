@@ -252,7 +252,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                                       rightTableAttributeNames,
                                       sql
                                     ) =>
-                                      function ($left: PgSelectSingleStep) {
+                                      function plan ($left: PgSelectSingleStep) {
                                         const $rights = rightResource.find();
 
                                         const leftConditions: SQL[] = [];
@@ -349,7 +349,7 @@ where ${sql.join(leftConditions, "\nand ")}
                                       rightTableAttributeNames,
                                       sql
                                     ) =>
-                                      function ($left: PgSelectSingleStep) {
+                                      function plan ($left: PgSelectSingleStep) {
                                         const $rights = rightResource.find();
 
                                         const leftConditions: SQL[] = [];
@@ -428,7 +428,7 @@ where ${sql.join(leftConditions, "\nand ")}
                                       rightTableAttributeNames,
                                       sql
                                     ) =>
-                                      function ($left: PgSelectSingleStep) {
+                                      function plan ($left: PgSelectSingleStep) {
                                         const $rights = rightResource.find();
 
                                         const leftConditions: SQL[] = [];
