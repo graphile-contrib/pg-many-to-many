@@ -48,7 +48,7 @@ test("exports a schema using the 'a' database schema", async () => {
     });
     try {
       await exportSchema(schema, exportFileLocation, {
-        mode: "graphql-js",
+        mode: "typeDefs",
       });
     } catch (e) {
       console.error(e);

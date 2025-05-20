@@ -74,7 +74,7 @@ field to the edges where all of the join records can be traversed.`,
           grafast: { connection },
           inflection,
           sql,
-          EXPORTABLE
+          EXPORTABLE,
         } = build;
         const {
           scope: { isPgManyToManyEdgeType, pgManyToManyRelationship },
