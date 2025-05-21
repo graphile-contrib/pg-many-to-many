@@ -2,7 +2,7 @@ import type { PgSelectSingleStep } from "@dataplan/pg";
 import type { EdgeStep } from "grafast";
 import type {} from "graphile-config";
 import type {} from "postgraphile";
-import { junctionSymbol } from "./PgManyToManyRelationPlugin";
+import { junctionSymbolContainer } from "./PgManyToManyRelationPlugin";
 
 const version = require("../package.json").version;
 
@@ -88,6 +88,13 @@ junction table.`,
                   return memo;
                 }
 
+                const junctionAlias = EXPORTABLE(
+                  (junctionSymbolContainer, sql) => ({
+                    alias: sql.identifier(junctionSymbolContainer.symbol),
+                  }),
+                  [junctionSymbolContainer, sql]
+                );
+
                 memo = extend(
                   memo,
                   {
@@ -106,7 +113,7 @@ junction table.`,
                           ReturnType
                         ),
                         plan: EXPORTABLE(
-                          (attributeName, codec, junctionSymbol, sql) =>
+                          (attributeName, codec, junctionAlias, sql) =>
                             function plan(
                               $edge: EdgeStep<
                                 any,
@@ -118,13 +125,13 @@ junction table.`,
                             ) {
                               const $right = $edge.node();
                               return $right.select(
-                                sql`${sql.identifier(
-                                  junctionSymbol
-                                )}.${sql.identifier(attributeName)}`,
+                                sql`${junctionAlias.alias}.${sql.identifier(
+                                  attributeName
+                                )}`,
                                 codec
                               );
                             },
-                          [attributeName, codec, junctionSymbol, sql]
+                          [attributeName, codec, junctionAlias, sql]
                         ),
                       })
                     ),

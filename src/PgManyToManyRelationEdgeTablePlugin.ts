@@ -3,7 +3,7 @@ import type { EdgeStep } from "grafast";
 import type {} from "graphile-config";
 import type { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
-import { junctionSymbol } from "./PgManyToManyRelationPlugin";
+import { junctionSymbolContainer } from "./PgManyToManyRelationPlugin";
 
 const version = require("../package.json").version;
 
@@ -128,6 +128,12 @@ field to the edges where all of the join records can be traversed.`,
         const listFieldName = build.inflection.manyToManyEdgeRelationListField(
           pgManyToManyRelationship
         );
+        const junctionAlias = EXPORTABLE(
+          (junctionSymbolContainer, sql) => ({
+            alias: sql.identifier(junctionSymbolContainer.symbol),
+          }),
+          [junctionSymbolContainer, sql]
+        );
 
         function makeFields(isConnection: boolean) {
           const fieldName = isConnection ? connectionFieldName : listFieldName;
@@ -167,7 +173,7 @@ field to the edges where all of the join records can be traversed.`,
                       (
                         connection,
                         isConnection,
-                        junctionSymbol,
+                        junctionAlias,
                         junctionTable,
                         leftAttributeCodecs,
                         leftAttributes,
@@ -200,9 +206,9 @@ field to the edges where all of the join records can be traversed.`,
                             const junctionAttributeCodec =
                               leftAttributeCodecs[i];
                             spec[junctionAttributeName] = $right.select(
-                              sql`${sql.identifier(
-                                junctionSymbol
-                              )}.${sql.identifier(junctionAttributeName)}`,
+                              sql`${junctionAlias.alias}.${sql.identifier(
+                                junctionAttributeName
+                              )}`,
                               junctionAttributeCodec
                             );
                           }
@@ -229,7 +235,7 @@ field to the edges where all of the join records can be traversed.`,
                       [
                         connection,
                         isConnection,
-                        junctionSymbol,
+                        junctionAlias,
                         junctionTable,
                         leftAttributeCodecs,
                         leftAttributes,

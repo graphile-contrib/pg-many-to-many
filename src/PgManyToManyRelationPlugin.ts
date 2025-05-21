@@ -6,10 +6,13 @@ import type {} from "postgraphile";
 import type { PgManyToManyRelationDetails, PgTableResource } from ".";
 import createManyToManyConnectionType from "./createManyToManyConnectionType";
 import manyToManyRelationships from "./manyToManyRelationships";
-
+import { EXPORTABLE } from "graphile-build";
 const version = require("../package.json").version;
 
-export const junctionSymbol = Symbol("junction");
+export const junctionSymbolContainer = EXPORTABLE(
+  () => Object.assign({}, { symbol: Symbol("junction") }),
+  []
+);
 
 declare global {
   namespace GraphileBuild {
@@ -198,7 +201,12 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                   rightRelation.localAttributes;
                 const rightTableAttributeNames = rightRelation.remoteAttributes;
                 const rightResource = rightRelation.remoteResource;
-                const junctionAlias = sql.identifier(junctionSymbol);
+                const junctionAlias = EXPORTABLE(
+                  (junctionSymbolContainer, sql) => ({
+                    alias: sql.identifier(junctionSymbolContainer.symbol),
+                  }),
+                  [junctionSymbolContainer, sql]
+                );
                 const leftAttributeCount = leftJunctionAttributeNames.length;
                 const rightAttributeCount = rightJunctionAttributeNames.length;
 
@@ -252,7 +260,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                                       rightTableAttributeNames,
                                       sql
                                     ) =>
-                                      function plan ($left: PgSelectSingleStep) {
+                                      function plan($left: PgSelectSingleStep) {
                                         const $rights = rightResource.find();
 
                                         const leftConditions: SQL[] = [];
@@ -262,7 +270,9 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                                           i++
                                         ) {
                                           leftConditions.push(
-                                            sql`${junctionAlias}.${sql.identifier(
+                                            sql`${
+                                              junctionAlias.alias
+                                            }.${sql.identifier(
                                               leftJunctionAttributeNames[i]
                                             )} = ${$rights.placeholder(
                                               $left.get(
@@ -279,7 +289,9 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                                           i++
                                         ) {
                                           rightConditions.push(
-                                            sql`${junctionAlias}.${sql.identifier(
+                                            sql`${
+                                              junctionAlias.alias
+                                            }.${sql.identifier(
                                               rightJunctionAttributeNames[i]
                                             )} = ${
                                               $rights.alias
@@ -293,27 +305,27 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                                         const leftDistinctFrom = sql`(${sql.indent`select distinct ${sql.join(
                                           leftJunctionAttributeNames.map(
                                             (c) =>
-                                              sql`${junctionAlias}.${sql.identifier(
-                                                c
-                                              )}`
+                                              sql`${
+                                                junctionAlias.alias
+                                              }.${sql.identifier(c)}`
                                           ),
                                           ", "
                                         )}, ${sql.join(
                                           rightJunctionAttributeNames.map(
                                             (c) =>
-                                              sql`${junctionAlias}.${sql.identifier(
-                                                c
-                                              )}`
+                                              sql`${
+                                                junctionAlias.alias
+                                              }.${sql.identifier(c)}`
                                           ),
                                           ", "
                                         )}\n
-from ${junctionFrom} ${junctionAlias}
+from ${junctionFrom} ${junctionAlias.alias}
 where ${sql.join(leftConditions, "\nand ")}
 `})`;
                                         $rights.join({
                                           type: "inner",
                                           conditions: rightConditions,
-                                          alias: junctionAlias,
+                                          alias: junctionAlias.alias,
                                           from: leftDistinctFrom,
                                         });
 
@@ -349,7 +361,7 @@ where ${sql.join(leftConditions, "\nand ")}
                                       rightTableAttributeNames,
                                       sql
                                     ) =>
-                                      function plan ($left: PgSelectSingleStep) {
+                                      function plan($left: PgSelectSingleStep) {
                                         const $rights = rightResource.find();
 
                                         const leftConditions: SQL[] = [];
@@ -359,7 +371,9 @@ where ${sql.join(leftConditions, "\nand ")}
                                           i++
                                         ) {
                                           leftConditions.push(
-                                            sql`${junctionAlias}.${sql.identifier(
+                                            sql`${
+                                              junctionAlias.alias
+                                            }.${sql.identifier(
                                               leftJunctionAttributeNames[i]
                                             )} = ${$rights.placeholder(
                                               $left.get(
@@ -376,7 +390,9 @@ where ${sql.join(leftConditions, "\nand ")}
                                           i++
                                         ) {
                                           rightConditions.push(
-                                            sql`${junctionAlias}.${sql.identifier(
+                                            sql`${
+                                              junctionAlias.alias
+                                            }.${sql.identifier(
                                               rightJunctionAttributeNames[i]
                                             )} = ${
                                               $rights.alias
@@ -390,7 +406,7 @@ where ${sql.join(leftConditions, "\nand ")}
                                         $rights.join({
                                           type: "inner",
                                           conditions: rightConditions,
-                                          alias: junctionAlias,
+                                          alias: junctionAlias.alias,
                                           from: junctionFrom,
                                         });
 
@@ -428,7 +444,7 @@ where ${sql.join(leftConditions, "\nand ")}
                                       rightTableAttributeNames,
                                       sql
                                     ) =>
-                                      function plan ($left: PgSelectSingleStep) {
+                                      function plan($left: PgSelectSingleStep) {
                                         const $rights = rightResource.find();
 
                                         const leftConditions: SQL[] = [];
@@ -438,7 +454,9 @@ where ${sql.join(leftConditions, "\nand ")}
                                           i++
                                         ) {
                                           leftConditions.push(
-                                            sql`${junctionAlias}.${sql.identifier(
+                                            sql`${
+                                              junctionAlias.alias
+                                            }.${sql.identifier(
                                               leftJunctionAttributeNames[i]
                                             )} = ${$rights.placeholder(
                                               $left.get(
@@ -451,9 +469,9 @@ where ${sql.join(leftConditions, "\nand ")}
                                         const rightJunctionAttributes = sql`${sql.join(
                                           rightJunctionAttributeNames.map(
                                             (n) =>
-                                              sql`${junctionAlias}.${sql.identifier(
-                                                n
-                                              )}`
+                                              sql`${
+                                                junctionAlias.alias
+                                              }.${sql.identifier(n)}`
                                           ),
                                           ", "
                                         )}`;
@@ -467,7 +485,7 @@ where ${sql.join(leftConditions, "\nand ")}
                                           ", "
                                         )})`;
                                         const junctionSubquery = sql.indent`select ${rightJunctionAttributes}
-from ${junctionFrom} ${junctionAlias}
+from ${junctionFrom} ${junctionAlias.alias}
 where ${sql.join(leftConditions, "\nand ")}`;
 
                                         $rights.where(
