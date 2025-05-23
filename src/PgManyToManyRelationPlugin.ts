@@ -10,7 +10,7 @@ import { EXPORTABLE } from "graphile-build";
 const version = require("../package.json").version;
 
 export const junctionSymbolContainer = EXPORTABLE(
-  () => Object.assign({}, { symbol: Symbol("junction") }),
+  () => ({ symbol: Symbol("junction") }),
   []
 );
 
