@@ -2,7 +2,7 @@ import type { PgSelectSingleStep } from "@dataplan/pg";
 import type { EdgeStep } from "grafast";
 import type {} from "graphile-config";
 import type {} from "postgraphile";
-import { junctionSymbol } from "./PgManyToManyRelationPlugin";
+import { junctionSymbolContainer } from "./PgManyToManyRelationPlugin";
 
 const version = require("../package.json").version;
 
@@ -23,6 +23,7 @@ junction table.`,
           sql,
           inflection,
           nullableIf,
+          EXPORTABLE,
           graphql: { isOutputType },
         } = build;
         const {
@@ -87,6 +88,13 @@ junction table.`,
                   return memo;
                 }
 
+                const junctionAlias = EXPORTABLE(
+                  (junctionSymbolContainer, sql) => ({
+                    alias: sql.identifier(junctionSymbolContainer.symbol),
+                  }),
+                  [junctionSymbolContainer, sql]
+                );
+
                 memo = extend(
                   memo,
                   {
@@ -104,23 +112,27 @@ junction table.`,
                             !attribute.extensions?.tags?.notNull,
                           ReturnType
                         ),
-                        plan(
-                          $edge: EdgeStep<
-                            any,
-                            any,
-                            any,
-                            any,
-                            PgSelectSingleStep
-                          >
-                        ) {
-                          const $right = $edge.node();
-                          return $right.select(
-                            sql`${sql.identifier(
-                              junctionSymbol
-                            )}.${sql.identifier(attributeName)}`,
-                            codec
-                          );
-                        },
+                        plan: EXPORTABLE(
+                          (attributeName, codec, junctionAlias, sql) =>
+                            function plan(
+                              $edge: EdgeStep<
+                                any,
+                                any,
+                                any,
+                                any,
+                                PgSelectSingleStep
+                              >
+                            ) {
+                              const $right = $edge.node();
+                              return $right.select(
+                                sql`${junctionAlias.alias}.${sql.identifier(
+                                  attributeName
+                                )}`,
+                                codec
+                              );
+                            },
+                          [attributeName, codec, junctionAlias, sql]
+                        ),
                       })
                     ),
                   },

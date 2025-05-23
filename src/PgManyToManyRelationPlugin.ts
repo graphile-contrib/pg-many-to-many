@@ -1,15 +1,18 @@
 import type { PgResource, PgSelectSingleStep } from "@dataplan/pg";
 import type {} from "graphile-config";
 import type { GraphQLObjectType } from "graphql";
+import type { SQL } from "pg-sql2";
 import type {} from "postgraphile";
+import type { PgManyToManyRelationDetails, PgTableResource } from ".";
 import createManyToManyConnectionType from "./createManyToManyConnectionType";
 import manyToManyRelationships from "./manyToManyRelationships";
-import { PgManyToManyRelationDetails, PgTableResource } from ".";
-import type { SQL } from "pg-sql2";
-
+import { EXPORTABLE } from "graphile-build";
 const version = require("../package.json").version;
 
-export const junctionSymbol = Symbol("junction");
+export const junctionSymbolContainer = EXPORTABLE(
+  () => Object.assign({}, { symbol: Symbol("junction") }),
+  []
+);
 
 declare global {
   namespace GraphileBuild {
@@ -116,6 +119,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
           graphql: { GraphQLNonNull, GraphQLList },
           grafast: { connection },
           inflection,
+          EXPORTABLE,
         } = build;
         const {
           scope: { isPgClassType, pgCodec: leftTableCodec },
@@ -197,7 +201,12 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                   rightRelation.localAttributes;
                 const rightTableAttributeNames = rightRelation.remoteAttributes;
                 const rightResource = rightRelation.remoteResource;
-                const junctionAlias = sql.identifier(junctionSymbol);
+                const junctionAlias = EXPORTABLE(
+                  (junctionSymbolContainer, sql) => ({
+                    alias: sql.identifier(junctionSymbolContainer.symbol),
+                  }),
+                  [junctionSymbolContainer, sql]
+                );
                 const leftAttributeCount = leftJunctionAttributeNames.length;
                 const rightAttributeCount = rightJunctionAttributeNames.length;
 
@@ -237,166 +246,266 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
                             plan:
                               allowsMultipleEdgesToNode && isConnection
                                 ? // Distinct join strategy so we can determine the joined-on records for edges.
-                                  ($left: PgSelectSingleStep) => {
-                                    const $rights = rightResource.find();
+                                  EXPORTABLE(
+                                    (
+                                      connection,
+                                      junctionAlias,
+                                      junctionFrom,
+                                      leftAttributeCount,
+                                      leftJunctionAttributeNames,
+                                      leftTableAttributeNames,
+                                      rightAttributeCount,
+                                      rightJunctionAttributeNames,
+                                      rightResource,
+                                      rightTableAttributeNames,
+                                      sql
+                                    ) =>
+                                      function plan($left: PgSelectSingleStep) {
+                                        const $rights = rightResource.find();
 
-                                    const leftConditions: SQL[] = [];
-                                    for (
-                                      let i = 0;
-                                      i < leftAttributeCount;
-                                      i++
-                                    ) {
-                                      leftConditions.push(
-                                        sql`${junctionAlias}.${sql.identifier(
-                                          leftJunctionAttributeNames[i]
-                                        )} = ${$rights.placeholder(
-                                          $left.get(leftTableAttributeNames[i])
-                                        )}`
-                                      );
-                                    }
+                                        const leftConditions: SQL[] = [];
+                                        for (
+                                          let i = 0;
+                                          i < leftAttributeCount;
+                                          i++
+                                        ) {
+                                          leftConditions.push(
+                                            sql`${
+                                              junctionAlias.alias
+                                            }.${sql.identifier(
+                                              leftJunctionAttributeNames[i]
+                                            )} = ${$rights.placeholder(
+                                              $left.get(
+                                                leftTableAttributeNames[i]
+                                              )
+                                            )}`
+                                          );
+                                        }
 
-                                    const rightConditions: SQL[] = [];
-                                    for (
-                                      let i = 0;
-                                      i < rightAttributeCount;
-                                      i++
-                                    ) {
-                                      rightConditions.push(
-                                        sql`${junctionAlias}.${sql.identifier(
-                                          rightJunctionAttributeNames[i]
-                                        )} = ${$rights.alias}.${sql.identifier(
-                                          rightTableAttributeNames[i]
-                                        )}`
-                                      );
-                                    }
+                                        const rightConditions: SQL[] = [];
+                                        for (
+                                          let i = 0;
+                                          i < rightAttributeCount;
+                                          i++
+                                        ) {
+                                          rightConditions.push(
+                                            sql`${
+                                              junctionAlias.alias
+                                            }.${sql.identifier(
+                                              rightJunctionAttributeNames[i]
+                                            )} = ${
+                                              $rights.alias
+                                            }.${sql.identifier(
+                                              rightTableAttributeNames[i]
+                                            )}`
+                                          );
+                                        }
 
-                                    // Join to a distinct version of junction table
-                                    const leftDistinctFrom = sql`(${sql.indent`select distinct ${sql.join(
-                                      leftJunctionAttributeNames.map(
-                                        (c) =>
-                                          sql`${junctionAlias}.${sql.identifier(
-                                            c
-                                          )}`
-                                      ),
-                                      ", "
-                                    )}, ${sql.join(
-                                      rightJunctionAttributeNames.map(
-                                        (c) =>
-                                          sql`${junctionAlias}.${sql.identifier(
-                                            c
-                                          )}`
-                                      ),
-                                      ", "
-                                    )}\n
-from ${junctionFrom} ${junctionAlias}
+                                        // Join to a distinct version of junction table
+                                        const leftDistinctFrom = sql`(${sql.indent`select distinct ${sql.join(
+                                          leftJunctionAttributeNames.map(
+                                            (c) =>
+                                              sql`${
+                                                junctionAlias.alias
+                                              }.${sql.identifier(c)}`
+                                          ),
+                                          ", "
+                                        )}, ${sql.join(
+                                          rightJunctionAttributeNames.map(
+                                            (c) =>
+                                              sql`${
+                                                junctionAlias.alias
+                                              }.${sql.identifier(c)}`
+                                          ),
+                                          ", "
+                                        )}\n
+from ${junctionFrom} ${junctionAlias.alias}
 where ${sql.join(leftConditions, "\nand ")}
 `})`;
-                                    $rights.join({
-                                      type: "inner",
-                                      conditions: rightConditions,
-                                      alias: junctionAlias,
-                                      from: leftDistinctFrom,
-                                    });
+                                        $rights.join({
+                                          type: "inner",
+                                          conditions: rightConditions,
+                                          alias: junctionAlias.alias,
+                                          from: leftDistinctFrom,
+                                        });
 
-                                    return connection($rights) as any;
-                                  }
+                                        return connection($rights) as any;
+                                      },
+                                    [
+                                      connection,
+                                      junctionAlias,
+                                      junctionFrom,
+                                      leftAttributeCount,
+                                      leftJunctionAttributeNames,
+                                      leftTableAttributeNames,
+                                      rightAttributeCount,
+                                      rightJunctionAttributeNames,
+                                      rightResource,
+                                      rightTableAttributeNames,
+                                      sql,
+                                    ]
+                                  )
                                 : isConnection
                                 ? // Simple join strategy so we can grab attributes on the connection edges
-                                  ($left: PgSelectSingleStep) => {
-                                    const $rights = rightResource.find();
+                                  EXPORTABLE(
+                                    (
+                                      connection,
+                                      junctionAlias,
+                                      junctionFrom,
+                                      leftAttributeCount,
+                                      leftJunctionAttributeNames,
+                                      leftTableAttributeNames,
+                                      rightAttributeCount,
+                                      rightJunctionAttributeNames,
+                                      rightResource,
+                                      rightTableAttributeNames,
+                                      sql
+                                    ) =>
+                                      function plan($left: PgSelectSingleStep) {
+                                        const $rights = rightResource.find();
 
-                                    const leftConditions: SQL[] = [];
-                                    for (
-                                      let i = 0;
-                                      i < leftAttributeCount;
-                                      i++
-                                    ) {
-                                      leftConditions.push(
-                                        sql`${junctionAlias}.${sql.identifier(
-                                          leftJunctionAttributeNames[i]
-                                        )} = ${$rights.placeholder(
-                                          $left.get(leftTableAttributeNames[i])
-                                        )}`
-                                      );
-                                    }
+                                        const leftConditions: SQL[] = [];
+                                        for (
+                                          let i = 0;
+                                          i < leftAttributeCount;
+                                          i++
+                                        ) {
+                                          leftConditions.push(
+                                            sql`${
+                                              junctionAlias.alias
+                                            }.${sql.identifier(
+                                              leftJunctionAttributeNames[i]
+                                            )} = ${$rights.placeholder(
+                                              $left.get(
+                                                leftTableAttributeNames[i]
+                                              )
+                                            )}`
+                                          );
+                                        }
 
-                                    const rightConditions: SQL[] = [];
-                                    for (
-                                      let i = 0;
-                                      i < rightAttributeCount;
-                                      i++
-                                    ) {
-                                      rightConditions.push(
-                                        sql`${junctionAlias}.${sql.identifier(
-                                          rightJunctionAttributeNames[i]
-                                        )} = ${$rights.alias}.${sql.identifier(
-                                          rightTableAttributeNames[i]
-                                        )}`
-                                      );
-                                    }
+                                        const rightConditions: SQL[] = [];
+                                        for (
+                                          let i = 0;
+                                          i < rightAttributeCount;
+                                          i++
+                                        ) {
+                                          rightConditions.push(
+                                            sql`${
+                                              junctionAlias.alias
+                                            }.${sql.identifier(
+                                              rightJunctionAttributeNames[i]
+                                            )} = ${
+                                              $rights.alias
+                                            }.${sql.identifier(
+                                              rightTableAttributeNames[i]
+                                            )}`
+                                          );
+                                        }
 
-                                    // Join to junction table
-                                    $rights.join({
-                                      type: "inner",
-                                      conditions: rightConditions,
-                                      alias: junctionAlias,
-                                      from: junctionFrom,
-                                    });
+                                        // Join to junction table
+                                        $rights.join({
+                                          type: "inner",
+                                          conditions: rightConditions,
+                                          alias: junctionAlias.alias,
+                                          from: junctionFrom,
+                                        });
 
-                                    // Limit to only the junction entries that match $left
-                                    for (const leftCondition of leftConditions) {
-                                      $rights.where(leftCondition);
-                                    }
+                                        // Limit to only the junction entries that match $left
+                                        for (const leftCondition of leftConditions) {
+                                          $rights.where(leftCondition);
+                                        }
 
-                                    return connection($rights) as any;
-                                  }
+                                        return connection($rights) as any;
+                                      },
+                                    [
+                                      connection,
+                                      junctionAlias,
+                                      junctionFrom,
+                                      leftAttributeCount,
+                                      leftJunctionAttributeNames,
+                                      leftTableAttributeNames,
+                                      rightAttributeCount,
+                                      rightJunctionAttributeNames,
+                                      rightResource,
+                                      rightTableAttributeNames,
+                                      sql,
+                                    ]
+                                  )
                                 : // Subquery strategy - most efficient, but we cannot query attributes from the junction table
-                                  ($left: PgSelectSingleStep) => {
-                                    const $rights = rightResource.find();
+                                  EXPORTABLE(
+                                    (
+                                      junctionAlias,
+                                      junctionFrom,
+                                      leftAttributeCount,
+                                      leftJunctionAttributeNames,
+                                      leftTableAttributeNames,
+                                      rightJunctionAttributeNames,
+                                      rightResource,
+                                      rightTableAttributeNames,
+                                      sql
+                                    ) =>
+                                      function plan($left: PgSelectSingleStep) {
+                                        const $rights = rightResource.find();
 
-                                    const leftConditions: SQL[] = [];
-                                    for (
-                                      let i = 0;
-                                      i < leftAttributeCount;
-                                      i++
-                                    ) {
-                                      leftConditions.push(
-                                        sql`${junctionAlias}.${sql.identifier(
-                                          leftJunctionAttributeNames[i]
-                                        )} = ${$rights.placeholder(
-                                          $left.get(leftTableAttributeNames[i])
-                                        )}`
-                                      );
-                                    }
+                                        const leftConditions: SQL[] = [];
+                                        for (
+                                          let i = 0;
+                                          i < leftAttributeCount;
+                                          i++
+                                        ) {
+                                          leftConditions.push(
+                                            sql`${
+                                              junctionAlias.alias
+                                            }.${sql.identifier(
+                                              leftJunctionAttributeNames[i]
+                                            )} = ${$rights.placeholder(
+                                              $left.get(
+                                                leftTableAttributeNames[i]
+                                              )
+                                            )}`
+                                          );
+                                        }
 
-                                    const rightJunctionAttributes = sql`${sql.join(
-                                      rightJunctionAttributeNames.map(
-                                        (n) =>
-                                          sql`${junctionAlias}.${sql.identifier(
-                                            n
-                                          )}`
-                                      ),
-                                      ", "
-                                    )}`;
-                                    const rightTableAttribute = sql`(${sql.join(
-                                      rightTableAttributeNames.map(
-                                        (n) =>
-                                          sql`${$rights.alias}.${sql.identifier(
-                                            n
-                                          )}`
-                                      ),
-                                      ", "
-                                    )})`;
-                                    const junctionSubquery = sql.indent`select ${rightJunctionAttributes}
-from ${junctionFrom} ${junctionAlias}
+                                        const rightJunctionAttributes = sql`${sql.join(
+                                          rightJunctionAttributeNames.map(
+                                            (n) =>
+                                              sql`${
+                                                junctionAlias.alias
+                                              }.${sql.identifier(n)}`
+                                          ),
+                                          ", "
+                                        )}`;
+                                        const rightTableAttribute = sql`(${sql.join(
+                                          rightTableAttributeNames.map(
+                                            (n) =>
+                                              sql`${
+                                                $rights.alias
+                                              }.${sql.identifier(n)}`
+                                          ),
+                                          ", "
+                                        )})`;
+                                        const junctionSubquery = sql.indent`select ${rightJunctionAttributes}
+from ${junctionFrom} ${junctionAlias.alias}
 where ${sql.join(leftConditions, "\nand ")}`;
 
-                                    $rights.where(
-                                      sql`${rightTableAttribute} in (${junctionSubquery})`
-                                    );
+                                        $rights.where(
+                                          sql`${rightTableAttribute} in (${junctionSubquery})`
+                                        );
 
-                                    return $rights;
-                                  },
+                                        return $rights;
+                                      },
+                                    [
+                                      junctionAlias,
+                                      junctionFrom,
+                                      leftAttributeCount,
+                                      leftJunctionAttributeNames,
+                                      leftTableAttributeNames,
+                                      rightJunctionAttributeNames,
+                                      rightResource,
+                                      rightTableAttributeNames,
+                                      sql,
+                                    ]
+                                  ),
                           })
                         ),
                       },

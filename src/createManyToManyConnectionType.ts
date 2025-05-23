@@ -1,10 +1,10 @@
 import type { PgSelectSingleStep } from "@dataplan/pg";
 import type { ConnectionStep, EdgeStep } from "grafast";
 import type { GraphQLObjectType, GraphQLOutputType } from "graphql";
-import {
-  PgTableResource,
+import type {
   PgManyToManyRelationDetails,
   PgManyToManyRelationDetailsWithExtras,
+  PgTableResource,
 } from "./interfaces.js";
 
 export default function createManyToManyConnectionType(
@@ -20,6 +20,7 @@ export default function createManyToManyConnectionType(
     // allowsMultipleEdgesToNode,
   } = relationship;
   const {
+    EXPORTABLE,
     inflection,
     graphql: { GraphQLNonNull, GraphQLList },
     grafast: { ConnectionStep, assertEdgeCapableStep },
@@ -63,9 +64,13 @@ export default function createManyToManyConnectionType(
               type: getTypeByName(
                 inflection.builtin("Cursor")
               ) as GraphQLOutputType,
-              plan($edge: EdgeStep<any, any, any, any>) {
-                return $edge.cursor();
-              },
+              plan: EXPORTABLE(
+                () =>
+                  function plan($edge: EdgeStep<any, any, any, any>) {
+                    return $edge.cursor();
+                  },
+                []
+              ),
             })
           ),
           node: fieldWithHooks(
@@ -78,10 +83,16 @@ export default function createManyToManyConnectionType(
                 !pgForbidSetofFunctionsToReturnNull,
                 getTypeByName(rightTableTypeName) as GraphQLObjectType
               ),
-              plan($edge: EdgeStep<any, any, any, PgSelectSingleStep>) {
-                const $right = $edge.node();
-                return $right;
-              },
+              plan: EXPORTABLE(
+                () =>
+                  function plan(
+                    $edge: EdgeStep<any, any, any, PgSelectSingleStep>
+                  ) {
+                    const $right = $edge.node();
+                    return $right;
+                  },
+                []
+              ),
             })
           ),
         };
@@ -104,13 +115,17 @@ export default function createManyToManyConnectionType(
       // pgIntrospection: rightTable,
     },
     () => ({
-      assertStep(
-        $step: any
-      ): asserts $step is ConnectionStep<any, any, any, any> {
-        if (!($step instanceof ConnectionStep)) {
-          throw new Error(`Expected ${$step} to be a ConnectionStep`);
-        }
-      },
+      assertStep: EXPORTABLE(
+        (ConnectionStep) =>
+          function assertStep(
+            $step: any
+          ): asserts $step is ConnectionStep<any, any, any, any> {
+            if (!($step instanceof ConnectionStep)) {
+              throw new Error(`Expected ${$step} to be a ConnectionStep`);
+            }
+          },
+        [ConnectionStep]
+      ),
       description: `A connection to a list of \`${rightTableTypeName}\` values, with data from \`${junctionTypeName}\`.`,
       fields: ({ fieldWithHooks }) => {
         const PageInfo = getTypeByName(inflection.builtin("PageInfo")) as
@@ -131,9 +146,15 @@ export default function createManyToManyConnectionType(
                   )
                 )
               ),
-              plan($connection: ConnectionStep<any, any, any, any>) {
-                return $connection.nodes();
-              },
+              plan: EXPORTABLE(
+                () =>
+                  function plan(
+                    $connection: ConnectionStep<any, any, any, any>
+                  ) {
+                    return $connection.nodes();
+                  },
+                []
+              ),
             })
           ),
           edges: fieldWithHooks(
@@ -149,9 +170,15 @@ export default function createManyToManyConnectionType(
                   )
                 )
               ),
-              plan($connection: ConnectionStep<any, any, any, any>) {
-                return $connection.edges();
-              },
+              plan: EXPORTABLE(
+                () =>
+                  function plan(
+                    $connection: ConnectionStep<any, any, any, any>
+                  ) {
+                    return $connection.edges();
+                  },
+                []
+              ),
             })
           ),
           ...(PageInfo
@@ -159,9 +186,15 @@ export default function createManyToManyConnectionType(
                 pageInfo: fieldWithHooks({ fieldName: "pageInfo" }, () => ({
                   description: "Information to aid in pagination.",
                   type: new GraphQLNonNull(PageInfo),
-                  plan($connection: ConnectionStep<any, any, any, any>) {
-                    return $connection.pageInfo() as any;
-                  },
+                  plan: EXPORTABLE(
+                    () =>
+                      function plan(
+                        $connection: ConnectionStep<any, any, any, any>
+                      ) {
+                        return $connection.pageInfo() as any;
+                      },
+                    []
+                  ),
                 })),
               }
             : null),

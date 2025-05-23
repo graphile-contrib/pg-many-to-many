@@ -3,7 +3,7 @@ import type { EdgeStep } from "grafast";
 import type {} from "graphile-config";
 import type { GraphQLObjectType } from "graphql";
 import type {} from "postgraphile";
-import { junctionSymbol } from "./PgManyToManyRelationPlugin";
+import { junctionSymbolContainer } from "./PgManyToManyRelationPlugin";
 
 const version = require("../package.json").version;
 
@@ -74,6 +74,7 @@ field to the edges where all of the join records can be traversed.`,
           grafast: { connection },
           inflection,
           sql,
+          EXPORTABLE,
         } = build;
         const {
           scope: { isPgManyToManyEdgeType, pgManyToManyRelationship },
@@ -127,6 +128,12 @@ field to the edges where all of the join records can be traversed.`,
         const listFieldName = build.inflection.manyToManyEdgeRelationListField(
           pgManyToManyRelationship
         );
+        const junctionAlias = EXPORTABLE(
+          (junctionSymbolContainer, sql) => ({
+            alias: sql.identifier(junctionSymbolContainer.symbol),
+          }),
+          [junctionSymbolContainer, sql]
+        );
 
         function makeFields(isConnection: boolean) {
           const fieldName = isConnection ? connectionFieldName : listFieldName;
@@ -162,42 +169,81 @@ field to the edges where all of the join records can be traversed.`,
                           )
                         ),
                     args: Object.create(null),
-                    plan(
-                      $edge: EdgeStep<any, any, any, any, PgSelectSingleStep>
-                    ) {
-                      const $right = $edge.node();
+                    plan: EXPORTABLE(
+                      (
+                        connection,
+                        isConnection,
+                        junctionAlias,
+                        junctionTable,
+                        leftAttributeCodecs,
+                        leftAttributes,
+                        rightAttributes,
+                        rightRemoteAttributes,
+                        sql
+                      ) =>
+                        function plan(
+                          $edge: EdgeStep<
+                            any,
+                            any,
+                            any,
+                            any,
+                            PgSelectSingleStep
+                          >
+                        ) {
+                          const $right = $edge.node();
 
-                      // Create a spec that all entries in the collection must
-                      // match
-                      const spec = Object.create(null);
+                          // Create a spec that all entries in the collection must
+                          // match
+                          const spec = Object.create(null);
 
-                      // Add left attributes to spec
-                      for (let i = 0, l = leftAttributes.length; i < l; i++) {
-                        const junctionAttributeName = leftAttributes[i];
-                        const junctionAttributeCodec = leftAttributeCodecs[i];
-                        spec[junctionAttributeName] = $right.select(
-                          sql`${sql.identifier(
-                            junctionSymbol
-                          )}.${sql.identifier(junctionAttributeName)}`,
-                          junctionAttributeCodec
-                        );
-                      }
+                          // Add left attributes to spec
+                          for (
+                            let i = 0, l = leftAttributes.length;
+                            i < l;
+                            i++
+                          ) {
+                            const junctionAttributeName = leftAttributes[i];
+                            const junctionAttributeCodec =
+                              leftAttributeCodecs[i];
+                            spec[junctionAttributeName] = $right.select(
+                              sql`${junctionAlias.alias}.${sql.identifier(
+                                junctionAttributeName
+                              )}`,
+                              junctionAttributeCodec
+                            );
+                          }
 
-                      // Add right attributes to spec
-                      for (let i = 0, l = rightAttributes.length; i < l; i++) {
-                        const junctionAttributeName = rightAttributes[i];
-                        const rightAttributeName = rightRemoteAttributes[i];
-                        spec[junctionAttributeName] =
-                          $right.get(rightAttributeName);
-                      }
+                          // Add right attributes to spec
+                          for (
+                            let i = 0, l = rightAttributes.length;
+                            i < l;
+                            i++
+                          ) {
+                            const junctionAttributeName = rightAttributes[i];
+                            const rightAttributeName = rightRemoteAttributes[i];
+                            spec[junctionAttributeName] =
+                              $right.get(rightAttributeName);
+                          }
 
-                      // These are the equivalent junction records for this entry
-                      const $junctions = junctionTable.find(spec);
+                          // These are the equivalent junction records for this entry
+                          const $junctions = junctionTable.find(spec);
 
-                      return isConnection
-                        ? (connection($junctions) as any)
-                        : $junctions;
-                    },
+                          return isConnection
+                            ? (connection($junctions) as any)
+                            : $junctions;
+                        },
+                      [
+                        connection,
+                        isConnection,
+                        junctionAlias,
+                        junctionTable,
+                        leftAttributeCodecs,
+                        leftAttributes,
+                        rightAttributes,
+                        rightRemoteAttributes,
+                        sql,
+                      ]
+                    ),
                   })
                 ),
               },
