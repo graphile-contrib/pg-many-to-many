@@ -7,6 +7,7 @@ import type { PgManyToManyRelationDetails, PgTableResource } from ".";
 import createManyToManyConnectionType from "./createManyToManyConnectionType";
 import manyToManyRelationships from "./manyToManyRelationships";
 import { EXPORTABLE } from "graphile-build";
+
 const version = require("../package.json").version;
 
 export const junctionSymbolContainer = EXPORTABLE(
@@ -46,7 +47,7 @@ function getPgTableResourceByCodec(
       resource.codec === pgCodec && isPgTableResource(resource)
   );
   if (pgTableResourceMatches.length !== 1) {
-    if (pgTableResourceMatches.length > 2) {
+    if (pgTableResourceMatches.length > 1) {
       throw new Error(
         `PgManyToMany: there are multiple parameterless sources for codec '${pgCodec.name}', we can't determine which one to use.`
       );
@@ -304,7 +305,10 @@ where ${sql.join(leftConditions, "\nand ")}`;
 function extendFields(
   fields: GraphileBuild.GrafastFieldConfigMap,
   build: GraphileBuild.Build,
-  context: GraphileBuild.ContextObjectFields
+  context:
+    | GraphileBuild.ContextObjectFields
+    | GraphileBuild.ContextInterfaceFields,
+  isInterface: boolean
 ) {
   const {
     extend,
@@ -312,11 +316,11 @@ function extendFields(
     inflection,
   } = build;
   const {
-    scope: { isPgClassType, pgCodec: leftTableCodec },
+    scope: { pgCodec: leftTableCodec },
     fieldWithHooks,
     Self,
   } = context;
-  if (!isPgClassType || !leftTableCodec || !leftTableCodec.attributes) {
+  if (!leftTableCodec || !leftTableCodec.attributes) {
     return fields;
   }
 
@@ -367,6 +371,11 @@ function extendFields(
             );
           }
 
+          const leftRelation = leftTable.getRelation(leftRelationName);
+          if (typeof leftRelation.remoteResource.from === "function") {
+            throw new Error(`Function resource not supported for relation`);
+          }
+
           // TODO: throw an error if localAttributes or remoteAttributes involve
           // `via` or `expression` - we only want pure column relations.
 
@@ -398,15 +407,19 @@ function extendFields(
                             new GraphQLList(new GraphQLNonNull(RightTableType!))
                           ),
                       args: Object.create(null),
-                      plan: makeRelationPlan(
-                        build,
-                        isConnection,
-                        allowsMultipleEdgesToNode,
-                        leftTable,
-                        leftRelationName,
-                        junctionTable,
-                        rightRelationName
-                      ),
+                      ...(isInterface
+                        ? null
+                        : {
+                            plan: makeRelationPlan(
+                              build,
+                              isConnection,
+                              allowsMultipleEdgesToNode,
+                              leftTable,
+                              leftRelationName,
+                              junctionTable,
+                              rightRelationName
+                            ),
+                          }),
                     })
                   ),
                 },
@@ -516,7 +529,23 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
       },
 
       GraphQLObjectType_fields(fields, build, context) {
-        return extendFields(fields, build, context);
+        const {
+          scope: { isPgClassType },
+        } = context;
+        if (!isPgClassType) {
+          return fields;
+        }
+        return extendFields(fields, build, context, false);
+      },
+
+      GraphQLInterfaceType_fields(fields, build, context) {
+        const {
+          scope: { isPgPolymorphicTableType },
+        } = context;
+        if (!isPgPolymorphicTableType) {
+          return fields;
+        }
+        return extendFields(fields, build, context, true);
       },
     },
   },

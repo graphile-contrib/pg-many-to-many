@@ -1,0 +1,18 @@
+query {
+  a: allPeople {
+    nodes {
+      __typename
+      personName
+      teamsList {
+        id
+        teamName
+      }
+      ... on InternalEmployee {
+        department
+      }
+      ... on ExternalPerson {
+        companyName
+      }
+    }
+  }
+}

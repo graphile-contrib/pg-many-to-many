@@ -893,6 +893,92 @@ exports[`schema=h query=many-to-many.graphql 1`] = `
 }
 `;
 
+exports[`schema=i query=many-to-many.graphql 1`] = `
+{
+  "data": {
+    "a": {
+      "nodes": [
+        {
+          "__typename": "InternalEmployee",
+          "department": "Department1",
+          "personName": "Person1",
+          "personType": "EMPLOYEE",
+          "teamsList": [
+            {
+              "id": 1,
+            },
+            {
+              "id": 2,
+            },
+          ],
+        },
+        {
+          "__typename": "ExternalPerson",
+          "companyName": "Company1",
+          "personName": "Person2",
+          "personType": "EXTERNAL",
+          "teamsList": [
+            {
+              "id": 1,
+            },
+          ],
+        },
+        {
+          "__typename": "InternalEmployee",
+          "department": "Department1",
+          "personName": "Person3",
+          "personType": "EMPLOYEE",
+          "teamsList": [],
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`schema=j query=many-to-many.graphql 1`] = `
+{
+  "data": {
+    "a": {
+      "nodes": [
+        {
+          "__typename": "ExternalPerson",
+          "companyName": "Company1",
+          "personName": "Person2",
+          "teamsList": [
+            {
+              "id": 1,
+              "teamName": "Team1",
+            },
+          ],
+        },
+        {
+          "__typename": "InternalEmployee",
+          "department": "Department1",
+          "personName": "Person1",
+          "teamsList": [
+            {
+              "id": 1,
+              "teamName": "Team1",
+            },
+            {
+              "id": 2,
+              "teamName": "Team2",
+            },
+          ],
+        },
+        {
+          "__typename": "InternalEmployee",
+          "department": "Department2",
+          "personName": "Person3",
+          "teamsList": [],
+        },
+      ],
+    },
+  },
+}
+`;
+
 exports[`schema=p query=edge-fields.graphql 1`] = `
 {
   "data": {
