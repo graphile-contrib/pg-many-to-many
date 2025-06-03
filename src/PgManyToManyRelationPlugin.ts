@@ -43,8 +43,9 @@ function getPgTableResourceByCodec(
   const pgTableResourceMatches = Object.values(
     build.input.pgRegistry.pgResources
   ).filter(
-    (resource) => resource.codec === pgCodec && isPgTableResource(resource)
-  ) as PgTableResource[];
+    (resource): resource is PgTableResource =>
+      resource.codec === pgCodec && isPgTableResource(resource)
+  );
   if (pgTableResourceMatches.length !== 1) {
     if (pgTableResourceMatches.length > 1) {
       throw new Error(
