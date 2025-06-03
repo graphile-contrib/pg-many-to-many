@@ -302,20 +302,13 @@ where ${sql.join(leftConditions, "\nand ")}`;
   }
 }
 
-type FieldsContext =
-  | GraphileBuild.ContextObjectFields
-  | GraphileBuild.ContextInterfaceFields;
-
-function isInterfaceContext(
-  context: FieldsContext
-): context is GraphileBuild.ContextInterfaceFields {
-  return context.type === "GraphQLInterfaceType";
-}
-
 function extendFields(
   fields: GraphileBuild.GrafastFieldConfigMap,
   build: GraphileBuild.Build,
-  context: FieldsContext
+  context:
+    | GraphileBuild.ContextObjectFields
+    | GraphileBuild.ContextInterfaceFields,
+  isInterface: boolean
 ) {
   const {
     extend,
@@ -327,7 +320,6 @@ function extendFields(
     scope: { pgCodec: leftTableCodec },
     Self,
   } = context;
-  const isInterface = isInterfaceContext(context);
   if (!leftTableCodec) {
     return fields;
   }
@@ -544,7 +536,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
         if (!isPgClassType) {
           return fields;
         }
-        return extendFields(fields, build, context);
+        return extendFields(fields, build, context, false);
       },
 
       GraphQLInterfaceType_fields(fields, build, context) {
@@ -554,7 +546,7 @@ export const PgManyToManyRelationPlugin: GraphileConfig.Plugin = {
         if (!isPgPolymorphicTableType) {
           return fields;
         }
-        return extendFields(fields, build, context);
+        return extendFields(fields, build, context, true);
       },
     },
   },
