@@ -40,6 +40,11 @@ declare global {
       pgManyToManyJunctionTable?: PgResource;
     }
 
+    interface ScopeInterfaceFieldsField {
+      isPgManyToManyRelationField?: boolean;
+      pgManyToManyRightTable?: PgResource;
+    }
+
     interface ScopeObject {
       isPgManyToManyEdgeType?: boolean;
       pgManyToManyRelationship?: PgManyToManyRelationDetails;

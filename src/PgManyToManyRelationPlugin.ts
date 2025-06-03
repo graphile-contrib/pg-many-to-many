@@ -394,12 +394,8 @@ function extendFields(
                       pgFieldResource: rightTable,
                       isPgFieldConnection: isConnection,
                       isPgFieldSimpleCollection: !isConnection,
-                      isPgManyToManyRelationField: isInterface
-                        ? undefined
-                        : true,
-                      pgManyToManyRightTable: isInterface
-                        ? undefined
-                        : rightTable,
+                      isPgManyToManyRelationField: true,
+                      pgManyToManyRightTable: rightTable,
                     },
                     () => ({
                       description: `Reads and enables pagination through a set of \`${
