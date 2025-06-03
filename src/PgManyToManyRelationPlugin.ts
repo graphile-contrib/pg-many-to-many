@@ -320,7 +320,7 @@ function extendFields(
     fieldWithHooks,
     Self,
   } = context;
-  if (!leftTableCodec) {
+  if (!leftTableCodec || !leftTableCodec.attributes) {
     return fields;
   }
 
