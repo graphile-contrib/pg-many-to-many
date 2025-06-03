@@ -407,17 +407,19 @@ function extendFields(
                             new GraphQLList(new GraphQLNonNull(RightTableType!))
                           ),
                       args: Object.create(null),
-                      plan: isInterface
-                        ? undefined
-                        : makeRelationPlan(
-                            build,
-                            isConnection,
-                            allowsMultipleEdgesToNode,
-                            leftTable,
-                            leftRelationName,
-                            junctionTable,
-                            rightRelationName
-                          ),
+                      ...(isInterface
+                        ? null
+                        : {
+                            plan: makeRelationPlan(
+                              build,
+                              isConnection,
+                              allowsMultipleEdgesToNode,
+                              leftTable,
+                              leftRelationName,
+                              junctionTable,
+                              rightRelationName
+                            ),
+                          }),
                     })
                   ),
                 },
