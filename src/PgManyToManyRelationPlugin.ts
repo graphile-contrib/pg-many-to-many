@@ -312,7 +312,7 @@ function isInterfaceContext(
 }
 
 function extendFields(
-  fields: GraphileBuild.GrafastFieldConfigMap<any, any>,
+  fields: GraphileBuild.GrafastFieldConfigMap,
   build: GraphileBuild.Build,
   context: FieldsContext
 ) {
