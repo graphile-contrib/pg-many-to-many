@@ -377,6 +377,11 @@ function extendFields(
             );
           }
 
+          const leftRelation = leftTable.getRelation(leftRelationName);
+          if (typeof leftRelation.remoteResource.from === "function") {
+            throw new Error(`Function resource not supported for relation`);
+          }
+
           // TODO: throw an error if localAttributes or remoteAttributes involve
           // `via` or `expression` - we only want pure column relations.
 
