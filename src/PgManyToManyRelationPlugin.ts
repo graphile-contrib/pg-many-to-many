@@ -312,17 +312,18 @@ function extendFields(
 ) {
   const {
     extend,
-    inflection,
     graphql: { GraphQLNonNull, GraphQLList },
+    inflection,
   } = build;
   const {
-    fieldWithHooks,
     scope: { pgCodec: leftTableCodec },
+    fieldWithHooks,
     Self,
   } = context;
   if (!leftTableCodec) {
     return fields;
   }
+
   const leftTable = getPgTableResourceByCodec(build, leftTableCodec);
   if (!leftTable) {
     return fields;
