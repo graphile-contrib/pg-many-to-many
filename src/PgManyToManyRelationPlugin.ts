@@ -1,11 +1,11 @@
 import type { PgCodec, PgResource, PgSelectSingleStep } from "@dataplan/pg";
 import type {} from "graphile-config";
 import type { GraphQLObjectType } from "graphql";
+import type { SQL } from "pg-sql2";
 import type {} from "postgraphile";
+import type { PgManyToManyRelationDetails, PgTableResource } from ".";
 import createManyToManyConnectionType from "./createManyToManyConnectionType";
 import manyToManyRelationships from "./manyToManyRelationships";
-import type { PgManyToManyRelationDetails, PgTableResource } from ".";
-import type { SQL } from "pg-sql2";
 import { EXPORTABLE } from "graphile-build";
 
 const version = require("../package.json").version;
