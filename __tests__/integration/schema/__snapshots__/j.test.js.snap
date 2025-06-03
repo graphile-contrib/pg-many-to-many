@@ -104,7 +104,7 @@ type ExternalPerson implements Node & Person {
   personName: String!
 
   """Reads and enables pagination through a set of \`Team\`."""
-  teamsByExternalTeamMembershipPersonIdAndTeamId(
+  teams(
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
@@ -133,7 +133,7 @@ type ExternalPerson implements Node & Person {
   ): ExternalPersonTeamsByExternalTeamMembershipPersonIdAndTeamIdManyToManyConnection!
 
   """Reads and enables pagination through a set of \`Team\`."""
-  teamsByExternalTeamMembershipPersonIdAndTeamIdList(
+  teamsList(
     """
     A condition to be used in determining which values should be returned by the collection.
     """
@@ -336,7 +336,7 @@ type InternalEmployee implements Node & Person {
   personName: String!
 
   """Reads and enables pagination through a set of \`Team\`."""
-  teamsByInternalTeamMembershipPersonIdAndTeamId(
+  teams(
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
@@ -365,7 +365,7 @@ type InternalEmployee implements Node & Person {
   ): InternalEmployeeTeamsByInternalTeamMembershipPersonIdAndTeamIdManyToManyConnection!
 
   """Reads and enables pagination through a set of \`Team\`."""
-  teamsByInternalTeamMembershipPersonIdAndTeamIdList(
+  teamsList(
     """
     A condition to be used in determining which values should be returned by the collection.
     """
@@ -614,6 +614,9 @@ interface Person implements Node {
   """
   nodeId: ID!
   personName: String
+
+  """Reads and enables pagination through a set of \`Team\`."""
+  teamsList: [Team!]!
 }
 
 """
@@ -1041,7 +1044,7 @@ type Query implements Node {
 
 type Team implements Node {
   """Reads and enables pagination through a set of \`ExternalPerson\`."""
-  externalPeopleByExternalTeamMembershipTeamIdAndPersonId(
+  externalPeople(
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
@@ -1070,7 +1073,7 @@ type Team implements Node {
   ): TeamExternalPeopleByExternalTeamMembershipTeamIdAndPersonIdManyToManyConnection!
 
   """Reads and enables pagination through a set of \`ExternalPerson\`."""
-  externalPeopleByExternalTeamMembershipTeamIdAndPersonIdList(
+  externalPeopleList(
     """
     A condition to be used in determining which values should be returned by the collection.
     """
@@ -1138,7 +1141,7 @@ type Team implements Node {
   id: Int!
 
   """Reads and enables pagination through a set of \`InternalEmployee\`."""
-  internalEmployeesByInternalTeamMembershipTeamIdAndPersonId(
+  internalEmployees(
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
@@ -1167,7 +1170,7 @@ type Team implements Node {
   ): TeamInternalEmployeesByInternalTeamMembershipTeamIdAndPersonIdManyToManyConnection!
 
   """Reads and enables pagination through a set of \`InternalEmployee\`."""
-  internalEmployeesByInternalTeamMembershipTeamIdAndPersonIdList(
+  internalEmployeesList(
     """
     A condition to be used in determining which values should be returned by the collection.
     """
