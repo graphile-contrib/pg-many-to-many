@@ -115,13 +115,7 @@ junction table.`,
                         plan: EXPORTABLE(
                           (attributeName, codec, junctionAlias, sql) =>
                             function plan(
-                              $edge: EdgeStep<
-                                any,
-                                any,
-                                any,
-                                any,
-                                PgSelectSingleStep
-                              >
+                              $edge: EdgeStep<any, PgSelectSingleStep>
                             ) {
                               const $right = $edge.node();
                               return $right.select(

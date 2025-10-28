@@ -1,5 +1,5 @@
 import type { PgSelectSingleStep } from "@dataplan/pg";
-import type { ConnectionStep, EdgeStep } from "grafast";
+import { ConnectionStep, EdgeStep } from "grafast";
 import type { GraphQLObjectType, GraphQLOutputType } from "graphql";
 import type {
   PgManyToManyRelationDetails,
@@ -23,7 +23,7 @@ export default function createManyToManyConnectionType(
     EXPORTABLE,
     inflection,
     graphql: { GraphQLNonNull, GraphQLList },
-    grafast: { ConnectionStep, assertEdgeCapableStep },
+    grafast: { ConnectionStep },
     getTypeByName,
     options: { pgForbidSetofFunctionsToReturnNull = false },
     nullableIf,
@@ -50,7 +50,7 @@ export default function createManyToManyConnectionType(
       pgManyToManyRelationship: relationship,
     },
     () => ({
-      assertStep: assertEdgeCapableStep,
+      assertStep: EdgeStep,
       description: `A \`${rightTableTypeName}\` edge in the connection, with data from \`${junctionTypeName}\`.`,
       fields: ({ fieldWithHooks }) => {
         return {
@@ -66,7 +66,7 @@ export default function createManyToManyConnectionType(
               ) as GraphQLOutputType,
               plan: EXPORTABLE(
                 () =>
-                  function plan($edge: EdgeStep<any, any, any, any>) {
+                  function plan($edge: EdgeStep<any, PgSelectSingleStep, any>) {
                     return $edge.cursor();
                   },
                 []
@@ -85,9 +85,7 @@ export default function createManyToManyConnectionType(
               ),
               plan: EXPORTABLE(
                 () =>
-                  function plan(
-                    $edge: EdgeStep<any, any, any, PgSelectSingleStep>
-                  ) {
+                  function plan($edge: EdgeStep<any, PgSelectSingleStep>) {
                     const $right = $edge.node();
                     return $right;
                   },

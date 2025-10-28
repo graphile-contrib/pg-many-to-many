@@ -182,13 +182,7 @@ field to the edges where all of the join records can be traversed.`,
                         sql
                       ) =>
                         function plan(
-                          $edge: EdgeStep<
-                            any,
-                            any,
-                            any,
-                            any,
-                            PgSelectSingleStep
-                          >
+                          $edge: EdgeStep<any, PgSelectSingleStep>
                         ) {
                           const $right = $edge.node();
 
