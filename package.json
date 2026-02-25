@@ -24,7 +24,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.23.3",
     "@babel/preset-env": "^7.23.5",
     "@babel/preset-typescript": "^7.23.3",
-    "@dataplan/pg": "^1.0.0-rc.1",
+    "@dataplan/pg": "^1.0.0-rc.7",
     "@tsconfig/node18": "^18.2.4",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
     "@typescript-eslint/parser": "^6.13.1",
