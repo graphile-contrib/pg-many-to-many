@@ -42,7 +42,6 @@ export default function createManyToManyConnectionType(
   build.registerObjectType(
     edgeTypeName,
     {
-      __origin: `Adding many-to-many edge type from ${leftTable.name} to ${rightTable.name} via ${junctionTable.name}.`,
       isConnectionEdgeType: true,
       // isPgRowEdgeType: true,
       isPgManyToManyEdgeType: true,
@@ -96,7 +95,7 @@ export default function createManyToManyConnectionType(
         };
       },
     }),
-    `PgManyToMany edge type for ${leftTable.name}-${junctionTable.name}-${rightTable.name}`
+    `Adding many-to-many edge type from ${leftTable.name} to ${rightTable.name} via ${junctionTable.name}.`
   );
   const connectionTypeName =
     inflection.manyToManyRelationConnectionType(inflectorInfo);

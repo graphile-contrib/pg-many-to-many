@@ -27,7 +27,7 @@ field to the edges where all of the join records can be traversed.`,
           // rightTable,
         } = details;
         const leftRelation = leftTable.getRelation(leftRelationName);
-        const baseOverride = leftRelation.extensions?.tags.foreignFieldName;
+        const baseOverride = leftRelation.extensions?.tags?.foreignFieldName;
         if (typeof baseOverride === "string") {
           return baseOverride;
         }
@@ -46,7 +46,7 @@ field to the edges where all of the join records can be traversed.`,
         const { leftTable, leftRelationName } = details;
         const leftRelation = leftTable.getRelation(leftRelationName);
         const override =
-          leftRelation.extensions?.tags.foreignConnectionFieldName;
+          leftRelation.extensions?.tags?.foreignConnectionFieldName;
         if (typeof override === "string") {
           return override;
         }
@@ -55,7 +55,7 @@ field to the edges where all of the join records can be traversed.`,
       manyToManyEdgeRelationListField(_info, details) {
         const { leftTable, leftRelationName } = details;
         const leftRelation = leftTable.getRelation(leftRelationName);
-        const override = leftRelation.extensions?.tags.foreignSimpleFieldName;
+        const override = leftRelation.extensions?.tags?.foreignSimpleFieldName;
         if (typeof override === "string") {
           return override;
         }
