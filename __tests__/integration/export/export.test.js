@@ -1,12 +1,11 @@
-const { withPgClient, getSchemaPath } = require("../../helpers");
+const { withPgClient } = require("../../helpers");
 const fs = require("fs");
-const util = require("util");
-const path = require("path");
 const { makeSchema } = require("postgraphile");
 const {
   default: postgraphilePresetAmber,
 } = require("postgraphile/presets/amber");
 const { makeV4Preset } = require("postgraphile/presets/v4");
+const { PgMinifySchemaPreset } = require("postgraphile/presets/minify");
 const { PgManyToManyPreset } = require("../../../");
 const pgAdaptor = require("@dataplan/pg/adaptors/pg");
 const { exportSchema } = require("graphile-export");
@@ -22,7 +21,12 @@ afterAll(async () => {
 test("exports a schema using the 'a' database schema", async () => {
   return withPgClient(async (client) => {
     const { schema } = await makeSchema({
-      extends: [postgraphilePresetAmber, makeV4Preset({}), PgManyToManyPreset],
+      extends: [
+        postgraphilePresetAmber,
+        makeV4Preset({}),
+        PgManyToManyPreset,
+        PgMinifySchemaPreset,
+      ],
       pgServices: /* makePgServices(DATABASE_URL, ["app_public"]) */ [
         {
           name: "main",
@@ -40,7 +44,7 @@ test("exports a schema using the 'a' database schema", async () => {
     });
     try {
       await exportSchema(schema, exportFileLocation, {
-        mode: "graphql-js",
+        mode: "typeDefs",
       });
     } catch (e) {
       console.error(e);

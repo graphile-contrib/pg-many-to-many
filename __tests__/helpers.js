@@ -26,7 +26,7 @@ const withPgClient = async (url, fn) => {
     try {
       await client.release();
     } catch (e) {
-      console.error("Error releasing pgClient", e); // eslint-disable-line no-console
+      console.error("Error releasing pgClient", e);
     }
     await pgPool.end();
   }

@@ -48,7 +48,7 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
           junctionTable,
         } = processDetails(details);
         const baseOverride =
-          junctionRightRelation.extensions?.tags.manyToManyFieldName;
+          junctionRightRelation.extensions?.tags?.manyToManyFieldName;
         if (typeof baseOverride === "string") {
           return baseOverride;
         }
@@ -66,7 +66,7 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
       manyToManyRelationConnectionField(_preset, details) {
         const { junctionRightRelation } = processDetails(details);
         const override =
-          junctionRightRelation.extensions?.tags.manyToManyConnectionFieldName;
+          junctionRightRelation.extensions?.tags?.manyToManyConnectionFieldName;
         if (typeof override === "string") {
           return override;
         }
@@ -75,7 +75,7 @@ export const PgManyToManyRelationInflectionPlugin: GraphileConfig.Plugin = {
       manyToManyRelationListField(_preset, details) {
         const { junctionRightRelation } = processDetails(details);
         const override =
-          junctionRightRelation.extensions?.tags.manyToManySimpleFieldName;
+          junctionRightRelation.extensions?.tags?.manyToManySimpleFieldName;
         if (typeof override === "string") {
           return override;
         }
