@@ -1,7 +1,5 @@
-const { withPgClient, getSchemaPath } = require("../../helpers");
+const { withPgClient } = require("../../helpers");
 const fs = require("fs");
-const util = require("util");
-const path = require("path");
 const { makeSchema } = require("postgraphile");
 const {
   default: postgraphilePresetAmber,
