@@ -138,16 +138,15 @@ connection field and the list field when both are present. This base name is
 then fed through the `connectionField` inflector for connection fields and the
 `listField` inflector for list fields.
 
-The `@manyToManyConnectionFieldName` smart comment can be used to fully
-override the connection field name without applying the `connectionField`
-inflector. For example:
-
 ```sql
-comment on constraint membership_team_id_fkey on p.membership is E'@manyToManyConnectionFieldName teamsConnection';
+comment on constraint membership_team_id_fkey on p.membership is E'@manyToManyFieldName teams';
 ```
 
+The `@manyToManyConnectionFieldName` smart comment can be used to fully override
+the connection field name without applying the `connectionField` inflector.
 Similarly, `@manyToManySimpleFieldName` can be used to fully override the list
-field name without applying the `listField` inflector. For example:
+field name without applying the `listField` inflector. If using these, we
+encourage you to set both at the same time; for example:
 
 ```sql
 comment on constraint membership_team_id_fkey on p.membership is E'@manyToManyConnectionFieldName teamsConnection\n@manyToManySimpleFieldName teamsSimple';
