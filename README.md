@@ -133,6 +133,11 @@ For example, to rename the Connection field from `teamsByTeamMemberTeamId` to `t
 comment on constraint membership_team_id_fkey on p.membership is E'@manyToManyFieldName teams';
 ```
 
+The `@manyToManyFieldName` smart comment provides the base name for both the
+connection field and the list field when both are present. This base name is
+then fed through the `connectionField` inflector for connection fields and the
+`listField` inflector for list fields.
+
 The `@manyToManyConnectionFieldName` smart comment can be used to fully
 override the connection field name without applying the `connectionField`
 inflector. For example:
@@ -141,5 +146,12 @@ inflector. For example:
 comment on constraint membership_team_id_fkey on p.membership is E'@manyToManyConnectionFieldName teamsConnection';
 ```
 
-The `@manyToManyConnectionFieldName` smart comment takes precedence over the
-`@manyToManyFieldName` smart comment.
+Similarly, `@manyToManySimpleFieldName` can be used to fully override the list
+field name without applying the `listField` inflector. For example:
+
+```sql
+comment on constraint membership_team_id_fkey on p.membership is E'@manyToManyConnectionFieldName teamsConnection\n@manyToManySimpleFieldName teamsSimple';
+```
+
+The `@manyToManyConnectionFieldName` and `@manyToManySimpleFieldName` smart
+comments take precedence over the `@manyToManyFieldName` smart comment.
