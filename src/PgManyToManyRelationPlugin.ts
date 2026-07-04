@@ -1,4 +1,8 @@
-import type { PgCodec, PgResource, PgSelectSingleStep } from "@dataplan/pg";
+import type {
+  PgCodec,
+  PgResource,
+  PgSelectSingleStep,
+} from "@dataplan/pg";
 import type {} from "graphile-config";
 import type { GraphQLObjectType } from "graphql";
 import type { SQL } from "pg-sql2";
@@ -334,6 +338,18 @@ function extendFields(
   if (!relationships || relationships.length === 0) {
     return fields;
   }
+
+  const representedResources = (() => {
+    const polymorphism = context.scope.pgPolymorphism;
+    if (!isInterface || polymorphism?.mode !== "relational") {
+      return null;
+    }
+    return Object.values(polymorphism.types).map((spec) => {
+      const relation = leftTable.getRelation(spec.relationName);
+      return relation.remoteResource as PgTableResource;
+    });
+  })();
+
   return extend(
     fields,
     relationships.reduce(
@@ -379,7 +395,56 @@ function extendFields(
           // TODO: throw an error if localAttributes or remoteAttributes involve
           // `via` or `expression` - we only want pure column relations.
 
+          function representedResourcesHaveField(isConnection: boolean) {
+            if (!representedResources) {
+              return true;
+            }
+            const manyRelationFieldName = isConnection
+              ? inflection.manyToManyRelationConnectionField(relationship)
+              : inflection.manyToManyRelationListField(relationship);
+
+            return representedResources.every((resource) => {
+              const childRelationships =
+                build.pgManyToManyRealtionshipsByResource.get(resource);
+              if (!childRelationships) {
+                return false;
+              }
+              return childRelationships.some((childRelationship) => {
+                if (childRelationship.rightTable !== relationship.rightTable) {
+                  return false;
+                }
+                if (
+                  !build.behavior.pgManyToManyMatches(
+                    childRelationship,
+                    "manyToMany"
+                  )
+                ) {
+                  return false;
+                }
+                if (
+                  !build.behavior.pgManyToManyMatches(
+                    childRelationship,
+                    isConnection ? "connection" : "list"
+                  )
+                ) {
+                  return false;
+                }
+
+                const childRelationFieldName = isConnection
+                  ? inflection.manyToManyRelationConnectionField(
+                      childRelationship
+                    )
+                  : inflection.manyToManyRelationListField(childRelationship);
+                return childRelationFieldName === manyRelationFieldName;
+              });
+            });
+          }
+
           function makeFields(isConnection: boolean) {
+            if (!representedResourcesHaveField(isConnection)) {
+              return;
+            }
+
             const manyRelationFieldName = isConnection
               ? inflection.manyToManyRelationConnectionField(relationship)
               : inflection.manyToManyRelationListField(relationship);
