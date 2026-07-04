@@ -1,4 +1,3 @@
-const { printSchema } = require("graphql");
 const { makeSchema } = require("postgraphile");
 const {
   default: postgraphilePresetAmber,
@@ -94,9 +93,18 @@ test("many-to-many candidates do not break relational polymorphic interfaces", a
       ],
     });
 
-    const sdl = printSchema(schema);
+    const event = schema.getType("Event");
+    const eventCreated = schema.getType("EventCreated");
 
-    expect(sdl).toContain("interface Event");
-    expect(sdl).toContain("type EventCreated implements Event");
+    expect(event).toBeTruthy();
+    expect(eventCreated.getInterfaces().some((i) => i.name === "Event")).toBe(
+      true
+    );
+    expect(Object.keys(event.getFields())).not.toContain(
+      "accountsBySessionCurrentEventIdAndAccountId"
+    );
+    expect(Object.keys(event.getFields())).not.toContain(
+      "currenciesBySessionCurrentEventIdAndCurrencyId"
+    );
   });
 });
